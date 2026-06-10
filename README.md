@@ -72,6 +72,22 @@ uv run jupyter lab
 
 ---
 
+## Visualisations
+
+<table>
+<tr>
+<td valign="top" width="42%">
+<img src="src/1DCNN_A/window_anatomy_resized.png" width="100%">
+</td>
+<td valign="top" width="58%">
+<img src="src/docs/KMeans.png" width="100%"><br><br>
+<img src="src/docs/TrainingExitFunctions.png" width="100%">
+</td>
+</tr>
+</table>
+
+---
+
 ## Database
 
 MariaDB 10.11 runs via Docker Compose on a remote home server (`192.168.142.174:3306`). The app connects as the `stock_app` user. Tables are created automatically on first startup.
