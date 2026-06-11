@@ -16,7 +16,7 @@ class Config:
     DATA_DIR:   str      = field(default_factory=lambda: os.path.join("..", "..", "data"))
     API_BASE:   str      = "http://localhost:8000"
     FETCH_DATA: bool     = False           # True = re-pull from Alpaca
-    MAX_BARS:   int|None = 200_000         # None = load all bars
+    MAX_BARS:   int|None = 2_000         # None = load all bars - int like 200_000
 
     # ── Windowing ─────────────────────────────────────────────────────────────
     WINDOW_SIZE:  int      = 64            # bars per input window

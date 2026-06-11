@@ -1,5 +1,21 @@
 # 1DCNN Autoencoder — Stock Market Analysis
 
+## Visualisations
+
+<table>
+<tr>
+<td valign="top" width="42%">
+<img src="src/docs/window_anatomy_resized2.png" width="100%">
+</td>
+<td valign="top" width="58%">
+<img src="src/docs/KMeans.png" width="100%"><br><br>
+<img src="src/docs/TrainingExitFunctions.png" width="100%">
+</td>
+</tr>
+</table>
+
+---
+
 A two-layer Python project that collects stock market data via the Alpaca Markets API and feeds it into a 1D CNN autoencoder built with PyTorch for pattern detection and anomaly analysis.
 
 ---
@@ -69,22 +85,6 @@ The notebooks in `src/1DCNN_A/` implement a 1D convolutional autoencoder trained
 ```bash
 uv run jupyter lab
 ```
-
----
-
-## Visualisations
-
-<table>
-<tr>
-<td valign="top" width="42%">
-<img src="src/1DCNN_A/window_anatomy_resized.png" width="100%">
-</td>
-<td valign="top" width="58%">
-<img src="src/docs/KMeans.png" width="100%"><br><br>
-<img src="src/docs/TrainingExitFunctions.png" width="100%">
-</td>
-</tr>
-</table>
 
 ---
 
