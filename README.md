@@ -5,7 +5,7 @@
 <table>
 <tr>
 <td valign="top" width="42%">
-<img src="src/1DCNN_A/window_anatomy_resized2.png" width="100%">
+<img src="src/docs/window_anatomy_resized2.png" width="100%">
 </td>
 <td valign="top" width="58%">
 <img src="src/docs/KMeans.png" width="100%"><br><br>
