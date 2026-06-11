@@ -8,9 +8,11 @@ This module handles everything that touches raw data:
   4. Normalise every feature column with RobustScaler.
   5. Slice the time series into overlapping WINDOW_SIZE-bar windows.
   6. Remove windows that cross an overnight or weekend gap.
+  7. Save / load the fitted scaler so inference uses identical normalisation.
 
 Import this module in a notebook like:
     from data import load_bars, clean_data, add_features, scale_features, make_windows, filter_gap_windows
+    from data import save_scaler, load_scaler   # for inference
 """
 
 from __future__ import annotations
@@ -362,3 +364,67 @@ def filter_gap_windows(
           f"removed {(~valid_mask).sum():,} windows  |  "
           f"{X_clean.shape[0]:,} clean windows remain")
     return X_clean, valid_mask
+
+
+# ── 8. Save / load the fitted scaler ─────────────────────────────────────────
+
+def save_scaler(scaler: RobustScaler, data_dir: str, symbol: str) -> str:
+    """
+    Save the fitted RobustScaler to disk so inference can use it later.
+
+    Why saving matters
+    ------------------
+    The autoencoder was trained on data that was normalised with a specific
+    scaler (fitted on the training bars).  If inference data is normalised
+    differently — even with a "fresh" scaler fitted on inference bars — the
+    feature values will be on a different scale and the model will produce
+    meaningless outputs.  Always load and reuse the scaler from training.
+
+    The file is saved as:  data_dir / symbol / scaler.pkl
+
+    Parameters
+    ----------
+    scaler   : The fitted RobustScaler returned by scale_features().
+    data_dir : Root data directory.
+    symbol   : Ticker symbol (used as a subdirectory name).
+
+    Returns
+    -------
+    Path string where the file was saved.
+    """
+    import joblib
+
+    save_dir = os.path.join(data_dir, symbol)
+    os.makedirs(save_dir, exist_ok=True)
+
+    path = os.path.join(save_dir, "scaler.pkl")
+    joblib.dump(scaler, path)
+    print(f"Scaler saved → {path}")
+    return path
+
+
+def load_scaler(data_dir: str, symbol: str) -> RobustScaler:
+    """
+    Load the RobustScaler saved by 1dcnn_train.ipynb.
+
+    Use this in inference notebooks to normalise new bars with the same
+    scaling that was applied during training.
+
+    IMPORTANT: call scaler.transform() NOT scaler.fit_transform() — you want
+    to apply the existing scaling, not learn a new one from the new data.
+
+    Parameters
+    ----------
+    data_dir : Root data directory.
+    symbol   : Ticker symbol.
+
+    Returns
+    -------
+    Fitted RobustScaler ready for .transform() calls.
+    """
+    import joblib
+
+    path = os.path.join(data_dir, symbol, "scaler.pkl")
+    scaler = joblib.load(path)
+    print(f"Scaler loaded ← {path}")
+    return scaler

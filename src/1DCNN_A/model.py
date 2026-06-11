@@ -9,9 +9,12 @@ Contains:
   - make_dataloaders : split X_clean into train/test DataLoaders
   - save_model       : save model weights to disk
   - load_model       : load model weights from disk
+  - save_kmeans      : save the fitted K-Means model to disk
+  - load_kmeans      : load the K-Means model saved by latent_cluster.ipynb
 
 Import in a notebook:
     from model import ConvAutoencoder, make_dataloaders, save_model, load_model
+    from model import save_kmeans, load_kmeans   # for inference
 """
 
 from __future__ import annotations
@@ -318,3 +321,59 @@ def load_model(
 
     print(f"Model loaded ← {model_path}  (device={device})")
     return model
+
+
+# ── save_kmeans / load_kmeans ─────────────────────────────────────────────────
+
+def save_kmeans(kmeans, data_dir: str, symbol: str) -> str:
+    """
+    Save a fitted scikit-learn KMeans model to disk.
+
+    The K-Means model is fitted in latent_cluster.ipynb.  Saving it lets
+    inference.ipynb assign cluster labels to new windows without re-fitting.
+
+    The file is written to:  data_dir / symbol / kmeans.pkl
+
+    Parameters
+    ----------
+    kmeans   : Fitted sklearn.cluster.KMeans instance.
+    data_dir : Root data directory.
+    symbol   : Ticker symbol (used as a subdirectory name).
+
+    Returns
+    -------
+    Path string where the file was saved.
+    """
+    import joblib
+
+    save_dir = os.path.join(data_dir, symbol)
+    os.makedirs(save_dir, exist_ok=True)
+
+    path = os.path.join(save_dir, "kmeans.pkl")
+    joblib.dump(kmeans, path)
+    print(f"K-Means saved → {path}")
+    return path
+
+
+def load_kmeans(data_dir: str, symbol: str):
+    """
+    Load the K-Means model saved by latent_cluster.ipynb.
+
+    Once loaded, call kmeans.predict(z.reshape(1, -1)) to assign a cluster
+    label to a single latent vector z.
+
+    Parameters
+    ----------
+    data_dir : Root data directory.
+    symbol   : Ticker symbol.
+
+    Returns
+    -------
+    Fitted sklearn.cluster.KMeans instance.
+    """
+    import joblib
+
+    path = os.path.join(data_dir, symbol, "kmeans.pkl")
+    kmeans = joblib.load(path)
+    print(f"K-Means loaded ← {path}  ({kmeans.n_clusters} clusters)")
+    return kmeans
