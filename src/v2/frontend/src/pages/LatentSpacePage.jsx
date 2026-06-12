@@ -28,11 +28,12 @@ function clusterStats(labels, nClusters) {
 }
 
 export default function LatentSpacePage() {
-  const [scatter, setScatter] = useState([]);
-  const [result, setResult]   = useState(null);
-  const [quality, setQuality] = useState(null);
-  const [state, setState]     = useState("idle");
-  const [error, setError]     = useState("");
+  const [scatter, setScatter]         = useState([]);
+  const [result, setResult]           = useState(null);
+  const [quality, setQuality]         = useState(null);
+  const [state, setState]             = useState("idle");
+  const [qualityLoading, setQualityLoading] = useState(false);
+  const [error, setError]             = useState("");
 
   async function handleCluster() {
     setState("running");
@@ -59,11 +60,15 @@ export default function LatentSpacePage() {
   }
 
   async function handleQuality() {
+    setQualityLoading(true);
+    setError("");
     try {
       const res = await api.clusterQuality();
       setQuality(res.scores);
     } catch (e) {
       setError(e.message);
+    } finally {
+      setQualityLoading(false);
     }
   }
 
@@ -81,26 +86,34 @@ export default function LatentSpacePage() {
       <div className="flex gap-3 mb-6 items-center">
         <button
           onClick={handleCluster}
-          disabled={state === "running"}
+          disabled={state === "running" || qualityLoading}
           className="bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 px-5 py-2 rounded text-sm font-semibold"
         >
           {state === "running" ? "Clustering…" : "Extract + Cluster"}
         </button>
         <button
           onClick={handleQuality}
-          disabled={state === "running"}
+          disabled={state === "running" || qualityLoading}
           className="bg-gray-700 hover:bg-gray-600 disabled:opacity-50 px-5 py-2 rounded text-sm font-semibold"
         >
-          Cluster Quality
+          {qualityLoading ? "Scoring…" : "Cluster Quality"}
         </button>
-        {state === "running" && <Spinner />}
+        {(state === "running" || qualityLoading) && <Spinner />}
       </div>
 
-      {/* Running status */}
+      {/* Extract + Cluster running status */}
       {state === "running" && (
         <div className="bg-gray-900 border border-gray-800 rounded-xl p-4 mb-6 text-sm text-gray-400">
           Extracting latent vectors → fitting K-Means → running t-SNE…
           <span className="text-gray-600 ml-1">This typically takes 30–60 seconds.</span>
+        </div>
+      )}
+
+      {/* Cluster Quality running status */}
+      {qualityLoading && (
+        <div className="bg-gray-900 border border-gray-800 rounded-xl p-4 mb-6 text-sm text-gray-400">
+          Re-encoding all windows → fitting K-Means for K=2…16 → computing metrics…
+          <span className="text-gray-600 ml-1">This typically takes 60–120 seconds.</span>
         </div>
       )}
 
