@@ -123,6 +123,6 @@ def models_dir() -> str:
 
 
 def downloads_dir() -> str:
-    """Return the absolute path to the project-root data/ directory."""
-    base = os.path.join(os.path.dirname(__file__), "..", "..", "..", "..", "data")
+    """Return the absolute path to the downloads/ directory."""
+    base = os.path.join(os.path.dirname(__file__), "..", "downloads")
     return os.path.abspath(base)
