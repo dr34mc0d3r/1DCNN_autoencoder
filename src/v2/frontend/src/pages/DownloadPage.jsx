@@ -164,8 +164,10 @@ export default function DownloadPage() {
     api.getConfig()
       .then((cfg) => setForm((f) => ({
         ...f,
-        symbol:    cfg.symbol    ?? f.symbol,
-        timeframe: cfg.timeframe ?? f.timeframe,
+        symbol:    cfg.symbol     ?? f.symbol,
+        timeframe: cfg.timeframe  ?? f.timeframe,
+        start:     cfg.start_date ?? f.start,
+        end:       cfg.end_date   ?? f.end,
       })))
       .catch(() => {});
   }, []);
