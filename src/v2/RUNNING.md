@@ -23,18 +23,18 @@ From the project root (installs into the shared `.venv`):
 uv pip install -r src/v2/backend/requirements.txt
 ```
 
-### Configure credentials
+### Credentials
 
-Edit `src/v2/backend/config/config.json` and fill in your Alpaca keys:
+Alpaca credentials are read automatically from the root `.env` file:
 
-```json
-{
-  "alpaca_key":    "your-api-key-here",
-  "alpaca_secret": "your-api-secret-here"
-}
+```
+ALPACA_API_KEY=...
+ALPACA_SECRET_KEY=...
+ALPACA_DATA_BASE_URL=https://data.alpaca.markets
 ```
 
-All other settings can be changed later from the browser (Config page).
+They are never written to `config.json`. All other settings can be changed
+from the browser (Config page).
 
 ### Start the server
 

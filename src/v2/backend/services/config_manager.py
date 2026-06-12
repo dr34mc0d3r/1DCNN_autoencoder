@@ -11,11 +11,16 @@ import json
 import os
 from typing import Any
 
+from dotenv import dotenv_values
+
 _CONFIG_PATH = os.path.join(os.path.dirname(__file__), "..", "config", "config.json")
 
+# Root .env is four levels up from services/: services/ → backend/ → v2/ → src/ → project root
+_DOTENV_PATH = os.path.abspath(
+    os.path.join(os.path.dirname(__file__), "..", "..", "..", "..", ".env")
+)
+
 _DEFAULTS: dict[str, Any] = {
-    "alpaca_key": "",
-    "alpaca_secret": "",
     "alpaca_base_url": "https://data.alpaca.markets",
     "symbol": "TSLA",
     "timeframe": "1Min",
@@ -50,15 +55,32 @@ def _config_path() -> str:
     return os.path.abspath(_CONFIG_PATH)
 
 
+def _load_env_credentials() -> dict[str, str]:
+    """Read Alpaca credentials from the root .env file."""
+    env = dotenv_values(_DOTENV_PATH)
+    creds: dict[str, str] = {}
+    if env.get("ALPACA_API_KEY"):
+        creds["alpaca_key"] = env["ALPACA_API_KEY"]
+    if env.get("ALPACA_SECRET_KEY"):
+        creds["alpaca_secret"] = env["ALPACA_SECRET_KEY"]
+    if env.get("ALPACA_DATA_BASE_URL"):
+        creds["alpaca_base_url"] = env["ALPACA_DATA_BASE_URL"]
+    return creds
+
+
 def load() -> dict[str, Any]:
-    """Return the current config, merged with defaults for any missing keys."""
+    """Return the current config merged from defaults, config.json, and root .env.
+
+    Priority (highest wins): .env credentials > config.json > _DEFAULTS.
+    Alpaca credentials always come from .env and are never written to config.json.
+    """
     path = _config_path()
     if os.path.exists(path):
         with open(path) as f:
             data = json.load(f)
     else:
         data = {}
-    return {**_DEFAULTS, **data}
+    return {**_DEFAULTS, **data, **_load_env_credentials()}
 
 
 def get(key: str, default: Any = None) -> Any:
@@ -66,15 +88,27 @@ def get(key: str, default: Any = None) -> Any:
     return load().get(key, default)
 
 
+_ENV_ONLY_KEYS = {"alpaca_key", "alpaca_secret"}
+
+
 def update(partial: dict[str, Any]) -> dict[str, Any]:
-    """Merge partial into the saved config and write to disk. Returns full config."""
-    current = load()
-    current.update(partial)
+    """Merge partial into the saved config and write to disk. Returns full config.
+
+    Credential keys (alpaca_key, alpaca_secret) are silently dropped from the
+    write — they live in .env only and must never be persisted to config.json.
+    """
     path = _config_path()
+    if os.path.exists(path):
+        with open(path) as f:
+            on_disk = json.load(f)
+    else:
+        on_disk = {}
+    safe_partial = {k: v for k, v in partial.items() if k not in _ENV_ONLY_KEYS}
+    on_disk.update(safe_partial)
     os.makedirs(os.path.dirname(path), exist_ok=True)
     with open(path, "w") as f:
-        json.dump(current, f, indent=2)
-    return current
+        json.dump(on_disk, f, indent=2)
+    return load()
 
 
 def feature_cols() -> list[str]:
