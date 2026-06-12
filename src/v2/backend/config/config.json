@@ -1,7 +1,4 @@
 {
-  "alpaca_key": "",
-  "alpaca_secret": "",
-  "alpaca_base_url": "https://data.alpaca.markets",
   "symbol": "TSLA",
   "timeframe": "1Min",
   "start_date": "2024-01-01",
