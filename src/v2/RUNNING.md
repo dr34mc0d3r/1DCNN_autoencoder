@@ -77,7 +77,17 @@ Enter the symbol and date range, then click **Start Download**. A progress bar
 updates live via WebSocket. The bars are saved to
 `src/v2/backend/downloads/<SYMBOL>/<TIMEFRAME>.csv`.
 
+The **Available Downloads** panel below the form lists every CSV already on
+disk — Ticker, Timeframe, Start, End, and row count. Click **Use** to
+populate the download form with that file's settings, or **Delete** (confirm
+inline) to remove it.
+
 ### Step 3 — Train page
+Before starting, expand **Training Data Preview** to see how the pipeline
+splits your data: total bars, total windows, train/test window counts, and
+the first 20 rows of each split. This confirms the CSV loaded correctly and
+the split is what you expect.
+
 Click **Start Training**. The loss-curve chart updates every epoch. Training
 stops automatically when the guard detects a plateau, explosion, collapse, or
 overfitting — or after the configured number of epochs. The model, scaler, and
@@ -86,10 +96,15 @@ config are saved to `src/v2/backend/models/`.
 You can click **Stop** at any time to interrupt training.
 
 ### Step 4 — Latent Space page
-Click **Extract + Cluster**. The backend runs the encoder over all training
-windows, fits K-Means, and returns a t-SNE scatter coloured by cluster. Click
-**Cluster Quality** to see silhouette / Davies-Bouldin / Calinski-Harabasz
-scores for K = 2 … 16 to help pick the best K.
+Click **Extract + Cluster**. A status card shows progress while the backend
+encodes all windows and fits K-Means. When done, the t-SNE scatter appears
+coloured by cluster alongside a **Clustering Report** — total window count,
+number of clusters, and a per-cluster table showing the window share of each
+cluster with a colour swatch and bar.
+
+Click **Cluster Quality** (its own spinner) to see silhouette /
+Davies-Bouldin / Calinski-Harabasz scores for K = 2 … 16 to help pick the
+best K. Update `n_clusters` in Config and re-run Extract + Cluster to apply.
 
 ### Step 5 — Windows page
 Click **Load Windows**, then toggle between three views:
@@ -98,14 +113,35 @@ Click **Load Windows**, then toggle between three views:
 - **Thumbnail Grid** — compact thumbnails
 
 ### Step 6 — Analysis page
-Click **Run Reconstruction** to see original vs reconstructed windows and the
-per-feature MSE bar chart. Click **Load Temporal Patterns** to see cluster
-membership by hour of day and day of week.
+Each panel has its own **Execute** button and spinner so you can run them
+independently without waiting for all charts to finish.
+
+- **Reconstruction Comparison** — encode then decode 20 windows; compare
+  originals and reconstructions side by side, plus a per-feature MSE bar chart.
+- **Hour-of-Day Heatmap** — CSS grid where rows are clusters and columns are
+  market hours; cell brightness = relative window frequency. Shows which
+  clusters are characteristic of the open vs the close.
+- **Cluster Frequency by Hour** — stacked bar chart of window counts per
+  cluster at each hour.
+- **Day-of-Week Distribution** — stacked bar chart of window counts per
+  cluster for each trading day.
 
 ### Step 7 — Live Inference page
-Set a date range within your downloaded data, then click **Start**. The MSE
-timeline, current bar info, window image, latent vector bar chart, and cluster
-history strip all update in real time as each bar is processed.
+Set a date range within your downloaded data, then click **Start**. The five
+panels update in real time as each bar is processed:
+
+- **Panel A — MSE Timeline**: reconstruction error per window with a p95
+  threshold line. Spikes signal patterns the model hasn't seen before.
+- **Panel B — Current Bar**: timestamp, MSE, and cluster label for the latest bar.
+- **Panel C — Current Window**: greyscale canvas of the 14-feature × 64-bar
+  window the model just processed.
+- **Panel D — Latent Vector**: bar chart of the 32-dim latent representation
+  (indigo = positive, red = negative).
+- **Panel E — Cluster History**: colour-coded strip of the last 200 cluster
+  assignments. Long runs of one colour = persistent regime.
+
+Expand **? How to read these charts** for a built-in guide explaining each
+panel, what healthy output looks like, and what to watch for.
 
 ---
 
