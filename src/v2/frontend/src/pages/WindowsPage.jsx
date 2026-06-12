@@ -1,6 +1,61 @@
 import { useEffect, useRef, useState } from "react";
 import { api } from "../api.js";
 
+function WindowsGuide() {
+  const [open, setOpen] = useState(false);
+  return (
+    <div className="bg-gray-900 border border-gray-800 rounded-xl mb-6 overflow-hidden">
+      <button
+        onClick={() => setOpen(v => !v)}
+        className="w-full flex items-center justify-between px-4 py-3 text-sm font-semibold text-gray-300 hover:text-gray-100 hover:bg-gray-800/40 transition-colors"
+      >
+        <span>Reading the Window Viewer</span>
+        <span className="text-gray-500 text-xs">{open ? "▲ Hide" : "▼ Show"}</span>
+      </button>
+
+      {open && (
+        <div className="border-t border-gray-800 px-5 py-4 space-y-4 text-sm text-gray-400">
+
+          <div>
+            <p className="text-gray-200 font-semibold mb-1">What you're looking at</p>
+            <p>Each window is a slice of <strong className="text-gray-300">14 normalised technical indicator features</strong> — rows are time steps, columns are features. Pixel brightness represents the scaled value: dark = low, bright = high. This is exactly what the model sees during both training and inference.</p>
+          </div>
+
+          <div>
+            <p className="text-gray-300 font-medium mb-0.5">Contact Sheet view</p>
+            <p>Best for spotting outliers. Windows that look dramatically different from the majority are rare regimes — the model typically assigns these to low-frequency clusters. Look for:</p>
+            <ul className="list-disc list-inside space-y-1 mt-1">
+              <li><strong className="text-gray-300">All-dark windows</strong> — low volatility, flat price action, compressed range.</li>
+              <li><strong className="text-gray-300">All-bright windows</strong> — breakout or strong directional move.</li>
+              <li><strong className="text-gray-300">Striped / high-contrast windows</strong> — oscillating or choppy conditions.</li>
+            </ul>
+          </div>
+
+          <div>
+            <p className="text-gray-300 font-medium mb-0.5">Heatmap Strip view</p>
+            <p>All windows concatenated left-to-right in time order. A sudden shift in the brightness pattern marks a transition between market conditions — useful for sanity-checking that the CSV spans multiple distinct regimes. Long uniform stretches mean the model is seeing a homogeneous period.</p>
+          </div>
+
+          <div>
+            <p className="text-gray-300 font-medium mb-0.5">Thumbnail Grid view</p>
+            <p>Same windows packed tightly — useful for seeing the overall distribution of appearances at a glance. If the grid looks monotonous (everything mid-grey), the training data may be too uniform. If you see clear visual clusters, the K-Means clustering should work well.</p>
+          </div>
+
+          <div>
+            <p className="text-gray-300 font-medium mb-0.5">What to watch for</p>
+            <ul className="list-disc list-inside space-y-1">
+              <li>If all windows look nearly identical, consider extending the date range to include more varied conditions before retraining.</li>
+              <li>Windows that are extreme outliers (pure black or pure white) may indicate bad data or a scaler issue — cross-check the CSV.</li>
+              <li>The window count input lets you trade off between a representative sample (large count, slower) and a quick visual check (small count, fast).</li>
+            </ul>
+          </div>
+
+        </div>
+      )}
+    </div>
+  );
+}
+
 function WindowCanvas({ window: win, size = 4 }) {
   const ref = useRef(null);
 
@@ -99,6 +154,8 @@ export default function WindowsPage() {
           </div>
         )}
       </div>
+
+      <WindowsGuide />
 
       {data && (
         <>
