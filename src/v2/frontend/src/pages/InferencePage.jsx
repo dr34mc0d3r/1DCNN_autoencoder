@@ -158,13 +158,12 @@ export default function InferencePage() {
         <div className="flex items-center gap-2 bg-gray-900 border border-gray-800 rounded-lg px-3 py-2">
           <span className="text-gray-600 uppercase tracking-wider font-semibold">Model</span>
           {activeModel ? (
-            <span className="text-indigo-300 font-mono">{activeModel.name}</span>
+            <span className="text-indigo-300 font-mono">src/v2/backend/models/{activeModel.name}/</span>
           ) : (
             <span className="text-red-400">No active model — train one first</span>
           )}
           {activeModel && (
             <span className="text-gray-600">
-              · {activeModel.symbol} {activeModel.timeframe}
               · W{activeModel.window_size} L{activeModel.latent_dim} K{activeModel.n_clusters}
               {activeModel.has_kmeans ? "" : " · ⚠ no K-Means yet"}
             </span>
@@ -173,7 +172,7 @@ export default function InferencePage() {
         <div className="flex items-center gap-2 bg-gray-900 border border-gray-800 rounded-lg px-3 py-2">
           <span className="text-gray-600 uppercase tracking-wider font-semibold">CSV</span>
           {csvInfo ? (
-            <span className="text-gray-300 font-mono">{csvInfo.symbol}/{csvInfo.timeframe}.csv</span>
+            <span className="text-indigo-300 font-mono">src/v2/backend/downloads/{csvInfo.symbol}/{csvInfo.timeframe}.csv</span>
           ) : (
             <span className="text-gray-600">loading…</span>
           )}
