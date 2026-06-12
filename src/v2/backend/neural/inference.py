@@ -86,10 +86,19 @@ async def walk_forward(
         label = int(kmeans.predict(z.reshape(1, -1))[0])
         ts    = str(df["timestamp"].iloc[i])
 
+        # Normalize window to 0-255 for canvas display: shape (n_features, window_size)
+        w_min, w_max = window_np.min(), window_np.max()
+        window_pixels = (
+            ((window_np.T - w_min) / (w_max - w_min + 1e-8) * 255)
+            .astype(np.uint8)
+            .tolist()
+        )
+
         await asyncio.sleep(0)  # yield control so stop requests are processed between bars
         yield {
             "timestamp":     ts,
             "mse":           mse,
             "cluster_label": label,
             "latent_vector": z.tolist(),
+            "window_pixels": window_pixels,
         }
