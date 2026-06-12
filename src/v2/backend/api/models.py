@@ -12,6 +12,18 @@ def list_models() -> list[dict]:
     return storage.list_models()
 
 
+@router.get("/active")
+def get_active_model() -> dict:
+    """Return the active bundle's meta, or {} if none is set."""
+    name = storage.active_model_name()
+    if not name:
+        return {}
+    for m in storage.list_models():
+        if m["name"] == name:
+            return m
+    return {}
+
+
 @router.post("/{name}/activate")
 def activate_model(name: str) -> dict:
     try:
