@@ -147,73 +147,24 @@ def run_pipeline(
     return X_clean, df, scaler
 
 
-# ── Model artifacts ───────────────────────────────────────────────────────────
-
-def _model_path() -> str:
-    return os.path.join(config_manager.models_dir(), "model.pt")
-
-def _scaler_path() -> str:
-    return os.path.join(config_manager.models_dir(), "scaler.pkl")
-
-def _kmeans_path() -> str:
-    return os.path.join(config_manager.models_dir(), "kmeans.pkl")
-
-
-def save_model(model: Any, device: torch.device | None = None) -> str:
-    os.makedirs(config_manager.models_dir(), exist_ok=True)
-    path = _model_path()
-    torch.save(model.state_dict(), path)
-    return path
-
-
-def load_model(n_features: int, latent_dim: int, device: torch.device) -> Any:
-    from neural.model import ConvAutoencoder
-    m = ConvAutoencoder(n_features, latent_dim).to(device)
-    m.load_state_dict(torch.load(_model_path(), map_location=device))
-    m.eval()
-    return m
-
-
-def save_scaler(scaler: RobustScaler) -> str:
-    os.makedirs(config_manager.models_dir(), exist_ok=True)
-    path = _scaler_path()
-    joblib.dump(scaler, path)
-    return path
-
-
-def load_scaler() -> RobustScaler:
-    return joblib.load(_scaler_path())
-
-
-def save_kmeans(kmeans: Any) -> str:
-    os.makedirs(config_manager.models_dir(), exist_ok=True)
-    path = _kmeans_path()
-    joblib.dump(kmeans, path)
-    return path
-
-
-def load_kmeans() -> Any:
-    return joblib.load(_kmeans_path())
-
-
-def model_exists() -> bool:
-    return os.path.exists(_model_path())
-
-def scaler_exists() -> bool:
-    return os.path.exists(_scaler_path())
-
-def kmeans_exists() -> bool:
-    return os.path.exists(_kmeans_path())
-
-
-# ── Named model bundles ───────────────────────────────────────────────────────
+# ── Model bundle storage ──────────────────────────────────────────────────────
+#
+# Each trained model lives in its own directory:
+#   models/{name}/
+#       model.pt      — encoder/decoder weights
+#       scaler.pkl    — RobustScaler fitted on training data
+#       kmeans.pkl    — K-Means fitted on latent vectors (added by Latent Space page)
+#       meta.json     — symbol, timeframe, hyperparams, saved_at, has_kmeans
+#
+# models/active.json → {"name": "<bundle-name>"}  points to the active bundle.
+# All load functions read from the active bundle — no file copying on activation.
 
 def _active_json_path() -> str:
     return os.path.join(config_manager.models_dir(), "active.json")
 
 
 def active_model_name() -> str | None:
-    """Return the name of the currently active named model, or None."""
+    """Return the name of the active bundle, or None."""
     path = _active_json_path()
     if not os.path.exists(path):
         return None
@@ -224,18 +175,24 @@ def active_model_name() -> str | None:
         return None
 
 
+def bundle_dir(name: str) -> str:
+    return os.path.join(config_manager.models_dir(), name)
+
+
+def _active_bundle_dir() -> str | None:
+    name = active_model_name()
+    if not name:
+        return None
+    d = bundle_dir(name)
+    return d if os.path.isdir(d) else None
+
+
 def save_named_model(name: str, model: Any, scaler: RobustScaler, cfg: dict) -> None:
-    """
-    Save a named model bundle (model.pt + scaler.pkl + meta.json) and mark it
-    active. The standard model.pt / scaler.pkl remain as the active copies used
-    by all other pages — activate_model() keeps them in sync.
-    """
-    models_dir = config_manager.models_dir()
-    os.makedirs(models_dir, exist_ok=True)
-
-    torch.save(model.state_dict(), os.path.join(models_dir, f"{name}_model.pt"))
-    joblib.dump(scaler, os.path.join(models_dir, f"{name}_scaler.pkl"))
-
+    """Save model + scaler + meta into models/{name}/ and mark it active."""
+    d = bundle_dir(name)
+    os.makedirs(d, exist_ok=True)
+    torch.save(model.state_dict(), os.path.join(d, "model.pt"))
+    joblib.dump(scaler, os.path.join(d, "scaler.pkl"))
     meta = {
         "name":        name,
         "symbol":      cfg.get("symbol", ""),
@@ -244,59 +201,120 @@ def save_named_model(name: str, model: Any, scaler: RobustScaler, cfg: dict) -> 
         "latent_dim":  cfg.get("latent_dim", 0),
         "n_clusters":  cfg.get("n_clusters", 0),
         "saved_at":    datetime.now().isoformat(timespec="seconds"),
+        "has_kmeans":  False,
     }
-    with open(os.path.join(models_dir, f"{name}_meta.json"), "w") as f:
+    with open(os.path.join(d, "meta.json"), "w") as f:
         json.dump(meta, f, indent=2)
-
+    os.makedirs(config_manager.models_dir(), exist_ok=True)
     with open(_active_json_path(), "w") as f:
         json.dump({"name": name}, f)
 
 
+def load_model(n_features: int, latent_dim: int, device: torch.device) -> Any:
+    d = _active_bundle_dir()
+    if d is None:
+        raise FileNotFoundError("No active model — train a named model first.")
+    from neural.model import ConvAutoencoder
+    m = ConvAutoencoder(n_features, latent_dim).to(device)
+    m.load_state_dict(torch.load(os.path.join(d, "model.pt"), map_location=device))
+    m.eval()
+    return m
+
+
+def load_scaler() -> RobustScaler:
+    d = _active_bundle_dir()
+    if d is None:
+        raise FileNotFoundError("No active model — train a named model first.")
+    return joblib.load(os.path.join(d, "scaler.pkl"))
+
+
+def save_kmeans(kmeans: Any) -> str:
+    """Save K-Means into the active bundle and set has_kmeans in meta.json."""
+    d = _active_bundle_dir()
+    if d is None:
+        raise RuntimeError("No active model bundle — train a named model first.")
+    path = os.path.join(d, "kmeans.pkl")
+    joblib.dump(kmeans, path)
+    meta_path = os.path.join(d, "meta.json")
+    if os.path.exists(meta_path):
+        with open(meta_path) as f:
+            meta = json.load(f)
+        meta["has_kmeans"] = True
+        with open(meta_path, "w") as f:
+            json.dump(meta, f, indent=2)
+    return path
+
+
+def load_kmeans() -> Any:
+    d = _active_bundle_dir()
+    if d is None:
+        raise FileNotFoundError("No active model — train a named model first.")
+    path = os.path.join(d, "kmeans.pkl")
+    if not os.path.exists(path):
+        raise FileNotFoundError(
+            "No K-Means in this bundle — run Latent Space → Extract + Cluster first."
+        )
+    return joblib.load(path)
+
+
+def model_exists() -> bool:
+    d = _active_bundle_dir()
+    return d is not None and os.path.exists(os.path.join(d, "model.pt"))
+
+
+def scaler_exists() -> bool:
+    d = _active_bundle_dir()
+    return d is not None and os.path.exists(os.path.join(d, "scaler.pkl"))
+
+
+def kmeans_exists() -> bool:
+    d = _active_bundle_dir()
+    return d is not None and os.path.exists(os.path.join(d, "kmeans.pkl"))
+
+
 def list_models() -> list[dict]:
-    """Return all named model bundles, newest first."""
+    """Return all model bundles (subdirs with meta.json), newest first."""
     models_dir = config_manager.models_dir()
     if not os.path.isdir(models_dir):
         return []
     active = active_model_name()
     result = []
-    for fn in os.listdir(models_dir):
-        if not fn.endswith("_meta.json"):
+    for name in os.listdir(models_dir):
+        d = os.path.join(models_dir, name)
+        if not os.path.isdir(d):
             continue
-        name = fn[: -len("_meta.json")]
+        meta_path = os.path.join(d, "meta.json")
+        if not os.path.exists(meta_path):
+            continue
         try:
-            with open(os.path.join(models_dir, fn)) as f:
+            with open(meta_path) as f:
                 meta = json.load(f)
         except Exception:
             continue
-        meta["name"]       = name
-        meta["is_active"]  = (name == active)
-        meta["has_scaler"] = os.path.exists(os.path.join(models_dir, f"{name}_scaler.pkl"))
+        meta["name"]      = name
+        meta["is_active"] = (name == active)
         result.append(meta)
     result.sort(key=lambda x: x.get("saved_at", ""), reverse=True)
     return result
 
 
 def activate_model(name: str) -> None:
-    """Copy a named bundle's files to model.pt / scaler.pkl and record it as active."""
-    models_dir = config_manager.models_dir()
-    pt_src = os.path.join(models_dir, f"{name}_model.pt")
-    if not os.path.exists(pt_src):
-        raise FileNotFoundError(f"No model file for '{name}'")
-    shutil.copy2(pt_src, _model_path())
-    pkl_src = os.path.join(models_dir, f"{name}_scaler.pkl")
-    if os.path.exists(pkl_src):
-        shutil.copy2(pkl_src, _scaler_path())
+    """Mark a bundle as active. No file copying — load functions read from bundle dir."""
+    d = bundle_dir(name)
+    if not os.path.isdir(d):
+        raise FileNotFoundError(f"No bundle directory for '{name}'")
+    if not os.path.exists(os.path.join(d, "model.pt")):
+        raise FileNotFoundError(f"No model.pt in bundle '{name}'")
+    os.makedirs(config_manager.models_dir(), exist_ok=True)
     with open(_active_json_path(), "w") as f:
         json.dump({"name": name}, f)
 
 
 def delete_named_model(name: str) -> None:
-    """Remove a named model bundle's files. Clears active.json if it was active."""
-    models_dir = config_manager.models_dir()
-    for suffix in ("_model.pt", "_scaler.pkl", "_meta.json"):
-        path = os.path.join(models_dir, f"{name}{suffix}")
-        if os.path.exists(path):
-            os.remove(path)
+    """Delete a bundle directory. Clears active pointer if it was active."""
+    d = bundle_dir(name)
+    if os.path.isdir(d):
+        shutil.rmtree(d)
     if active_model_name() == name:
         with open(_active_json_path(), "w") as f:
             json.dump({"name": None}, f)

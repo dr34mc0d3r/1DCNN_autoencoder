@@ -73,8 +73,12 @@ def test_load_bars_returns_sorted_df(tmp_backend, patch_config_manager):
 
 
 def test_save_load_scaler(tmp_backend, patch_config_manager, pipeline_outputs):
+    from services import config_manager
+    from neural.model import ConvAutoencoder
     _, _, scaler = pipeline_outputs
-    path = storage.save_scaler(scaler)
+    cfg = config_manager.load()
+    model = ConvAutoencoder(14, cfg["latent_dim"])
+    storage.save_named_model("test_scaler", model, scaler, cfg)
     loaded = storage.load_scaler()
     assert loaded is not None
     assert storage.scaler_exists()
