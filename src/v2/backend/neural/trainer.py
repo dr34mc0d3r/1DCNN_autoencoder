@@ -8,6 +8,7 @@ anything about HTTP or WebSockets.
 
 from __future__ import annotations
 
+import asyncio
 import logging
 from typing import Callable
 
@@ -111,6 +112,39 @@ class TrainingGuard:
         )
 
 
+# ── Synchronous epoch helpers (run in thread pool) ─────────────────────────────
+
+def _train_epoch(model, loader, criterion, optimizer, device) -> float:
+    """One full training pass. Runs in a thread pool — must not call async code."""
+    model.train()
+    total = 0.0
+    for batch in loader:
+        if isinstance(batch, (list, tuple)):
+            batch = batch[0]
+        batch = batch.to(device)
+        optimizer.zero_grad()
+        recon = model(batch)
+        loss  = criterion(recon, batch)
+        loss.backward()
+        optimizer.step()
+        total += loss.item() * len(batch)
+    return total / len(loader.dataset)
+
+
+def _val_epoch(model, loader, criterion, device) -> float:
+    """One full validation pass. Runs in a thread pool — must not call async code."""
+    model.eval()
+    total = 0.0
+    with torch.no_grad():
+        for batch in loader:
+            if isinstance(batch, (list, tuple)):
+                batch = batch[0]
+            batch = batch.to(device)
+            recon = model(batch)
+            total += criterion(recon, batch).item() * len(batch)
+    return total / len(loader.dataset)
+
+
 # ── Training loop ──────────────────────────────────────────────────────────────
 
 async def train(
@@ -126,50 +160,23 @@ async def train(
     """
     Run the autoencoder training loop.
 
-    Parameters
-    ----------
-    model        : ConvAutoencoder in training mode.
-    train_loader : Training DataLoader.
-    test_loader  : Validation DataLoader.
-    epochs       : Maximum number of epochs.
-    lr           : Learning rate.
-    device       : torch.device.
-    guard        : TrainingGuard instance.
-    progress_cb  : Async callable(epoch, train_loss, val_loss, guard_status).
-                   Called after every epoch.
-
-    Returns
-    -------
-    Stop reason string (from guard or "completed").
+    Each epoch's train and validation passes run in a thread pool executor so
+    the asyncio event loop stays free to flush WebSocket messages between epochs.
+    progress_cb is awaited after each epoch on the event loop.
     """
     model.to(device)
-    model.train()
     criterion = nn.MSELoss()
     optimizer = torch.optim.Adam(model.parameters(), lr=lr)
+    loop = asyncio.get_event_loop()
 
     for epoch in range(1, epochs + 1):
-        # ── Training pass ───────────────────────────────────────────────────
-        model.train()
-        train_loss = 0.0
-        for batch in train_loader:
-            batch = batch.to(device)
-            optimizer.zero_grad()
-            recon = model(batch)
-            loss  = criterion(recon, batch)
-            loss.backward()
-            optimizer.step()
-            train_loss += loss.item() * len(batch)
-        train_loss /= len(train_loader.dataset)
-
-        # ── Validation pass ─────────────────────────────────────────────────
-        model.eval()
-        val_loss = 0.0
-        with torch.no_grad():
-            for batch in test_loader:
-                batch = batch.to(device)
-                recon = model(batch)
-                val_loss += criterion(recon, batch).item() * len(batch)
-        val_loss /= len(test_loader.dataset)
+        # Run CPU-bound passes in a thread so the event loop can flush WS messages
+        train_loss = await loop.run_in_executor(
+            None, _train_epoch, model, train_loader, criterion, optimizer, device
+        )
+        val_loss = await loop.run_in_executor(
+            None, _val_epoch, model, test_loader, criterion, device
+        )
 
         status = guard.status_str(epoch, train_loss, val_loss)
         logger.info(status)
