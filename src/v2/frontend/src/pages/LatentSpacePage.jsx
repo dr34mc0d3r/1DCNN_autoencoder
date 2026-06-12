@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   ScatterChart, Scatter, XAxis, YAxis, Tooltip, Cell, ResponsiveContainer,
   LineChart, Line, CartesianGrid, Legend,
@@ -28,12 +28,17 @@ function clusterStats(labels, nClusters) {
 }
 
 export default function LatentSpacePage() {
+  const [activeModel, setActiveModel] = useState(null);
   const [scatter, setScatter]         = useState([]);
   const [result, setResult]           = useState(null);
   const [quality, setQuality]         = useState(null);
   const [state, setState]             = useState("idle");
   const [qualityLoading, setQualityLoading] = useState(false);
   const [error, setError]             = useState("");
+
+  useEffect(() => {
+    api.getActiveModel().then(m => setActiveModel(Object.keys(m).length ? m : null)).catch(() => {});
+  }, []);
 
   async function handleCluster() {
     setState("running");
@@ -80,7 +85,19 @@ export default function LatentSpacePage() {
 
   return (
     <div>
-      <h1 className="text-2xl font-bold mb-6">Latent Space</h1>
+      <h1 className="text-2xl font-bold mb-4">Latent Space</h1>
+
+      {/* Active model strip */}
+      <div className="flex items-center gap-2 mb-5 bg-gray-900 border border-gray-800 rounded-lg px-3 py-2 text-xs w-fit">
+        <span className="text-gray-600 uppercase tracking-wider font-semibold">Model</span>
+        {activeModel ? (
+          <span className="text-indigo-300 font-mono">
+            src/v2/backend/models/{activeModel.name}/
+          </span>
+        ) : (
+          <span className="text-red-400">No active model — train one first</span>
+        )}
+      </div>
 
       {/* Controls */}
       <div className="flex gap-3 mb-6 items-center">
