@@ -208,11 +208,7 @@ export default function TrainPage() {
       <div className="flex items-center gap-2 mb-5 bg-gray-900 border border-gray-800 rounded-lg px-3 py-2 text-xs w-fit">
         <span className="text-gray-600 uppercase tracking-wider font-semibold">CSV</span>
         {csvInfo ? (
-          <>
-            <span className="text-indigo-300 font-mono">{csvInfo.symbol}/{csvInfo.timeframe}.csv</span>
-            <span className="text-gray-600">·</span>
-            <span className="text-gray-500 font-mono">data/{csvInfo.symbol}/{csvInfo.timeframe}.csv</span>
-          </>
+          <span className="text-indigo-300 font-mono">data/{csvInfo.symbol}/{csvInfo.timeframe}.csv</span>
         ) : (
           <span className="text-gray-600">loading…</span>
         )}
