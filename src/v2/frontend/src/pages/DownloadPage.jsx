@@ -1,26 +1,55 @@
 import { useEffect, useState } from "react";
 import { api } from "../api.js";
 import { ws } from "../ws.js";
+import FieldInfo from "../components/FieldInfo.jsx";
 
-// Guidance per timeframe: what to enter and why.
+// ── Field info content ─────────────────────────────────────────────────────────
+
+const INFO = {
+  symbol: {
+    label: "Symbol",
+    what: "The stock ticker to fetch bars for. Should match the symbol set in Config so training uses the correct CSV.",
+    values: "Any valid US equity on Alpaca's IEX data feed — e.g. TSLA, AAPL, SPY. Must be uppercase.",
+    affects: "Creates the file downloads/{SYMBOL}/{TIMEFRAME}.csv. The Train, Windows, Analysis, and Inference pages all read from this file. If this differs from Config's symbol, training will fail to find the data.",
+  },
+  timeframe: {
+    label: "Timeframe",
+    what: "The bar interval to fetch. Must exactly match the timeframe set in Config — Alpaca's filename lookup is case-sensitive and the pipeline constructs the path from these two values.",
+    values: "Alpaca strings: 1Min, 5Min, 15Min, 30Min, 1Hour, 4Hour, 1Day. No spaces.",
+    affects: "Creates downloads/{SYMBOL}/{TIMEFRAME}.csv. A mismatch with Config's timeframe means training fails silently (wrong file path). Also determines how many bars per trading day you receive.",
+  },
+  start: {
+    label: "Start Date",
+    what: "The earliest date to fetch bars from (inclusive). Alpaca IEX data goes back to roughly 2016 for most US equities.",
+    values: "ISO date YYYY-MM-DD. Must be before end. Alpaca's IEX feed has no pre-market or extended hours — bars are market-hours only.",
+    affects: "Determines how many total bars are downloaded and therefore how many training windows are available. Too short a range means too few windows → the model won't generalise well. The training pipeline uses all bars; the validation set is taken from the most recent portion.",
+  },
+  end: {
+    label: "End Date",
+    what: "The latest date to fetch bars through (inclusive). Use today's date to include the most recent market data.",
+    values: "ISO date YYYY-MM-DD. Must be after start. Cannot be in the future — Alpaca won't return future bars.",
+    affects: "Sets the recency of your data. The validation set (last test_split % of bars) covers the period nearest this date. More recent data means the model and Inference page reflect current market conditions.",
+  },
+};
+
+// ── Guidance panel ─────────────────────────────────────────────────────────────
+
 const GUIDANCE = {
   "1Min": {
-    interval: "1Min",
     barsPerDay: 390,
     minRange: { label: "3 months", start: () => offsetDate(-90) },
-    recRange: { label: "6–12 months", start: () => offsetDate(-365), end: () => today() },
+    recRange: { label: "6–12 months", start: () => offsetDate(-365) },
     notes: [
-      "1-minute bars capture every intraday tick-level move.",
+      "1-minute bars capture every intraday move. Files are large.",
       "3 months ≈ 25 k bars — enough to train, but patterns may be noisy.",
       "6–12 months (50 k–100 k bars) gives the model enough variety to generalise.",
       "Avoid going beyond 2 years — the file gets large and training slows noticeably.",
     ],
   },
   "5Min": {
-    interval: "5Min",
     barsPerDay: 78,
     minRange: { label: "6 months", start: () => offsetDate(-180) },
-    recRange: { label: "1–2 years", start: () => offsetDate(-730), end: () => today() },
+    recRange: { label: "1–2 years", start: () => offsetDate(-730) },
     notes: [
       "5-minute bars are the standard for intraday pattern learning with this model.",
       "6 months ≈ 10 k bars — a viable minimum; expect noisier clusters.",
@@ -29,10 +58,9 @@ const GUIDANCE = {
     ],
   },
   "15Min": {
-    interval: "15Min",
     barsPerDay: 26,
     minRange: { label: "1 year", start: () => offsetDate(-365) },
-    recRange: { label: "2–3 years", start: () => offsetDate(-1095), end: () => today() },
+    recRange: { label: "2–3 years", start: () => offsetDate(-1095) },
     notes: [
       "15-minute bars smooth out micro-noise while keeping intraday structure.",
       "1 year ≈ 6.5 k bars — workable but clusters will be broad.",
@@ -40,25 +68,23 @@ const GUIDANCE = {
     ],
   },
   "1Hour": {
-    interval: "1Hour",
     barsPerDay: 7,
     minRange: { label: "2 years", start: () => offsetDate(-730) },
-    recRange: { label: "3–5 years", start: () => offsetDate(-1825), end: () => today() },
+    recRange: { label: "3–5 years", start: () => offsetDate(-1825) },
     notes: [
-      "Hourly bars capture session-level swings and opening/closing dynamics.",
+      "Hourly bars capture session-level swings and open/close dynamics.",
       "2 years ≈ 3.6 k bars — minimum for meaningful training.",
       "3–5 years (5 k–9 k bars) is recommended.",
     ],
   },
   "1Day": {
-    interval: "1Day",
     barsPerDay: 1,
     minRange: { label: "3 years", start: () => offsetDate(-1095) },
-    recRange: { label: "5–10 years", start: () => "2015-01-01", end: () => today() },
+    recRange: { label: "5–10 years", start: () => "2015-01-01" },
     notes: [
       "Daily bars are for multi-week swing and trend patterns.",
       "3 years ≈ 750 bars — a minimum; the model will underfit with fewer.",
-      "5–10 years (1 250–2 500 bars) gives the model enough bull/bear cycles to learn from.",
+      "5–10 years (1 250–2 500 bars) gives the model bull/bear cycle variety.",
       "Alpaca provides free daily data back to 2015 for most US equities.",
     ],
   },
@@ -76,9 +102,8 @@ function offsetDate(days) {
 function GuidancePanel({ timeframe, onApply }) {
   const g = GUIDANCE[timeframe];
   if (!g) return (
-    <div className="bg-gray-800 rounded-lg p-4 text-sm text-gray-400">
-      No guidance available for timeframe <code className="text-gray-300">{timeframe}</code>.
-      Check your Config page.
+    <div className="bg-gray-800 rounded-lg p-4 text-sm text-gray-400 mb-6">
+      No guidance for timeframe <code className="text-gray-300">{timeframe}</code>. Check Config.
     </div>
   );
 
@@ -87,12 +112,12 @@ function GuidancePanel({ timeframe, onApply }) {
       <div className="flex items-start justify-between gap-4 mb-4">
         <div>
           <h2 className="text-sm font-semibold text-gray-200 mb-0.5">
-            What to download for <code className="text-indigo-400">{g.interval}</code>
+            What to download for <code className="text-indigo-400">{timeframe}</code>
           </h2>
           <p className="text-xs text-gray-500">≈ {g.barsPerDay} bars per trading day</p>
         </div>
         <button
-          onClick={() => onApply(g.recRange.start(), g.recRange.end ? g.recRange.end() : today())}
+          onClick={() => onApply(g.recRange.start(), today())}
           className="shrink-0 bg-indigo-700 hover:bg-indigo-600 px-3 py-1.5 rounded text-xs font-semibold"
         >
           Use recommended range
@@ -108,23 +133,22 @@ function GuidancePanel({ timeframe, onApply }) {
         <div className="bg-gray-800 rounded p-3 border border-indigo-800">
           <p className="text-xs text-indigo-400 mb-1">Recommended</p>
           <p className="text-sm text-gray-200 font-medium">{g.recRange.label}</p>
-          <p className="text-xs text-gray-500 mt-0.5">
-            {g.recRange.start()} → {g.recRange.end ? g.recRange.end() : today()}
-          </p>
+          <p className="text-xs text-gray-500 mt-0.5">{g.recRange.start()} → {today()}</p>
         </div>
       </div>
 
       <ul className="space-y-1">
         {g.notes.map((n, i) => (
           <li key={i} className="flex gap-2 text-xs text-gray-400">
-            <span className="text-gray-600 shrink-0">—</span>
-            {n}
+            <span className="text-gray-600 shrink-0">—</span>{n}
           </li>
         ))}
       </ul>
     </div>
   );
 }
+
+// ── Component ──────────────────────────────────────────────────────────────────
 
 export default function DownloadPage() {
   const [form, setForm] = useState({
@@ -136,14 +160,16 @@ export default function DownloadPage() {
   const [savedPath, setSavedPath] = useState("");
   const [error, setError]         = useState("");
 
-  // Load symbol + timeframe from config on mount
   useEffect(() => {
     api.getConfig()
-      .then((cfg) => setForm((f) => ({ ...f, symbol: cfg.symbol ?? f.symbol, timeframe: cfg.timeframe ?? f.timeframe })))
+      .then((cfg) => setForm((f) => ({
+        ...f,
+        symbol:    cfg.symbol    ?? f.symbol,
+        timeframe: cfg.timeframe ?? f.timeframe,
+      })))
       .catch(() => {});
   }, []);
 
-  // WebSocket progress
   useEffect(() => {
     const off = ws.on("download_progress", (data) => {
       setBarsTotal(data.bars_fetched ?? 0);
@@ -172,6 +198,13 @@ export default function DownloadPage() {
     }
   }
 
+  const FORM_FIELDS = [
+    { key: "symbol",    label: "Symbol",     type: "text" },
+    { key: "timeframe", label: "Timeframe",  type: "text" },
+    { key: "start",     label: "Start Date", type: "date" },
+    { key: "end",       label: "End Date",   type: "date" },
+  ];
+
   return (
     <div className="max-w-lg">
       <h1 className="text-2xl font-bold mb-6">Download Bars</h1>
@@ -179,10 +212,12 @@ export default function DownloadPage() {
       <GuidancePanel timeframe={form.timeframe} onApply={applyRange} />
 
       <div className="grid grid-cols-2 gap-4 mb-6">
-        {[["Symbol", "symbol", "text"], ["Timeframe", "timeframe", "text"],
-          ["Start Date", "start", "date"], ["End Date", "end", "date"]].map(([label, key, type]) => (
+        {FORM_FIELDS.map(({ key, label, type }) => (
           <div key={key} className="flex flex-col gap-1">
-            <label className="text-xs text-gray-400">{label}</label>
+            <label className="text-xs text-gray-400 flex items-center">
+              {label}
+              <FieldInfo info={INFO[key]} />
+            </label>
             <input
               type={type}
               value={form[key]}
