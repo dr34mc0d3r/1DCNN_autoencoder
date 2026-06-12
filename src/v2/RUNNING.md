@@ -5,7 +5,7 @@
 | Tool | Version | Notes |
 |------|---------|-------|
 | Python | 3.12 | Pinned via `.python-version` at project root |
-| uv | any | Package manager (`pip install uv`) |
+| uv | any | Package manager — install from https://docs.astral.sh/uv/ |
 | Node.js | 18+ | For the React frontend |
 | npm | 10+ | Comes with Node.js |
 
@@ -17,12 +17,7 @@ No database required — v2 uses CSV files only.
 
 ### Install dependencies
 
-```bash
-cd src/v2/backend
-pip install -r requirements.txt
-```
-
-Or with `uv` from the project root:
+From the project root (installs into the shared `.venv`):
 
 ```bash
 uv pip install -r src/v2/backend/requirements.txt
@@ -45,7 +40,7 @@ All other settings can be changed later from the browser (Config page).
 
 ```bash
 cd src/v2/backend
-uvicorn app:app --reload --port 8000
+uv run uvicorn app:app --reload --port 8000
 ```
 
 The API is now running at **http://localhost:8000**.  
@@ -118,7 +113,7 @@ history strip all update in real time as each bar is processed.
 
 ```bash
 cd src/v2
-pytest
+uv run pytest
 ```
 
 Tests run in an isolated temp directory — they never touch your real
@@ -127,8 +122,8 @@ Tests run in an isolated temp directory — they never touch your real
 To run a specific module:
 
 ```bash
-pytest tests/neural/test_model.py -v
-pytest tests/api/test_config.py -v
+uv run pytest tests/neural/test_model.py -v
+uv run pytest tests/api/test_config.py -v
 ```
 
 ---
