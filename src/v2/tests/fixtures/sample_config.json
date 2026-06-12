@@ -1,0 +1,20 @@
+{
+  "symbol": "TEST",
+  "timeframe": "5Min",
+  "window_size": 16,
+  "latent_dim": 8,
+  "epochs": 2,
+  "lr": 0.001,
+  "batch_size": 4,
+  "test_split": 0.2,
+  "n_clusters": 3,
+  "alpaca_api_key": "TEST_KEY",
+  "alpaca_api_secret": "TEST_SECRET",
+  "guard_patience": 5,
+  "guard_min_delta": 0.001,
+  "guard_overfit_ratio": 2.0,
+  "guard_explosion_factor": 10.0,
+  "guard_oscillation_window": 5,
+  "guard_oscillation_cv": 0.5,
+  "guard_collapse_threshold": 1e-7
+}
