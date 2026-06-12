@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { api } from "../api.js";
 
 function WindowCanvas({ window: win, size = 4 }) {
@@ -34,10 +34,15 @@ function WindowCanvas({ window: win, size = 4 }) {
 }
 
 export default function WindowsPage() {
+  const [activeModel, setActiveModel] = useState(null);
   const [data, setData]       = useState(null);
   const [loading, setLoading] = useState(false);
   const [count, setCount]     = useState(200);
   const [view, setView]       = useState("contact");
+
+  useEffect(() => {
+    api.getActiveModel().then(m => setActiveModel(Object.keys(m).length ? m : null)).catch(() => {});
+  }, []);
 
   async function handleLoad() {
     setLoading(true);
@@ -53,7 +58,16 @@ export default function WindowsPage() {
 
   return (
     <div>
-      <h1 className="text-2xl font-bold mb-6">Windows</h1>
+      <h1 className="text-2xl font-bold mb-4">Windows</h1>
+
+      <div className="flex items-center gap-2 mb-5 bg-gray-900 border border-gray-800 rounded-lg px-3 py-2 text-xs w-fit">
+        <span className="text-gray-600 uppercase tracking-wider font-semibold">Model</span>
+        {activeModel ? (
+          <span className="text-indigo-300 font-mono">src/v2/backend/models/{activeModel.name}/</span>
+        ) : (
+          <span className="text-red-400">No active model — train one first</span>
+        )}
+      </div>
 
       <div className="flex gap-3 items-center mb-6">
         <input
