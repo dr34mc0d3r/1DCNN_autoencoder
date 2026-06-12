@@ -41,7 +41,9 @@ async def _run_inference(req: InferRequest) -> None:
             _state["results"].append(result)
             await manager.send("infer_step", result)
 
+        stop_reason = "cancelled" if (_cancel_event and _cancel_event.is_set()) else "completed"
         _state["state"] = "done"
+        await manager.send("infer_complete", {"stop_reason": stop_reason})
     except Exception as exc:
         logger.exception("Inference failed")
         _state.update({"state": "error", "error": str(exc)})
@@ -58,7 +60,7 @@ def start_inference(req: InferRequest, background_tasks: BackgroundTasks) -> dic
 
 
 @router.post("/stop")
-def stop_inference() -> dict:
+async def stop_inference() -> dict:
     if _cancel_event:
         _cancel_event.set()
     return {"status": "stop_requested"}

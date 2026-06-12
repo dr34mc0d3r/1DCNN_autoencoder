@@ -7,6 +7,7 @@ The API layer streams each result via WebSocket.
 
 from __future__ import annotations
 
+import asyncio
 from typing import AsyncGenerator
 
 import numpy as np
@@ -85,6 +86,7 @@ async def walk_forward(
         label = int(kmeans.predict(z.reshape(1, -1))[0])
         ts    = str(df["timestamp"].iloc[i])
 
+        await asyncio.sleep(0)  # yield control so stop requests are processed between bars
         yield {
             "timestamp":     ts,
             "mse":           mse,

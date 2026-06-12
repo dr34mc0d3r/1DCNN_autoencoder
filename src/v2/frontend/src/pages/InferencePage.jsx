@@ -121,19 +121,25 @@ export default function InferencePage() {
   const [state, setState]     = useState("idle");
   const [error, setError]     = useState("");
   const canvasRef             = useRef(null);
+  const activeRef             = useRef(false);   // tracks whether inference is running (avoids stale closure)
 
   const p95 = mseData.length
     ? [...mseData].sort((a, b) => a.mse - b.mse)[Math.floor(mseData.length * 0.95)]?.mse
     : null;
 
   useEffect(() => {
-    const off = ws.on("infer_step", (data) => {
+    const offStep = ws.on("infer_step", (data) => {
+      if (!activeRef.current) return;
       setMseData((prev) => [...prev.slice(-999), { timestamp: data.timestamp, mse: data.mse }]);
       setCurrent(data);
       setClusterHistory((prev) => [...prev.slice(-(HISTORY_LEN - 1)), data.cluster_label]);
       drawWindow(data);
     });
-    return off;
+    const offDone = ws.on("infer_complete", () => {
+      activeRef.current = false;
+      setState("idle");
+    });
+    return () => { offStep(); offDone(); };
   }, []);
 
   function drawWindow(data) {
@@ -165,16 +171,19 @@ export default function InferencePage() {
     setCurrent(null);
     setClusterHistory([]);
     setError("");
+    activeRef.current = true;
     setState("running");
     try {
       await api.startInfer(form);
     } catch (e) {
+      activeRef.current = false;
       setError(e.message);
       setState("error");
     }
   }
 
   async function handleStop() {
+    activeRef.current = false;
     await api.stopInfer();
     setState("idle");
   }
