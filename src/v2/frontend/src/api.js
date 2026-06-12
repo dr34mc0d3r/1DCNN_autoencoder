@@ -22,6 +22,7 @@ export const api = {
   startTrain:     ()         => _request("POST", "/train"),
   stopTrain:      ()         => _request("POST", "/train/stop"),
   trainStatus:    ()         => _request("GET",  "/train/status"),
+  trainPreview:   ()         => _request("GET",  "/train/data-preview"),
   startInfer:     (body)     => _request("POST", "/infer", body),
   stopInfer:      ()         => _request("POST", "/infer/stop"),
   inferResults:   ()         => _request("GET",  "/infer/results"),
