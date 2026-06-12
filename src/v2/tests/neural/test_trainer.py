@@ -11,7 +11,7 @@ from neural.model import ConvAutoencoder
 from neural.dataset import make_dataloaders
 
 
-N_FEAT, LATENT, WIN = 14, 8, 16
+N_FEAT, LATENT, WIN = 14, 8, 64
 
 
 def _tiny_loaders():
@@ -44,7 +44,7 @@ class TestTrainingGuard:
 
     def test_status_str_returns_string(self):
         self.guard.check(0, 1.0, 0.9)
-        assert isinstance(self.guard.status_str(), str)
+        assert isinstance(self.guard.status_str(0, 1.0, 0.9), str)
 
     def test_nan_loss_triggers_stop(self):
         guard = TrainingGuard()

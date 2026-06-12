@@ -12,7 +12,7 @@ def test_windows_response_shape(client, sample_X):
     resp = client.get("/api/windows?n=10")
     body = resp.json()
     assert body["n_windows"] <= 10
-    assert body["window_size"] == 16
+    assert body["window_size"] == 64
     assert body["n_features"] == 14
     assert len(body["windows"]) == body["n_windows"]
 

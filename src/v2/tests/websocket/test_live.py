@@ -46,9 +46,9 @@ async def test_manager_disconnect_removes_connection():
 
     ws = _FakeWS()
     await manager.connect(ws)
-    assert ws in manager.active_connections
+    assert ws in manager._connections
     manager.disconnect(ws)
-    assert ws not in manager.active_connections
+    assert ws not in manager._connections
 
 
 @pytest.mark.asyncio

@@ -11,7 +11,7 @@ def test_load_returns_dict(patch_config_manager):
     cfg = cm.load()
     assert isinstance(cfg, dict)
     assert cfg["symbol"] == "TEST"
-    assert cfg["window_size"] == 16
+    assert cfg["window_size"] == 64
 
 
 def test_feature_cols_length():
