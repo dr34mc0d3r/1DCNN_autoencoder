@@ -379,6 +379,7 @@ export default function DownloadPage() {
   }, []);
 
   function handleUse(file) {
+    api.updateConfig({ symbol: file.ticker, timeframe: file.timeframe }).catch(() => {});
     setForm((f) => ({
       ...f,
       symbol:    file.ticker,
