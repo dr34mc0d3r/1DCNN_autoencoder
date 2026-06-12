@@ -53,12 +53,12 @@ pytest
 ## Workflow
 
 1. **Config** — fill in Alpaca API key + model hyperparameters
-2. **Download** — pull bar data for your symbol/timeframe/date range
-3. **Train** — start training; watch loss curves live via WebSocket
-4. **Latent Space** — extract latent vectors, cluster with K-Means, view t-SNE scatter
+2. **Download** — pull bar data; reuse or delete existing CSVs from the Available Downloads panel
+3. **Train** — start training; preview pipeline data before running; watch loss curves live via WebSocket
+4. **Latent Space** — extract latent vectors, cluster with K-Means, view t-SNE scatter and Clustering Report
 5. **Windows** — browse raw training windows (contact sheet / heatmap / thumbnail views)
-6. **Analysis** — compare original vs reconstructed windows; per-feature MSE; temporal cluster patterns
-7. **Live Inference** — walk-forward inference with real-time MSE timeline, cluster history, latent vector display
+6. **Analysis** — reconstruction comparison; Hour-of-Day Heatmap; Cluster Frequency by Hour; Day-of-Week Distribution
+7. **Live Inference** — walk-forward inference with real-time MSE timeline, cluster history, latent vector display; inline chart guide
 
 ## API Endpoints
 
@@ -69,9 +69,12 @@ pytest
 | GET | /api/status | System health (model loaded, training state…) |
 | POST | /api/download | Start bar download |
 | GET | /api/download/status | Download state |
+| GET | /api/download/list | List all downloaded CSVs with ticker, dates, and row count |
+| DELETE | /api/download/list/{ticker}/{timeframe} | Delete a downloaded CSV (and empty ticker dir) |
 | POST | /api/train | Start training |
 | POST | /api/train/stop | Stop training |
 | GET | /api/train/status | Training state + current loss |
+| GET | /api/train/data-preview | Pipeline stats and first 20 rows of train/test splits |
 | POST | /api/infer | Start walk-forward inference |
 | POST | /api/infer/stop | Stop inference |
 | GET | /api/infer/results | Completed inference results |
