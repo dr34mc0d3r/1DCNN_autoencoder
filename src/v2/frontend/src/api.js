@@ -32,8 +32,9 @@ export const api = {
   getWindows:     (n = 2000) => _request("GET",  `/windows?n=${n}`),
   reconstruct:    (n = 500)  => _request("POST", "/reconstruct", { n }),
   getTemporal:    ()         => _request("GET",  "/temporal"),
-  listModels:     ()         => _request("GET",    "/models"),
-  getActiveModel: ()         => _request("GET",    "/models/active"),
-  activateModel:  (name)     => _request("POST",   `/models/${encodeURIComponent(name)}/activate`),
-  deleteModel:    (name)     => _request("DELETE",  `/models/${encodeURIComponent(name)}`),
+  listModels:       ()       => _request("GET",    "/models"),
+  getActiveModel:   ()       => _request("GET",    "/models/active"),
+  activateModel:    (name)   => _request("POST",   `/models/${encodeURIComponent(name)}/activate`),
+  deactivateModel:  ()       => _request("POST",   "/models/deactivate"),
+  deleteModel:      (name)   => _request("DELETE",  `/models/${encodeURIComponent(name)}`),
 };

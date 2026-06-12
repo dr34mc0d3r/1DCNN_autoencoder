@@ -163,8 +163,9 @@ function ConfirmButtons({ onYes, onNo }) {
 function AvailableDownloads({ onUse }) {
   const [files, setFiles]       = useState([]);
   const [loading, setLoading]   = useState(true);
-  const [confirming, setConfirm] = useState(null); // "csv:TICKER/TF" or "model:NAME"
+  const [confirming, setConfirm] = useState(null); // "csv:TICKER/TF" | "model:NAME" | "deactivate:NAME"
   const [activating, setActivating] = useState(null); // model name mid-activation (shows "…")
+  const [deactivating, setDeactivating] = useState(false);
 
   function load() {
     setLoading(true);
@@ -192,11 +193,24 @@ function AvailableDownloads({ onUse }) {
     try {
       await api.activateModel(m.name);
       onUse(f);
-      load(); // refresh list so ● active badge moves to the newly activated model
+      load();
     } catch {
       // silently ignore
     } finally {
       setActivating(null);
+    }
+  }
+
+  async function handleDeactivate() {
+    setDeactivating(true);
+    try {
+      await api.deactivateModel();
+      load();
+    } catch {
+      // silently ignore
+    } finally {
+      setDeactivating(false);
+      setConfirm(null);
     }
   }
 
@@ -271,7 +285,7 @@ function AvailableDownloads({ onUse }) {
                           ${m.is_active ? "bg-indigo-950/40" : "bg-gray-900/60"}`}
                       >
                         <span className="text-indigo-400 shrink-0 w-4">⊕</span>
-                        <span className="font-mono text-gray-300 truncate max-w-[130px]" title={m.name}>{m.name}</span>
+                          <span className="font-mono text-gray-300 truncate max-w-[200px]" title={m.name}>{m.name}</span>
                         <span className="text-gray-600 shrink-0">Win <span className="text-gray-400">{m.window_size}</span></span>
                         <span className="text-gray-600 shrink-0">Lat <span className="text-gray-400">{m.latent_dim}</span></span>
                         <span className="text-gray-600 shrink-0">K <span className="text-gray-400">{m.n_clusters}</span></span>
@@ -280,15 +294,36 @@ function AvailableDownloads({ onUse }) {
                         <span className="flex items-center gap-1 ml-auto shrink-0">
                           {confirming === modelKey ? (
                             <ConfirmButtons onYes={() => handleDeleteModel(m.name)} onNo={() => setConfirm(null)} />
+                          ) : confirming === `deactivate:${m.name}` ? (
+                            <>
+                              <span className="text-amber-400 text-[11px]">Deactivate?</span>
+                              <button
+                                onClick={handleDeactivate}
+                                disabled={deactivating}
+                                className="bg-amber-700 hover:bg-amber-600 disabled:opacity-50 px-2 py-1 rounded text-[11px] font-semibold"
+                              >
+                                {deactivating ? "…" : "Yes"}
+                              </button>
+                              <button onClick={() => setConfirm(null)} className="bg-gray-700 hover:bg-gray-600 px-2 py-1 rounded text-[11px] font-semibold">No</button>
+                            </>
                           ) : (
                             <>
-                              <button
-                                onClick={() => handleUseModel(f, m)}
-                                disabled={isActive || m.is_active}
-                                className="bg-indigo-700 hover:bg-indigo-600 disabled:opacity-40 px-2.5 py-1 rounded text-[11px] font-semibold"
-                              >
-                                {isActive ? "…" : m.is_active ? "● Active" : "Set Active"}
-                              </button>
+                              {m.is_active ? (
+                                <button
+                                  onClick={() => setConfirm(`deactivate:${m.name}`)}
+                                  className="bg-amber-900 hover:bg-amber-800 text-amber-300 px-2.5 py-1 rounded text-[11px] font-semibold"
+                                >
+                                  Deactivate
+                                </button>
+                              ) : (
+                                <button
+                                  onClick={() => handleUseModel(f, m)}
+                                  disabled={isActive}
+                                  className="bg-indigo-700 hover:bg-indigo-600 disabled:opacity-40 px-2.5 py-1 rounded text-[11px] font-semibold"
+                                >
+                                  {isActive ? "…" : "Set Active"}
+                                </button>
+                              )}
                               <button
                                 onClick={() => setConfirm(modelKey)}
                                 className="bg-gray-700 hover:bg-red-800 px-2.5 py-1 rounded text-[11px] font-semibold text-gray-400 hover:text-red-300"
