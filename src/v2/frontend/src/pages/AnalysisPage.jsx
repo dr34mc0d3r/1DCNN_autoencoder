@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Legend,
 } from "recharts";
@@ -140,7 +140,12 @@ function ChartPanel({ title, description, onExecute, loading, hasData, children 
 // ── Page ───────────────────────────────────────────────────────────────────────
 
 export default function AnalysisPage() {
+  const [activeModel, setActiveModel] = useState(null);
   const [recon,        setRecon]       = useState(null);
+
+  useEffect(() => {
+    api.getActiveModel().then(m => setActiveModel(Object.keys(m).length ? m : null)).catch(() => {});
+  }, []);
   const [heatmapData,  setHeatmap]     = useState(null);
   const [hourData,     setHourData]    = useState(null);
   const [weekdayData,  setWeekday]     = useState(null);
@@ -194,7 +199,16 @@ export default function AnalysisPage() {
 
   return (
     <div>
-      <h1 className="text-2xl font-bold mb-6">Analysis</h1>
+      <h1 className="text-2xl font-bold mb-4">Analysis</h1>
+
+      <div className="flex items-center gap-2 mb-5 bg-gray-900 border border-gray-800 rounded-lg px-3 py-2 text-xs w-fit">
+        <span className="text-gray-600 uppercase tracking-wider font-semibold">Model</span>
+        {activeModel ? (
+          <span className="text-indigo-300 font-mono">src/v2/backend/models/{activeModel.name}/</span>
+        ) : (
+          <span className="text-red-400">No active model — train one first</span>
+        )}
+      </div>
 
       {/* Panel A — Reconstruction Comparison */}
       <ChartPanel
