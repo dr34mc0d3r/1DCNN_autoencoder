@@ -57,9 +57,9 @@ class ConnectionManager:
         for ws in dead:
             self.disconnect(ws)
 
-    async def send(self, event_type: str, payload: dict[str, Any]) -> None:
-        """Convenience wrapper: broadcast {type, payload}."""
-        await self.broadcast({"type": event_type, "payload": payload})
+    async def send(self, event_type: str, data: dict[str, Any]) -> None:
+        """Convenience wrapper: broadcast {type, data}."""
+        await self.broadcast({"type": event_type, "data": data})
 
 
 manager = ConnectionManager()

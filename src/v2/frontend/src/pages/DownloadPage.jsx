@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { api } from "../api.js";
 import { ws } from "../ws.js";
 
@@ -7,22 +7,27 @@ export default function DownloadPage() {
     symbol: "TSLA", timeframe: "5Min",
     start: "2024-01-01", end: "2025-01-01",
   });
-  const [state, setState]     = useState("idle");
-  const [progress, setProgress] = useState(null);
-  const [error, setError]     = useState("");
+  const [state, setState]         = useState("idle");
+  const [barsTotal, setBarsTotal] = useState(0);
+  const [savedPath, setSavedPath] = useState("");
+  const [error, setError]         = useState("");
 
   useEffect(() => {
     const off = ws.on("download_progress", (data) => {
-      setProgress(data);
-      if (data.done) setState("done");
+      setBarsTotal(data.bars_fetched ?? 0);
+      if (data.done) {
+        setState("done");
+        setSavedPath(data.path ?? "");
+      }
     });
     return off;
   }, []);
 
   async function handleStart() {
     setError("");
+    setBarsTotal(0);
+    setSavedPath("");
     setState("running");
-    setProgress(null);
     try {
       await api.startDownload(form);
     } catch (e) {
@@ -44,7 +49,7 @@ export default function DownloadPage() {
               type={type}
               value={form[key]}
               onChange={(e) => setForm((f) => ({ ...f, [key]: e.target.value }))}
-              className="bg-gray-800 border border-gray-700 rounded px-3 py-2 text-sm"
+              className="bg-gray-800 border border-gray-700 rounded px-3 py-2 text-sm focus:outline-none focus:border-indigo-500"
             />
           </div>
         ))}
@@ -53,20 +58,38 @@ export default function DownloadPage() {
       <button
         onClick={handleStart}
         disabled={state === "running"}
-        className="bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 px-5 py-2 rounded text-sm font-semibold mb-4"
+        className="bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 px-5 py-2 rounded text-sm font-semibold mb-6"
       >
         {state === "running" ? "Downloading…" : "Start Download"}
       </button>
 
-      {progress && (
-        <div className="bg-gray-800 rounded p-4 text-sm">
-          <div className="text-gray-300">Bars: {progress.total?.toLocaleString() ?? "—"}</div>
-          <div className="text-gray-400 text-xs mt-1">{JSON.stringify(progress)}</div>
+      {/* Progress bar — visible while running or after done */}
+      {(state === "running" || state === "done") && (
+        <div className="mb-4">
+          <div className="flex justify-between text-xs text-gray-400 mb-1">
+            <span>{state === "done" ? "Complete" : "Fetching pages…"}</span>
+            <span>{barsTotal.toLocaleString()} bars</span>
+          </div>
+          {/* Indeterminate bar while running (no known total), filled when done */}
+          <div className="w-full h-2 bg-gray-800 rounded overflow-hidden">
+            {state === "running" ? (
+              <div className="h-full bg-indigo-500 rounded animate-pulse w-full" />
+            ) : (
+              <div className="h-full bg-green-500 rounded w-full" />
+            )}
+          </div>
         </div>
       )}
 
-      {state === "done" && <p className="text-green-400 mt-3">Download complete.</p>}
-      {error && <p className="text-red-400 mt-3">{error}</p>}
+      {state === "done" && (
+        <div className="bg-gray-800 rounded p-4 text-sm">
+          <p className="text-green-400 font-semibold mb-1">Download complete</p>
+          <p className="text-gray-400">{barsTotal.toLocaleString()} bars saved</p>
+          {savedPath && <p className="text-gray-500 text-xs mt-1 break-all">{savedPath}</p>}
+        </div>
+      )}
+
+      {error && <p className="text-red-400 mt-3 text-sm">{error}</p>}
     </div>
   );
 }

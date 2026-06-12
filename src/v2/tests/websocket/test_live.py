@@ -73,4 +73,4 @@ async def test_manager_send_formats_json():
     assert len(received) == 1
     msg = json.loads(received[0])
     assert msg["type"] == "heartbeat"
-    assert msg["data"]["ts"] == 1
+    assert msg["data"]["ts"] == 1  # live.py sends {"type": ..., "data": ...}
