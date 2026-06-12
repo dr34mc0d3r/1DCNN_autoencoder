@@ -310,6 +310,13 @@ def activate_model(name: str) -> None:
         json.dump({"name": name}, f)
 
 
+def deactivate_model() -> None:
+    """Clear the active pointer — no model is active after this call."""
+    os.makedirs(config_manager.models_dir(), exist_ok=True)
+    with open(_active_json_path(), "w") as f:
+        json.dump({"name": None}, f)
+
+
 def delete_named_model(name: str) -> None:
     """Delete a bundle directory. Clears active pointer if it was active."""
     d = bundle_dir(name)

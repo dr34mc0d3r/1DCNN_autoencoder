@@ -24,6 +24,13 @@ def get_active_model() -> dict:
     return {}
 
 
+@router.post("/deactivate")
+def deactivate_model() -> dict:
+    """Clear the active model pointer."""
+    storage.deactivate_model()
+    return {"deactivated": True}
+
+
 @router.post("/{name}/activate")
 def activate_model(name: str) -> dict:
     try:
