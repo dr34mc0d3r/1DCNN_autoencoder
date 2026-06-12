@@ -108,3 +108,53 @@ def stop_training() -> dict:
 @router.get("/status")
 def training_status() -> dict:
     return _state
+
+
+@router.get("/data-preview")
+def data_preview() -> dict:
+    """
+    Run the data pipeline and return a tabular preview for the Train page.
+
+    Returns stats (window counts, split sizes) plus the first 20 rows of the
+    training and test portions of the cleaned, scaled DataFrame.
+    """
+    cfg         = config_manager.load()
+    feat_cols   = config_manager.feature_cols()
+    test_split  = cfg["test_split"]
+    window_size = cfg["window_size"]
+
+    X_clean, df, _ = storage.run_pipeline()
+
+    n_total = len(X_clean)
+    split   = int(n_total * (1 - test_split))
+    n_train = split
+    n_test  = n_total - split
+
+    columns = ["timestamp"] + feat_cols
+
+    def df_to_rows(sub: object) -> list[dict]:
+        rows = []
+        for _, row in sub[columns].iterrows():
+            record: dict = {}
+            for col in columns:
+                val = row[col]
+                if hasattr(val, "isoformat"):
+                    record[col] = str(val)[:19].replace("T", " ")
+                else:
+                    record[col] = round(float(val), 5)
+            rows.append(record)
+        return rows
+
+    return {
+        "stats": {
+            "total_bars":     len(df),
+            "total_windows":  n_total,
+            "train_windows":  n_train,
+            "test_windows":   n_test,
+            "test_split_pct": round(test_split * 100, 1),
+            "window_size":    window_size,
+        },
+        "columns":    columns,
+        "train_rows": df_to_rows(df.iloc[:20]),
+        "test_rows":  df_to_rows(df.iloc[split: split + 20]),
+    }

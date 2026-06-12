@@ -5,6 +5,118 @@ import {
 import { api } from "../api.js";
 import { ws } from "../ws.js";
 
+// ── Data Preview ───────────────────────────────────────────────────────────────
+
+function DataTable({ columns, rows, caption }) {
+  if (!rows.length) return <p className="text-xs text-gray-500">No rows.</p>;
+  // Shorten timestamp column header; keep feature names as-is
+  return (
+    <div>
+      {caption && <p className="text-xs text-gray-500 mb-1">{caption}</p>}
+      <div className="overflow-x-auto rounded border border-gray-800">
+        <table className="text-xs font-mono whitespace-nowrap">
+          <thead>
+            <tr className="bg-gray-800 text-gray-400">
+              {columns.map((c) => (
+                <th key={c} className="px-2.5 py-1.5 text-left font-normal border-r border-gray-700 last:border-r-0">
+                  {c === "timestamp" ? "timestamp" : c}
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {rows.map((row, i) => (
+              <tr key={i} className={i % 2 === 0 ? "bg-gray-900" : "bg-gray-800/50"}>
+                {columns.map((c) => (
+                  <td key={c} className="px-2.5 py-1 text-gray-300 border-r border-gray-800 last:border-r-0">
+                    {row[c]}
+                  </td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+}
+
+function DataPreview() {
+  const [open, setOpen]       = useState(false);
+  const [data, setData]       = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError]     = useState("");
+  const fetched               = useRef(false);
+
+  function toggle() {
+    setOpen((v) => {
+      const next = !v;
+      if (next && !fetched.current) {
+        fetched.current = true;
+        setLoading(true);
+        api.trainPreview()
+          .then(setData)
+          .catch((e) => setError(e.message))
+          .finally(() => setLoading(false));
+      }
+      return next;
+    });
+  }
+
+  const s = data?.stats;
+
+  return (
+    <div className="bg-gray-900 border border-gray-800 rounded-xl mb-6 overflow-hidden">
+      <button
+        onClick={toggle}
+        className="w-full flex items-center justify-between px-4 py-3 text-sm font-semibold text-gray-300 hover:text-gray-100 hover:bg-gray-800/40 transition-colors"
+      >
+        <span>Training Data Preview</span>
+        <span className="text-gray-500 text-xs">{open ? "▲ Hide" : "▼ Show"}</span>
+      </button>
+
+      {open && (
+        <div className="border-t border-gray-800 px-4 py-4 space-y-5">
+          {loading && <p className="text-xs text-gray-500">Running pipeline…</p>}
+          {error   && <p className="text-xs text-red-400">{error}</p>}
+
+          {s && (
+            <div className="grid grid-cols-5 gap-3">
+              {[
+                ["Total bars",     s.total_bars.toLocaleString()],
+                ["Total windows",  s.total_windows.toLocaleString()],
+                ["Train windows",  s.train_windows.toLocaleString()],
+                ["Test windows",   s.test_windows.toLocaleString()],
+                ["Test split",     `${s.test_split_pct}%  (window size ${s.window_size})`],
+              ].map(([label, val]) => (
+                <div key={label} className="bg-gray-800 rounded-lg p-3">
+                  <p className="text-[10px] text-gray-500 mb-0.5">{label}</p>
+                  <p className="text-sm font-semibold text-gray-100">{val}</p>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {data && (
+            <>
+              <DataTable
+                columns={data.columns}
+                rows={data.train_rows}
+                caption={`Training portion — first 20 rows (bars 1–20 of ${s.total_bars.toLocaleString()})`}
+              />
+              <DataTable
+                columns={data.columns}
+                rows={data.test_rows}
+                caption={`Test portion — first 20 rows (starting at bar ${(s.train_windows + 1).toLocaleString()} of ${s.total_bars.toLocaleString()})`}
+              />
+            </>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
 function guardColor(status) {
   if (!status) return "text-gray-500";
   const s = status.toLowerCase();
@@ -101,6 +213,8 @@ export default function TrainPage() {
           Stop
         </button>
       </div>
+
+      <DataPreview />
 
       {/* ── Live status card ── */}
       {(status === "running" || lastEpoch) && (
