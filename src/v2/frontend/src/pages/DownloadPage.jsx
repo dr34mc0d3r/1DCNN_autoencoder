@@ -148,6 +148,125 @@ function GuidancePanel({ timeframe, onApply }) {
   );
 }
 
+// ── Available Downloads panel ──────────────────────────────────────────────────
+
+function AvailableDownloads({ onUse }) {
+  const [files, setFiles]         = useState([]);
+  const [loading, setLoading]     = useState(true);
+  const [confirming, setConfirming] = useState(null); // "TICKER/TF" key while awaiting confirm
+
+  function load() {
+    setLoading(true);
+    setConfirming(null);
+    api.listDownloads()
+      .then(setFiles)
+      .catch(() => setFiles([]))
+      .finally(() => setLoading(false));
+  }
+
+  useEffect(load, []);
+
+  async function handleDelete(f) {
+    try {
+      await api.deleteDownload(f.ticker, f.timeframe);
+      load();
+    } catch {
+      load();
+    }
+  }
+
+  if (loading) {
+    return (
+      <div className="bg-gray-900 border border-gray-800 rounded-xl p-4 mb-6 text-sm text-gray-500">
+        Scanning downloads…
+      </div>
+    );
+  }
+
+  if (files.length === 0) {
+    return (
+      <div className="bg-gray-900 border border-gray-800 rounded-xl p-4 mb-6">
+        <div className="flex items-center justify-between">
+          <p className="text-sm text-gray-500">No CSV files found in downloads/</p>
+          <button onClick={load} className="text-xs text-gray-500 hover:text-gray-300 underline">Refresh</button>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="bg-gray-900 border border-gray-800 rounded-xl p-4 mb-6">
+      <div className="flex items-center justify-between mb-3">
+        <p className="text-sm text-gray-400">Available Downloads</p>
+        <button onClick={load} className="text-xs text-gray-500 hover:text-gray-300 underline">Refresh</button>
+      </div>
+      <table className="w-full text-xs">
+        <thead>
+          <tr className="text-gray-500 border-b border-gray-800">
+            <th className="text-left py-1.5 font-normal pr-4">Ticker</th>
+            <th className="text-left py-1.5 font-normal pr-4">Timeframe</th>
+            <th className="text-left py-1.5 font-normal pr-4">Start</th>
+            <th className="text-left py-1.5 font-normal pr-4">End</th>
+            <th className="text-right py-1.5 font-normal pr-4">Rows</th>
+            <th className="py-1.5" />
+          </tr>
+        </thead>
+        <tbody>
+          {files.map((f) => {
+            const key = `${f.ticker}/${f.timeframe}`;
+            const isConfirming = confirming === key;
+            return (
+              <tr key={key} className="border-b border-gray-800/40 hover:bg-gray-800/40">
+                <td className="py-1.5 pr-4 font-semibold text-gray-200">{f.ticker}</td>
+                <td className="py-1.5 pr-4 font-mono text-gray-300">{f.timeframe}</td>
+                <td className="py-1.5 pr-4 font-mono text-gray-400">{f.start_date}</td>
+                <td className="py-1.5 pr-4 font-mono text-gray-400">{f.end_date}</td>
+                <td className="py-1.5 pr-4 text-right font-mono text-gray-400">{f.rows.toLocaleString()}</td>
+                <td className="py-1.5">
+                  <span className="flex items-center justify-end gap-1.5">
+                    {isConfirming ? (
+                      <>
+                        <span className="text-red-400 text-[11px]">Delete?</span>
+                        <button
+                          onClick={() => handleDelete(f)}
+                          className="bg-red-700 hover:bg-red-600 px-2 py-1 rounded text-[11px] font-semibold"
+                        >
+                          Yes
+                        </button>
+                        <button
+                          onClick={() => setConfirming(null)}
+                          className="bg-gray-700 hover:bg-gray-600 px-2 py-1 rounded text-[11px] font-semibold"
+                        >
+                          No
+                        </button>
+                      </>
+                    ) : (
+                      <>
+                        <button
+                          onClick={() => onUse(f)}
+                          className="bg-indigo-700 hover:bg-indigo-600 px-2.5 py-1 rounded text-[11px] font-semibold"
+                        >
+                          Use
+                        </button>
+                        <button
+                          onClick={() => setConfirming(key)}
+                          className="bg-gray-700 hover:bg-red-800 px-2.5 py-1 rounded text-[11px] font-semibold text-gray-400 hover:text-red-300"
+                        >
+                          Delete
+                        </button>
+                      </>
+                    )}
+                  </span>
+                </td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
 // ── Component ──────────────────────────────────────────────────────────────────
 
 export default function DownloadPage() {
@@ -171,6 +290,16 @@ export default function DownloadPage() {
       })))
       .catch(() => {});
   }, []);
+
+  function handleUse(file) {
+    setForm((f) => ({
+      ...f,
+      symbol:    file.ticker,
+      timeframe: file.timeframe,
+      start:     file.start_date,
+      end:       file.end_date,
+    }));
+  }
 
   useEffect(() => {
     const off = ws.on("download_progress", (data) => {
@@ -210,6 +339,8 @@ export default function DownloadPage() {
   return (
     <div className="max-w-lg">
       <h1 className="text-2xl font-bold mb-6">Download Bars</h1>
+
+      <AvailableDownloads onUse={handleUse} />
 
       <GuidancePanel timeframe={form.timeframe} onApply={applyRange} />
 
