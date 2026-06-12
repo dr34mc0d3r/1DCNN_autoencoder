@@ -57,6 +57,6 @@ async def test_walk_forward_bad_date_range(tmp_backend, patch_config_manager):
     """walk_forward should raise ValueError when the date range has no bars."""
     from neural.inference import walk_forward
 
-    with pytest.raises(ValueError, match="No bars found"):
+    with pytest.raises(ValueError, match="No bars in"):
         async for _ in walk_forward(infer_start="1990-01-01", infer_end="1990-01-31"):
             pass

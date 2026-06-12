@@ -32,14 +32,21 @@ async def test_fetch_bars_empty_response(monkeypatch):
     call_count = 0
 
     class _MockAsyncClient:
+        def __init__(self, **kwargs):
+            pass
+
         async def __aenter__(self):
             return self
 
         async def __aexit__(self, *args):
             pass
 
-        async def get(self, *args, **kwargs):
-            return httpx.Response(200, json={"bars": {}, "next_page_token": None})
+        async def get(self, url, **kwargs):
+            return httpx.Response(
+                200,
+                json={"bars": {}, "next_page_token": None},
+                request=httpx.Request("GET", url),
+            )
 
     monkeypatch.setattr(alpaca.httpx, "AsyncClient", _MockAsyncClient)
 

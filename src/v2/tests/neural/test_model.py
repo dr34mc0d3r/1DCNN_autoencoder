@@ -6,7 +6,7 @@ import pytest
 from neural.model import ConvAutoencoder, Encoder, Decoder
 
 
-N_FEAT, LATENT, WIN = 14, 8, 16
+N_FEAT, LATENT, WIN = 14, 8, 64
 
 
 def _batch(n=4) -> torch.Tensor:
@@ -20,7 +20,7 @@ def test_encoder_output_shape():
 
 
 def test_decoder_output_shape():
-    dec = Decoder(LATENT, N_FEAT, WIN)
+    dec = Decoder(N_FEAT, LATENT)
     z   = torch.randn(4, LATENT)
     out = dec(z)
     assert out.shape == (4, N_FEAT, WIN)

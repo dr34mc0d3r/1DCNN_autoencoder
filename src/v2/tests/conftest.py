@@ -17,12 +17,12 @@ import pytest
 FIXTURE_DIR = Path(__file__).parent / "fixtures"
 _SAMPLE_CONFIG = json.loads((FIXTURE_DIR / "sample_config.json").read_text())
 
-WINDOW_SIZE = _SAMPLE_CONFIG["window_size"]   # 16
+WINDOW_SIZE = _SAMPLE_CONFIG["window_size"]   # 64
 LATENT_DIM  = _SAMPLE_CONFIG["latent_dim"]    # 8
 N_FEATURES  = 14
 
 
-def _make_ohlcv_df(n: int = 300) -> pd.DataFrame:
+def _make_ohlcv_df(n: int = 600) -> pd.DataFrame:
     """Generate n synthetic 5-minute bars in one continuous session."""
     rng = np.random.default_rng(42)
     closes = 100.0 + np.cumsum(rng.normal(0, 0.1, n))

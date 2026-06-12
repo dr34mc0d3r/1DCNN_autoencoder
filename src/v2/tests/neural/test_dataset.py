@@ -21,16 +21,15 @@ def test_window_dataset_len():
 def test_window_dataset_item_shape():
     X = _fake_X(50)
     ds = WindowDataset(X)
-    x, y = ds[0]
-    assert x.shape == (14, 16)  # channels-first
-    assert y.shape == (14, 16)
+    item = ds[0]
+    assert item.shape == (16, 14)  # (window_size, n_features) — permuted by make_dataloaders
 
 
-def test_window_dataset_input_eq_target():
-    X = _fake_X(20)
+def test_window_dataset_item_is_tensor():
+    X = torch.tensor(_fake_X(20))
     ds = WindowDataset(X)
-    x, y = ds[5]
-    assert torch.equal(x, y)
+    item = ds[5]
+    assert isinstance(item, torch.Tensor)
 
 
 def test_make_dataloaders_returns_two():
@@ -52,7 +51,7 @@ def test_make_dataloaders_split_sizes():
 def test_make_dataloaders_batch_shape():
     X = _fake_X(50)
     train_dl, _ = make_dataloaders(X, test_split=0.2, batch_size=8)
-    for batch_x, batch_y in train_dl:
-        assert batch_x.shape[1] == 14  # features
-        assert batch_x.shape[2] == 16  # window_size
+    for batch in train_dl:
+        assert batch.shape[1] == 14  # n_features (channels-first after permute)
+        assert batch.shape[2] == 16  # window_size
         break
