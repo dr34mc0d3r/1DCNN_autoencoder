@@ -143,6 +143,7 @@ function DeltaBadge({ value }) {
 }
 
 export default function TrainPage() {
+  const [modelName, setModelName] = useState("");
   const [epochs, setEpochs]   = useState([]);
   const [status, setStatus]   = useState("idle");
   const [guard, setGuard]     = useState("");
@@ -179,7 +180,7 @@ export default function TrainPage() {
     setError("");
     setStatus("running");
     try {
-      await api.startTrain();
+      await api.startTrain({ model_name: modelName.trim() });
     } catch (e) {
       setError(e.message);
       setStatus("error");
@@ -197,21 +198,39 @@ export default function TrainPage() {
       <h1 className="text-2xl font-bold mb-6">Train</h1>
 
       {/* ── Controls ── */}
-      <div className="flex gap-3 mb-6">
-        <button
-          onClick={handleStart}
-          disabled={status === "running"}
-          className="bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 px-5 py-2 rounded text-sm font-semibold"
-        >
-          {status === "running" ? "Training…" : "Start Training"}
-        </button>
-        <button
-          onClick={handleStop}
-          disabled={status !== "running"}
-          className="bg-red-700 hover:bg-red-600 disabled:opacity-50 px-5 py-2 rounded text-sm font-semibold"
-        >
-          Stop
-        </button>
+      <div className="flex flex-col gap-3 mb-6">
+        <div className="flex flex-col gap-1 max-w-xs">
+          <label className="text-xs text-gray-400">
+            Model Name <span className="text-red-400">*</span>
+          </label>
+          <input
+            type="text"
+            value={modelName}
+            onChange={(e) => setModelName(e.target.value)}
+            disabled={status === "running"}
+            placeholder="e.g. tsla_5min_jan2024"
+            className="bg-gray-800 border border-gray-700 rounded px-3 py-2 text-sm focus:outline-none focus:border-indigo-500 disabled:opacity-50"
+          />
+          <p className="text-[11px] text-gray-600">
+            Saved as <code>{modelName.trim() || "…"}_model.pt</code> — required before training
+          </p>
+        </div>
+        <div className="flex gap-3">
+          <button
+            onClick={handleStart}
+            disabled={status === "running" || !modelName.trim()}
+            className="bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 px-5 py-2 rounded text-sm font-semibold"
+          >
+            {status === "running" ? "Training…" : "Start Training"}
+          </button>
+          <button
+            onClick={handleStop}
+            disabled={status !== "running"}
+            className="bg-red-700 hover:bg-red-600 disabled:opacity-50 px-5 py-2 rounded text-sm font-semibold"
+          >
+            Stop
+          </button>
+        </div>
       </div>
 
       <DataPreview />

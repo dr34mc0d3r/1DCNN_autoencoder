@@ -148,16 +148,28 @@ function GuidancePanel({ timeframe, onApply }) {
   );
 }
 
-// ── Available Downloads panel ──────────────────────────────────────────────────
+// ── Available Downloads / Models panel ────────────────────────────────────────
+
+function ConfirmButtons({ onYes, onNo }) {
+  return (
+    <>
+      <span className="text-red-400 text-[11px]">Delete?</span>
+      <button onClick={onYes} className="bg-red-700 hover:bg-red-600 px-2 py-1 rounded text-[11px] font-semibold">Yes</button>
+      <button onClick={onNo}  className="bg-gray-700 hover:bg-gray-600 px-2 py-1 rounded text-[11px] font-semibold">No</button>
+    </>
+  );
+}
 
 function AvailableDownloads({ onUse }) {
-  const [files, setFiles]         = useState([]);
-  const [loading, setLoading]     = useState(true);
-  const [confirming, setConfirming] = useState(null); // "TICKER/TF" key while awaiting confirm
+  const [files, setFiles]       = useState([]);
+  const [loading, setLoading]   = useState(true);
+  const [confirming, setConfirm] = useState(null); // "csv:TICKER/TF" or "model:NAME"
+  const [activating, setActivating] = useState(null); // model name being activated
+  const [activated, setActivated]   = useState(null); // last activated model name (for feedback)
 
   function load() {
     setLoading(true);
-    setConfirming(null);
+    setConfirm(null);
     api.listDownloads()
       .then(setFiles)
       .catch(() => setFiles([]))
@@ -166,103 +178,147 @@ function AvailableDownloads({ onUse }) {
 
   useEffect(load, []);
 
-  async function handleDelete(f) {
+  async function handleDeleteCsv(f) {
+    await api.deleteDownload(f.ticker, f.timeframe).catch(() => {});
+    load();
+  }
+
+  async function handleDeleteModel(name) {
+    await api.deleteModel(name).catch(() => {});
+    load();
+  }
+
+  async function handleUseModel(f, m) {
+    setActivating(m.name);
     try {
-      await api.deleteDownload(f.ticker, f.timeframe);
-      load();
+      await api.activateModel(m.name);
+      setActivated(m.name);
+      onUse(f); // also update form fields to match this CSV
+      setTimeout(() => setActivated(null), 3000);
     } catch {
-      load();
+      // silently ignore
+    } finally {
+      setActivating(null);
     }
   }
 
-  if (loading) {
-    return (
-      <div className="bg-gray-900 border border-gray-800 rounded-xl p-4 mb-6 text-sm text-gray-500">
-        Scanning downloads…
-      </div>
-    );
-  }
+  if (loading) return (
+    <div className="bg-gray-900 border border-gray-800 rounded-xl p-4 mb-6 text-sm text-gray-500">
+      Scanning downloads…
+    </div>
+  );
 
-  if (files.length === 0) {
-    return (
-      <div className="bg-gray-900 border border-gray-800 rounded-xl p-4 mb-6">
-        <div className="flex items-center justify-between">
-          <p className="text-sm text-gray-500">No CSV files found in downloads/</p>
-          <button onClick={load} className="text-xs text-gray-500 hover:text-gray-300 underline">Refresh</button>
-        </div>
+  if (files.length === 0) return (
+    <div className="bg-gray-900 border border-gray-800 rounded-xl p-4 mb-6">
+      <div className="flex items-center justify-between">
+        <p className="text-sm text-gray-500">No CSV files found in downloads/</p>
+        <button onClick={load} className="text-xs text-gray-500 hover:text-gray-300 underline">Refresh</button>
       </div>
-    );
-  }
+    </div>
+  );
 
   return (
     <div className="bg-gray-900 border border-gray-800 rounded-xl p-4 mb-6">
       <div className="flex items-center justify-between mb-3">
-        <p className="text-sm text-gray-400">Available Downloads</p>
+        <p className="text-sm text-gray-400">Available Downloads / Models</p>
         <button onClick={load} className="text-xs text-gray-500 hover:text-gray-300 underline">Refresh</button>
       </div>
-      <table className="w-full text-xs">
-        <thead>
-          <tr className="text-gray-500 border-b border-gray-800">
-            <th className="text-left py-1.5 font-normal pr-4">Ticker</th>
-            <th className="text-left py-1.5 font-normal pr-4">Timeframe</th>
-            <th className="text-left py-1.5 font-normal pr-4">Start</th>
-            <th className="text-left py-1.5 font-normal pr-4">End</th>
-            <th className="text-right py-1.5 font-normal pr-4">Rows</th>
-            <th className="py-1.5" />
-          </tr>
-        </thead>
-        <tbody>
-          {files.map((f) => {
-            const key = `${f.ticker}/${f.timeframe}`;
-            const isConfirming = confirming === key;
-            return (
-              <tr key={key} className="border-b border-gray-800/40 hover:bg-gray-800/40">
-                <td className="py-1.5 pr-4 font-semibold text-gray-200">{f.ticker}</td>
-                <td className="py-1.5 pr-4 font-mono text-gray-300">{f.timeframe}</td>
-                <td className="py-1.5 pr-4 font-mono text-gray-400">{f.start_date}</td>
-                <td className="py-1.5 pr-4 font-mono text-gray-400">{f.end_date}</td>
-                <td className="py-1.5 pr-4 text-right font-mono text-gray-400">{f.rows.toLocaleString()}</td>
-                <td className="py-1.5">
-                  <span className="flex items-center justify-end gap-1.5">
-                    {isConfirming ? (
-                      <>
-                        <span className="text-red-400 text-[11px]">Delete?</span>
-                        <button
-                          onClick={() => handleDelete(f)}
-                          className="bg-red-700 hover:bg-red-600 px-2 py-1 rounded text-[11px] font-semibold"
-                        >
-                          Yes
-                        </button>
-                        <button
-                          onClick={() => setConfirming(null)}
-                          className="bg-gray-700 hover:bg-gray-600 px-2 py-1 rounded text-[11px] font-semibold"
-                        >
-                          No
-                        </button>
-                      </>
-                    ) : (
-                      <>
-                        <button
-                          onClick={() => onUse(f)}
-                          className="bg-indigo-700 hover:bg-indigo-600 px-2.5 py-1 rounded text-[11px] font-semibold"
-                        >
-                          Use
-                        </button>
-                        <button
-                          onClick={() => setConfirming(key)}
-                          className="bg-gray-700 hover:bg-red-800 px-2.5 py-1 rounded text-[11px] font-semibold text-gray-400 hover:text-red-300"
-                        >
-                          Delete
-                        </button>
-                      </>
-                    )}
-                  </span>
-                </td>
-              </tr>
-            );
-          })}
-        </tbody>
-      </table>
+
+      <div className="space-y-3">
+        {files.map((f) => {
+          const csvKey = `csv:${f.ticker}/${f.timeframe}`;
+          return (
+            <div key={csvKey} className="border border-gray-800 rounded-lg overflow-hidden">
+
+              {/* CSV row */}
+              <div className="flex items-center gap-2 px-3 py-2 bg-gray-800/60 text-xs">
+                <span className="font-semibold text-gray-100 w-14 shrink-0">{f.ticker}</span>
+                <span className="font-mono text-gray-300 w-12 shrink-0">{f.timeframe}</span>
+                <span className="font-mono text-gray-500">{f.start_date}</span>
+                <span className="text-gray-700">→</span>
+                <span className="font-mono text-gray-500">{f.end_date}</span>
+                <span className="font-mono text-gray-600 ml-auto mr-2">{f.rows.toLocaleString()} rows</span>
+                <span className="flex items-center gap-1 shrink-0">
+                  {confirming === csvKey ? (
+                    <ConfirmButtons onYes={() => handleDeleteCsv(f)} onNo={() => setConfirm(null)} />
+                  ) : (
+                    <>
+                      <button
+                        onClick={() => onUse(f)}
+                        className="bg-indigo-700 hover:bg-indigo-600 px-2.5 py-1 rounded text-[11px] font-semibold"
+                      >
+                        Use CSV
+                      </button>
+                      <button
+                        onClick={() => setConfirm(csvKey)}
+                        className="bg-gray-700 hover:bg-red-800 px-2.5 py-1 rounded text-[11px] font-semibold text-gray-400 hover:text-red-300"
+                      >
+                        Delete
+                      </button>
+                    </>
+                  )}
+                </span>
+              </div>
+
+              {/* Model sub-rows */}
+              {f.models?.length > 0 && (
+                <div className="border-t border-gray-800">
+                  {f.models.map((m) => {
+                    const modelKey = `model:${m.name}`;
+                    const isActive = activating === m.name;
+                    const wasActivated = activated === m.name;
+                    return (
+                      <div
+                        key={m.name}
+                        className={`flex items-center gap-2 px-3 py-1.5 text-[11px] border-b border-gray-800/50 last:border-0
+                          ${m.is_active ? "bg-indigo-950/40" : "bg-gray-900/60"}`}
+                      >
+                        <span className="text-indigo-400 shrink-0 w-4">⊕</span>
+                        <span className="font-mono text-gray-300 truncate max-w-[130px]" title={m.name}>{m.name}</span>
+                        <span className="text-gray-600 shrink-0">Win <span className="text-gray-400">{m.window_size}</span></span>
+                        <span className="text-gray-600 shrink-0">Lat <span className="text-gray-400">{m.latent_dim}</span></span>
+                        <span className="text-gray-600 shrink-0">K <span className="text-gray-400">{m.n_clusters}</span></span>
+                        <span className="text-gray-700 shrink-0">{m.saved_at?.slice(0, 16).replace("T", " ") ?? ""}</span>
+                        {m.is_active && <span className="text-indigo-400 font-semibold shrink-0">● active</span>}
+                        {wasActivated && !m.is_active && <span className="text-green-400 shrink-0">✓ activated</span>}
+                        <span className="flex items-center gap-1 ml-auto shrink-0">
+                          {confirming === modelKey ? (
+                            <ConfirmButtons onYes={() => handleDeleteModel(m.name)} onNo={() => setConfirm(null)} />
+                          ) : (
+                            <>
+                              <button
+                                onClick={() => handleUseModel(f, m)}
+                                disabled={isActive || m.is_active}
+                                className="bg-indigo-700 hover:bg-indigo-600 disabled:opacity-40 px-2.5 py-1 rounded text-[11px] font-semibold"
+                              >
+                                {isActive ? "…" : m.is_active ? "Active" : "Use"}
+                              </button>
+                              <button
+                                onClick={() => setConfirm(modelKey)}
+                                className="bg-gray-700 hover:bg-red-800 px-2.5 py-1 rounded text-[11px] font-semibold text-gray-400 hover:text-red-300"
+                              >
+                                Delete
+                              </button>
+                            </>
+                          )}
+                        </span>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+
+              {/* No models placeholder */}
+              {(!f.models || f.models.length === 0) && (
+                <div className="px-3 py-1.5 text-[11px] text-gray-700 bg-gray-900/40 flex items-center gap-2">
+                  <span className="text-gray-800">⊕</span>
+                  No model trained for this symbol / timeframe yet
+                </div>
+              )}
+            </div>
+          );
+        })}
+      </div>
     </div>
   );
 }

@@ -8,7 +8,7 @@ from pathlib import Path
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from api import cluster, config, download, infer, reconstruct, status, train, windows
+from api import cluster, config, download, infer, models, reconstruct, status, train, windows
 from services import config_manager
 from websocket.live import heartbeat_loop, ws_endpoint
 
@@ -58,6 +58,7 @@ app.add_middleware(
 app.include_router(config.router)
 app.include_router(status.router)
 app.include_router(download.router)
+app.include_router(models.router)
 app.include_router(train.router)
 app.include_router(infer.router)
 app.include_router(cluster.router)

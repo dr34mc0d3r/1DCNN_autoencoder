@@ -9,7 +9,7 @@ from fastapi import APIRouter, BackgroundTasks, HTTPException
 from pydantic import BaseModel
 
 from api import status as status_api
-from services import config_manager
+from services import config_manager, storage
 from services.downloader import BarDownloader
 from websocket.live import manager
 
@@ -113,6 +113,15 @@ def list_downloads() -> list[dict]:
                 })
             except Exception:
                 logger.exception("Failed to read %s", fpath)
+
+    # Attach any associated named model bundles (matched by symbol + timeframe)
+    all_models = storage.list_models()
+    for entry in results:
+        entry["models"] = [
+            m for m in all_models
+            if m.get("symbol", "").upper() == entry["ticker"].upper()
+            and m.get("timeframe", "") == entry["timeframe"]
+        ]
 
     return results
 
