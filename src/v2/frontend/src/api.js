@@ -33,6 +33,7 @@ export const api = {
   reconstruct:    (n = 500)  => _request("POST", "/reconstruct", { n }),
   getTemporal:    ()         => _request("GET",  "/temporal"),
   listModels:     ()         => _request("GET",    "/models"),
+  getActiveModel: ()         => _request("GET",    "/models/active"),
   activateModel:  (name)     => _request("POST",   `/models/${encodeURIComponent(name)}/activate`),
   deleteModel:    (name)     => _request("DELETE",  `/models/${encodeURIComponent(name)}`),
 };

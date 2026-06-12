@@ -70,8 +70,15 @@ export default function InferencePage() {
   const [clusterHistory, setClusterHistory] = useState([]);
   const [state, setState]     = useState("idle");
   const [error, setError]     = useState("");
+  const [activeModel, setActiveModel] = useState(null);
+  const [csvInfo, setCsvInfo]         = useState(null);
   const canvasRef             = useRef(null);
   const activeRef             = useRef(false);
+
+  useEffect(() => {
+    api.getActiveModel().then(m => setActiveModel(Object.keys(m).length ? m : null)).catch(() => {});
+    api.getConfig().then(cfg => setCsvInfo({ symbol: cfg.symbol, timeframe: cfg.timeframe })).catch(() => {});
+  }, []);
 
   const p95 = mseData.length
     ? [...mseData].sort((a, b) => a.mse - b.mse)[Math.floor(mseData.length * 0.95)]?.mse
@@ -144,7 +151,34 @@ export default function InferencePage() {
 
   return (
     <div>
-      <h1 className="text-2xl font-bold mb-6">Live Inference</h1>
+      <h1 className="text-2xl font-bold mb-4">Live Inference</h1>
+
+      {/* ── Active model / CSV info strip ── */}
+      <div className="flex flex-wrap gap-4 mb-6 text-xs">
+        <div className="flex items-center gap-2 bg-gray-900 border border-gray-800 rounded-lg px-3 py-2">
+          <span className="text-gray-600 uppercase tracking-wider font-semibold">Model</span>
+          {activeModel ? (
+            <span className="text-indigo-300 font-mono">{activeModel.name}</span>
+          ) : (
+            <span className="text-red-400">No active model — train one first</span>
+          )}
+          {activeModel && (
+            <span className="text-gray-600">
+              · {activeModel.symbol} {activeModel.timeframe}
+              · W{activeModel.window_size} L{activeModel.latent_dim} K{activeModel.n_clusters}
+              {activeModel.has_kmeans ? "" : " · ⚠ no K-Means yet"}
+            </span>
+          )}
+        </div>
+        <div className="flex items-center gap-2 bg-gray-900 border border-gray-800 rounded-lg px-3 py-2">
+          <span className="text-gray-600 uppercase tracking-wider font-semibold">CSV</span>
+          {csvInfo ? (
+            <span className="text-gray-300 font-mono">{csvInfo.symbol}/{csvInfo.timeframe}.csv</span>
+          ) : (
+            <span className="text-gray-600">loading…</span>
+          )}
+        </div>
+      </div>
 
       <div className="flex gap-3 items-end mb-6 flex-wrap">
         {[["infer_start", "Start Date", "date"], ["infer_end", "End Date", "date"]].map(([k, label, type]) => (
