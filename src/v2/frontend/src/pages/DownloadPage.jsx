@@ -164,8 +164,7 @@ function AvailableDownloads({ onUse }) {
   const [files, setFiles]       = useState([]);
   const [loading, setLoading]   = useState(true);
   const [confirming, setConfirm] = useState(null); // "csv:TICKER/TF" or "model:NAME"
-  const [activating, setActivating] = useState(null); // model name being activated
-  const [activated, setActivated]   = useState(null); // last activated model name (for feedback)
+  const [activating, setActivating] = useState(null); // model name mid-activation (shows "…")
 
   function load() {
     setLoading(true);
@@ -192,9 +191,8 @@ function AvailableDownloads({ onUse }) {
     setActivating(m.name);
     try {
       await api.activateModel(m.name);
-      setActivated(m.name);
-      onUse(f); // also update form fields to match this CSV
-      setTimeout(() => setActivated(null), 3000);
+      onUse(f);
+      load(); // refresh list so ● active badge moves to the newly activated model
     } catch {
       // silently ignore
     } finally {
@@ -266,7 +264,6 @@ function AvailableDownloads({ onUse }) {
                   {f.models.map((m) => {
                     const modelKey = `model:${m.name}`;
                     const isActive = activating === m.name;
-                    const wasActivated = activated === m.name;
                     return (
                       <div
                         key={m.name}
@@ -280,7 +277,6 @@ function AvailableDownloads({ onUse }) {
                         <span className="text-gray-600 shrink-0">K <span className="text-gray-400">{m.n_clusters}</span></span>
                         <span className="text-gray-700 shrink-0">{m.saved_at?.slice(0, 16).replace("T", " ") ?? ""}</span>
                         {m.is_active && <span className="text-indigo-400 font-semibold shrink-0">● active</span>}
-                        {wasActivated && !m.is_active && <span className="text-green-400 shrink-0">✓ activated</span>}
                         <span className="flex items-center gap-1 ml-auto shrink-0">
                           {confirming === modelKey ? (
                             <ConfirmButtons onYes={() => handleDeleteModel(m.name)} onNo={() => setConfirm(null)} />
@@ -291,7 +287,7 @@ function AvailableDownloads({ onUse }) {
                                 disabled={isActive || m.is_active}
                                 className="bg-indigo-700 hover:bg-indigo-600 disabled:opacity-40 px-2.5 py-1 rounded text-[11px] font-semibold"
                               >
-                                {isActive ? "…" : m.is_active ? "Active" : "Use"}
+                                {isActive ? "…" : m.is_active ? "● Active" : "Set Active"}
                               </button>
                               <button
                                 onClick={() => setConfirm(modelKey)}
