@@ -63,6 +63,80 @@ const PANEL_INFO = {
   },
 };
 
+function CrossSymbolGuide({ activeModel, csvInfo }) {
+  const [open, setOpen] = useState(false);
+
+  const modelSymbol = activeModel?.symbol?.toUpperCase();
+  const csvSymbol   = csvInfo?.symbol?.toUpperCase();
+  const isCross     = modelSymbol && csvSymbol && modelSymbol !== csvSymbol;
+
+  return (
+    <div className="bg-gray-900 border border-gray-800 rounded-xl mb-6 overflow-hidden">
+      <button
+        onClick={() => setOpen(v => !v)}
+        className="w-full flex items-center justify-between px-4 py-3 text-sm font-semibold text-gray-300 hover:text-gray-100 hover:bg-gray-800/40 transition-colors"
+      >
+        <span className="flex items-center gap-2">
+          Cross-Symbol Inference
+          {isCross && (
+            <span className="text-[11px] font-normal bg-amber-900/60 text-amber-300 border border-amber-800 rounded px-1.5 py-0.5">
+              active — {modelSymbol} model → {csvSymbol} data
+            </span>
+          )}
+        </span>
+        <span className="text-gray-500 text-xs">{open ? "▲ Hide" : "▼ Show"}</span>
+      </button>
+
+      {open && (
+        <div className="border-t border-gray-800 px-5 py-4 space-y-4 text-sm text-gray-400">
+
+          <div>
+            <p className="text-gray-200 font-semibold mb-1">What it is</p>
+            <p>
+              The model never sees raw prices. It learns from 14 normalised technical indicator
+              features — EMAs, MACD, candle body/wick ratios, log returns, volume ratio — all
+              scaled by a RobustScaler. Because these features describe <em>pattern shapes</em>,
+              not absolute values, a model trained on one symbol can score windows from any other
+              symbol's CSV. The model assigns each window to the nearest cluster it learned during
+              training and measures how well it can reconstruct that pattern.
+            </p>
+          </div>
+
+          <div>
+            <p className="text-gray-200 font-semibold mb-1">How to use it</p>
+            <ol className="list-decimal list-inside space-y-1 text-gray-400">
+              <li>On the <strong className="text-gray-300">Download</strong> page, download the target symbol's CSV and click <strong className="text-gray-300">Use CSV</strong>.</li>
+              <li>On the <strong className="text-gray-300">Download</strong> page, set the trained model as active with <strong className="text-gray-300">Set Active</strong>.</li>
+              <li>Return here — the Model and CSV strips above should show different symbols.</li>
+              <li>Set your date range and click <strong className="text-gray-300">Start</strong>.</li>
+            </ol>
+          </div>
+
+          <div>
+            <p className="text-gray-200 font-semibold mb-1">What to expect</p>
+            <ul className="list-disc list-inside space-y-1 text-gray-400">
+              <li><strong className="text-gray-300">Higher baseline MSE</strong> — the scaler was fitted on the training symbol's feature distribution. The target symbol's IQR and median will differ slightly, raising the floor MSE. This is normal.</li>
+              <li><strong className="text-gray-300">Cluster assignments still meaningful</strong> — the model maps the target symbol's windows to whichever of its learned regimes they most resemble. A TSLA-trained "trending" cluster will attract trending MSFT windows.</li>
+              <li><strong className="text-gray-300">MSE spikes still signal anomalies</strong> — even on a different symbol, a sudden spike means the model encountered a pattern it has never seen. Watch for these against news or earnings events.</li>
+              <li><strong className="text-gray-300">Best-transferring features</strong> — returns, log-returns, and MACD patterns transfer most cleanly. Features tied to absolute price levels (EMA ratios) transfer less cleanly when the symbols have very different volatility profiles.</li>
+            </ul>
+          </div>
+
+          <div>
+            <p className="text-gray-200 font-semibold mb-1">What to watch for</p>
+            <ul className="list-disc list-inside space-y-1 text-gray-400">
+              <li>Compare the <strong className="text-gray-300">p95 line</strong> on the MSE Timeline — if it's much higher than it was on the training symbol, the symbols have meaningfully different volatility profiles.</li>
+              <li>Watch whether the <strong className="text-gray-300">cluster history</strong> gravitates to a small subset of clusters — this means the target symbol's behaviour mostly resembles only a few of the trained regimes.</li>
+              <li>For a cleaner baseline, train a dedicated model on the target symbol's data.</li>
+            </ul>
+          </div>
+
+        </div>
+      )}
+    </div>
+  );
+}
+
 export default function InferencePage() {
   const [form, setForm]       = useState({ infer_start: "2024-01-01", infer_end: "2024-06-30" });
   const [mseData, setMseData] = useState([]);
@@ -178,6 +252,9 @@ export default function InferencePage() {
           )}
         </div>
       </div>
+
+      {/* ── Cross-symbol guide ── */}
+      <CrossSymbolGuide activeModel={activeModel} csvInfo={csvInfo} />
 
       <div className="flex gap-3 items-end mb-6 flex-wrap">
         {[["infer_start", "Start Date", "date"], ["infer_end", "End Date", "date"]].map(([k, label, type]) => (
