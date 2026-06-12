@@ -5,6 +5,7 @@ import logging
 
 import torch
 from fastapi import APIRouter, BackgroundTasks, HTTPException
+from pydantic import BaseModel
 
 from api import status as status_api
 from neural import dataset as ds
@@ -27,7 +28,7 @@ _state: dict = {
 _cancel_event: asyncio.Event | None = None
 
 
-async def _run_training() -> None:
+async def _run_training(model_name: str) -> None:
     global _cancel_event
     _cancel_event = asyncio.Event()
 
@@ -75,9 +76,14 @@ async def _run_training() -> None:
 
         storage.save_model(model)
         storage.save_scaler(scaler)
+        storage.save_named_model(model_name, model, scaler, cfg)
 
         _state.update({"state": "done", "stop_reason": stop_reason})
-        await manager.send("training_complete", {"stop_reason": stop_reason, "final_epoch": _state["epoch"]})
+        await manager.send("training_complete", {
+            "stop_reason": stop_reason,
+            "final_epoch": _state["epoch"],
+            "model_name":  model_name,
+        })
 
     except asyncio.CancelledError:
         _state.update({"state": "idle", "stop_reason": "cancelled"})
@@ -90,11 +96,17 @@ async def _run_training() -> None:
         status_api.set_state("training", "idle")
 
 
+class TrainRequest(BaseModel):
+    model_name: str
+
+
 @router.post("")
-def start_training(background_tasks: BackgroundTasks) -> dict:
+def start_training(req: TrainRequest, background_tasks: BackgroundTasks) -> dict:
+    if not req.model_name.strip():
+        raise HTTPException(400, "model_name is required")
     if _state["state"] == "running":
         raise HTTPException(409, "Training already in progress")
-    background_tasks.add_task(_run_training)
+    background_tasks.add_task(_run_training, req.model_name.strip())
     return {"status": "started"}
 
 

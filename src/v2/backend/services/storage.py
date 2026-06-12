@@ -8,7 +8,10 @@ All paths are rooted under backend/downloads/ and backend/models/.
 
 from __future__ import annotations
 
+import json
 import os
+import shutil
+from datetime import datetime
 from typing import Any
 
 import joblib
@@ -201,3 +204,99 @@ def scaler_exists() -> bool:
 
 def kmeans_exists() -> bool:
     return os.path.exists(_kmeans_path())
+
+
+# ── Named model bundles ───────────────────────────────────────────────────────
+
+def _active_json_path() -> str:
+    return os.path.join(config_manager.models_dir(), "active.json")
+
+
+def active_model_name() -> str | None:
+    """Return the name of the currently active named model, or None."""
+    path = _active_json_path()
+    if not os.path.exists(path):
+        return None
+    try:
+        with open(path) as f:
+            return json.load(f).get("name") or None
+    except Exception:
+        return None
+
+
+def save_named_model(name: str, model: Any, scaler: RobustScaler, cfg: dict) -> None:
+    """
+    Save a named model bundle (model.pt + scaler.pkl + meta.json) and mark it
+    active. The standard model.pt / scaler.pkl remain as the active copies used
+    by all other pages — activate_model() keeps them in sync.
+    """
+    models_dir = config_manager.models_dir()
+    os.makedirs(models_dir, exist_ok=True)
+
+    torch.save(model.state_dict(), os.path.join(models_dir, f"{name}_model.pt"))
+    joblib.dump(scaler, os.path.join(models_dir, f"{name}_scaler.pkl"))
+
+    meta = {
+        "name":        name,
+        "symbol":      cfg.get("symbol", ""),
+        "timeframe":   cfg.get("timeframe", ""),
+        "window_size": cfg.get("window_size", 0),
+        "latent_dim":  cfg.get("latent_dim", 0),
+        "n_clusters":  cfg.get("n_clusters", 0),
+        "saved_at":    datetime.now().isoformat(timespec="seconds"),
+    }
+    with open(os.path.join(models_dir, f"{name}_meta.json"), "w") as f:
+        json.dump(meta, f, indent=2)
+
+    with open(_active_json_path(), "w") as f:
+        json.dump({"name": name}, f)
+
+
+def list_models() -> list[dict]:
+    """Return all named model bundles, newest first."""
+    models_dir = config_manager.models_dir()
+    if not os.path.isdir(models_dir):
+        return []
+    active = active_model_name()
+    result = []
+    for fn in os.listdir(models_dir):
+        if not fn.endswith("_meta.json"):
+            continue
+        name = fn[: -len("_meta.json")]
+        try:
+            with open(os.path.join(models_dir, fn)) as f:
+                meta = json.load(f)
+        except Exception:
+            continue
+        meta["name"]       = name
+        meta["is_active"]  = (name == active)
+        meta["has_scaler"] = os.path.exists(os.path.join(models_dir, f"{name}_scaler.pkl"))
+        result.append(meta)
+    result.sort(key=lambda x: x.get("saved_at", ""), reverse=True)
+    return result
+
+
+def activate_model(name: str) -> None:
+    """Copy a named bundle's files to model.pt / scaler.pkl and record it as active."""
+    models_dir = config_manager.models_dir()
+    pt_src = os.path.join(models_dir, f"{name}_model.pt")
+    if not os.path.exists(pt_src):
+        raise FileNotFoundError(f"No model file for '{name}'")
+    shutil.copy2(pt_src, _model_path())
+    pkl_src = os.path.join(models_dir, f"{name}_scaler.pkl")
+    if os.path.exists(pkl_src):
+        shutil.copy2(pkl_src, _scaler_path())
+    with open(_active_json_path(), "w") as f:
+        json.dump({"name": name}, f)
+
+
+def delete_named_model(name: str) -> None:
+    """Remove a named model bundle's files. Clears active.json if it was active."""
+    models_dir = config_manager.models_dir()
+    for suffix in ("_model.pt", "_scaler.pkl", "_meta.json"):
+        path = os.path.join(models_dir, f"{name}{suffix}")
+        if os.path.exists(path):
+            os.remove(path)
+    if active_model_name() == name:
+        with open(_active_json_path(), "w") as f:
+            json.dump({"name": None}, f)
