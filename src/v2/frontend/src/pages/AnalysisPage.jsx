@@ -109,13 +109,22 @@ const tooltipStyle = { backgroundColor: "#111827", border: "none" };
 
 // ── Reusable panel wrapper with its own Execute button + spinner ────────────────
 
-function ChartPanel({ title, description, onExecute, loading, hasData, children }) {
+function ChartPanel({ title, description, guide, onExecute, loading, hasData, children }) {
+  const [guideOpen, setGuideOpen] = useState(false);
   return (
     <div className="bg-gray-900 rounded-xl p-4 mb-6">
       <div className="flex items-start justify-between gap-4 mb-1">
-        <div>
+        <div className="flex-1">
           <p className="text-sm text-gray-400">{title}</p>
           {description && <p className="text-xs text-gray-600 mt-0.5">{description}</p>}
+          {guide && (
+            <button
+              onClick={() => setGuideOpen(v => !v)}
+              className="mt-1.5 text-xs text-gray-600 hover:text-gray-400 transition-colors"
+            >
+              {guideOpen ? "▲ Hide guide" : "▼ Guide"}
+            </button>
+          )}
         </div>
         <button
           onClick={onExecute}
@@ -132,6 +141,11 @@ function ChartPanel({ title, description, onExecute, loading, hasData, children 
           )}
         </button>
       </div>
+      {guide && guideOpen && (
+        <div className="mt-3 border-t border-gray-800 pt-3 text-xs text-gray-400 space-y-2">
+          {guide}
+        </div>
+      )}
       {hasData && <div className="mt-4">{children}</div>}
     </div>
   );
@@ -214,6 +228,14 @@ export default function AnalysisPage() {
       <ChartPanel
         title="Reconstruction Comparison"
         description="Encode then decode 20 windows; compare original vs reconstructed to judge how well the model has learned the data."
+        guide={
+          <div className="space-y-2">
+            <p><strong className="text-gray-300">What it does:</strong> Takes 20 random windows, encodes them through the CNN encoder to a compressed latent vector, then decodes back to the original shape. Comparing original vs reconstructed shows how faithfully the model compresses market patterns.</p>
+            <p><strong className="text-gray-300">Reading the images:</strong> A reconstructed window that looks close to the original means the model understood that pattern well. A blurry or smoothed-out reconstruction means the model averaged it toward the nearest learned regime. A completely different reconstruction means the model has never seen anything like it — this window is an outlier from the model's perspective.</p>
+            <p><strong className="text-gray-300">Per-feature MSE:</strong> Shows which of the 14 technical indicator features the model reconstructs worst. High MSE on a feature means the model deprioritises it in its internal representation. Low MSE features are the ones the model weights most heavily when encoding. Use this to understand what the model "pays attention to."</p>
+            <p><strong className="text-gray-300">Overall MSE as a baseline:</strong> Re-run Reconstruction Comparison after retraining with different parameters (more epochs, different window size, different K). A lower overall MSE generally means a better-fitting model — but watch for overfitting if it drops too close to zero.</p>
+          </div>
+        }
         onExecute={handleReconstruct}
         loading={reconLoading}
         hasData={!!recon}
@@ -253,6 +275,18 @@ export default function AnalysisPage() {
       <ChartPanel
         title="Hour-of-Day Heatmap"
         description="Each row is a cluster; each column is a market hour. Brighter = more windows of that cluster fell in that hour. Shows which clusters are characteristic of different times of day."
+        guide={
+          <div className="space-y-2">
+            <p><strong className="text-gray-300">How to read it:</strong> Each coloured row is one cluster; each column is a market hour. Brighter cells = more windows of that cluster appeared at that hour. A bright cell means that cluster and that hour are strongly associated.</p>
+            <p><strong className="text-gray-300">What to look for:</strong></p>
+            <ul className="list-disc list-inside space-y-1">
+              <li><strong className="text-gray-300">Bright only at 9–10</strong> — opening-range volatility regime. Common for breakout and gap-fill clusters.</li>
+              <li><strong className="text-gray-300">Bright only at 15–16</strong> — closing behaviour. Often high-volume, directional runs into the close.</li>
+              <li><strong className="text-gray-300">Uniformly bright across all hours</strong> — the cluster is a time-agnostic regime (e.g. calm drift or trend). It can occur at any point in the session.</li>
+              <li><strong className="text-gray-300">All cells roughly equal brightness</strong> — the model's clusters don't carry strong temporal signatures. Not bad — it may be capturing volatility structure rather than intraday rhythm.</li>
+            </ul>
+          </div>
+        }
         onExecute={() => fetchTemporal(setHeatmap, setHeatmapLoad)}
         loading={heatmapLoading}
         hasData={!!heatmapData}
@@ -264,6 +298,18 @@ export default function AnalysisPage() {
       <ChartPanel
         title="Cluster Frequency by Hour of Day"
         description="Stacked bars show how many windows of each cluster appeared at each market hour. A cluster that dominates the open behaves differently to one that dominates the close."
+        guide={
+          <div className="space-y-2">
+            <p><strong className="text-gray-300">How to read it:</strong> Each bar represents one market hour. The bar's total height = total windows in that hour. The colour breakdown = how many windows of each cluster fell there. A colour that fills most of a bar means that cluster dominates that hour.</p>
+            <p><strong className="text-gray-300">What to look for:</strong></p>
+            <ul className="list-disc list-inside space-y-1">
+              <li>A cluster colour that appears proportionally the same across every hour is a market-state cluster — it occurs regardless of time.</li>
+              <li>A colour that spikes dramatically in one hour but is nearly absent elsewhere is a time-specific regime (opening auction, lunch lull, power hour).</li>
+              <li>Unequal total bar heights are normal for 5-minute data — more sessions open at 9:30 than any other hour, so that bar is often tallest.</li>
+            </ul>
+            <p><strong className="text-gray-300">Cross-reference with the Heatmap:</strong> These two charts show the same data at different angles. The heatmap is better for spotting single-cluster temporal spikes; the bar chart is better for seeing the full composition of each hour side-by-side.</p>
+          </div>
+        }
         onExecute={() => fetchTemporal(setHourData, setHourLoad)}
         loading={hourLoading}
         hasData={!!hourData}
@@ -285,6 +331,19 @@ export default function AnalysisPage() {
       <ChartPanel
         title="Day-of-Week Distribution"
         description="Which clusters dominate each trading day. Uneven bar heights across days can reflect weekly seasonality — e.g. Mondays opening with different behaviour to Fridays closing."
+        guide={
+          <div className="space-y-2">
+            <p><strong className="text-gray-300">How to read it:</strong> Same stacked bar format as the hourly chart, but grouped by day of the week (Mon–Fri). Total bar height = total windows that fell on that day across the entire CSV. The colour split shows which clusters those windows belong to.</p>
+            <p><strong className="text-gray-300">What to look for:</strong></p>
+            <ul className="list-disc list-inside space-y-1">
+              <li><strong className="text-gray-300">Monday dominated by a different cluster</strong> — the model has captured gap-open or news-reaction behaviour that tends to concentrate at week-starts.</li>
+              <li><strong className="text-gray-300">Friday showing a distinctive cluster</strong> — position-squaring and end-of-week volume patterns. Common in equities.</li>
+              <li><strong className="text-gray-300">Wednesday spikes</strong> — for macro-driven stocks, Fed meeting Wednesdays can produce abnormal cluster concentrations.</li>
+              <li><strong className="text-gray-300">All days look similar</strong> — the model doesn't see strong weekly seasonality in this symbol/period. Still valid; the temporal signal just lives in intraday patterns instead.</li>
+            </ul>
+            <p><strong className="text-gray-300">Caveat:</strong> For short date ranges (&lt; 3 months), individual events (earnings, macro announcements) can distort individual days more than actual weekly structure. Use a wide date range for statistically meaningful day-of-week distributions.</p>
+          </div>
+        }
         onExecute={() => fetchTemporal(setWeekday, setWeekdayLoad)}
         loading={weekdayLoading}
         hasData={!!weekdayData}
