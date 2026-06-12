@@ -4,16 +4,14 @@ import pytest
 
 
 def _ensure_model(tmp_backend, patch_config_manager):
-    """Save an untrained model and scaler if not already present."""
+    """Save a named bundle with an untrained model and scaler if not already present."""
     from services import storage, config_manager
     from neural.model import ConvAutoencoder
     if not storage.model_exists():
-        cfg   = config_manager.load()
-        model = ConvAutoencoder(14, cfg["latent_dim"])
-        storage.save_model(model)
-    if not storage.scaler_exists():
+        cfg = config_manager.load()
         _, _, scaler = storage.run_pipeline()
-        storage.save_scaler(scaler)
+        model = ConvAutoencoder(14, cfg["latent_dim"])
+        storage.save_named_model("test_model", model, scaler, cfg)
 
 
 def test_reconstruct_returns_200(client, tmp_backend, patch_config_manager, sample_X):
@@ -50,15 +48,9 @@ def test_temporal_returns_200(client, tmp_backend, patch_config_manager, sample_
 
 def _ensure_model_and_kmeans(tmp_backend, patch_config_manager):
     from services import storage, config_manager
-    from neural.model import ConvAutoencoder
     from sklearn.cluster import KMeans
     import numpy as np
-    if not storage.model_exists():
-        cfg = config_manager.load()
-        storage.save_model(ConvAutoencoder(14, cfg["latent_dim"]))
-    if not storage.scaler_exists():
-        _, _, scaler = storage.run_pipeline()
-        storage.save_scaler(scaler)
+    _ensure_model(tmp_backend, patch_config_manager)
     if not storage.kmeans_exists():
         cfg = config_manager.load()
         Z = np.random.rand(50, cfg["latent_dim"]).astype(np.float32)

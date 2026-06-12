@@ -74,8 +74,6 @@ async def _run_training(model_name: str) -> None:
             guard=guard, progress_cb=on_epoch,
         )
 
-        storage.save_model(model)
-        storage.save_scaler(scaler)
         storage.save_named_model(model_name, model, scaler, cfg)
 
         _state.update({"state": "done", "stop_reason": stop_reason})

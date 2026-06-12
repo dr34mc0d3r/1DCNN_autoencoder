@@ -18,12 +18,12 @@ def test_train_stop_when_idle_is_graceful(client):
 def test_train_start_returns_started(client, monkeypatch):
     import api.train as train_mod
 
-    async def _fake_run():
+    async def _fake_run(model_name: str):
         pass
 
     monkeypatch.setattr(train_mod, "_run_training", _fake_run)
 
-    resp = client.post("/api/train")
+    resp = client.post("/api/train", json={"model_name": "test_model"})
     assert resp.status_code in (200, 202)
     body = resp.json()
     assert body.get("status") == "started"
