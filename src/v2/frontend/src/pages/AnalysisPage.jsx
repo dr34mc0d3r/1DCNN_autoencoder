@@ -57,6 +57,7 @@ function pivotByKey(rows, keyField, keyLabel, nClusters) {
 
 // Hour-of-Day Heatmap — CSS grid, each cell coloured by cluster with opacity = relative frequency
 function HourHeatmap({ byHour, nClusters }) {
+  if (!byHour?.length) return null;
   const hours = [...new Set(byHour.map(d => d.hour))].sort((a, b) => a - b);
   const maxCount = Math.max(...byHour.map(d => d.count), 1);
   const lookup = {};
@@ -242,7 +243,7 @@ export default function AnalysisPage() {
         loading={heatmapLoading}
         hasData={!!heatmapData}
       >
-        <HourHeatmap byHour={heatmapData.by_hour} nClusters={hmClusters} />
+        <HourHeatmap byHour={heatmapData?.by_hour ?? []} nClusters={hmClusters} />
       </ChartPanel>
 
       {/* Panel D — Cluster Frequency by Hour */}
