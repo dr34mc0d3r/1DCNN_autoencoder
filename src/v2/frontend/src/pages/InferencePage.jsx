@@ -5,17 +5,16 @@ import {
 } from "recharts";
 import { api } from "../api.js";
 import { ws } from "../ws.js";
+import PanelInfo from "../components/PanelInfo.jsx";
 
 const COLORS = ["#6366f1","#f59e0b","#10b981","#ef4444","#3b82f6","#8b5cf6","#ec4899","#14b8a6"];
 const HISTORY_LEN = 200;
 
-// ── Chart guide ────────────────────────────────────────────────────────────────
+// ── Panel info content ─────────────────────────────────────────────────────────
 
-const GUIDE = [
-  {
-    id: "mse",
+const PANEL_INFO = {
+  mse: {
     label: "MSE Timeline",
-    panel: "Panel A",
     what: "Mean Squared Error — how well the model can reconstruct the current window from its compressed latent representation. Low MSE means the model recognised this pattern from training. High MSE means it encountered something unfamiliar.",
     watch: [
       "A flat line with occasional spikes is healthy. The model knows what it's looking at most of the time.",
@@ -24,20 +23,16 @@ const GUIDE = [
       "The amber dashed line is the p95 threshold — anything above it is in the top 5% most 'surprising' windows seen so far this session.",
     ],
   },
-  {
-    id: "bar",
+  bar: {
     label: "Current Bar",
-    panel: "Panel B",
     what: "A snapshot of the most recently processed bar: its timestamp, reconstruction error, and the cluster the model assigned it to.",
     watch: [
       "Watch the cluster label over time. Staying in one cluster = persistent, consistent behaviour (trend or tight range). Rapidly switching clusters = choppy, uncertain price action.",
       "Cross-reference the MSE here with the MSE Timeline — a high number here explains a spike on the chart.",
     ],
   },
-  {
-    id: "window",
+  window: {
     label: "Current Window",
-    panel: "Panel C",
     what: "A greyscale image of the 14 technical indicator channels × 64 bars that the model just processed. Each row is one feature (ema, macd, body size, volume ratio, etc.); each column is one bar in the window. Brighter pixel = higher scaled value.",
     watch: [
       "Clean, horizontal bands = the features are moving consistently. The model likely sees a trend or steady regime.",
@@ -46,72 +41,27 @@ const GUIDE = [
       "This is the exact input the model 'sees'. If MSE is high, look here to understand why.",
     ],
   },
-  {
-    id: "latent",
+  latent: {
     label: "Latent Vector",
-    panel: "Panel D",
-    what: "The 32-number compressed fingerprint the encoder extracted from this window. It's the model's internal summary of 'what is the market doing right now'. K-Means clustering runs in this space — windows with similar bar patterns here land in the same cluster.",
+    what: "The compressed fingerprint the encoder extracted from this window. It's the model's internal summary of 'what is the market doing right now'. K-Means clustering runs in this space — windows with similar bar patterns here land in the same cluster.",
     watch: [
-      "Both indigo (positive) and red (negative) bars are normal — the pattern across all 32 values is what matters, not individual bars.",
+      "Both indigo (positive) and red (negative) bars are normal — the pattern across all values is what matters, not individual bars.",
       "If consecutive windows look nearly identical here, the model thinks the market is repeating the same behaviour.",
       "A sudden dramatic shift in the bar pattern = the encoder detected a regime change, even if price hasn't moved much yet.",
-      "Compare this to the t-SNE scatter on the Latent Space page — each dot there is one of these 32-number vectors projected into 2D.",
+      "Compare this to the t-SNE scatter on the Latent Space page — each dot there is one of these vectors projected into 2D.",
     ],
   },
-  {
-    id: "history",
+  history: {
     label: "Cluster History",
-    panel: "Panel E",
-    what: "The last 200 windows colour-coded by the cluster the model assigned each one to. Time runs left to right. The colours match the clusters on the Latent Space page.",
+    what: `The last ${HISTORY_LEN} windows colour-coded by the cluster the model assigned each one to. Time runs left to right. The colours match the clusters on the Latent Space page.`,
     watch: [
-      "Long runs of the same colour = the model sees a persistent regime. This is characteristic of a trend or a quiet consolidation.",
+      "Long runs of the same colour = the model sees a persistent regime. Characteristic of a trend or a quiet consolidation.",
       "Rapidly alternating colours = choppy, indecisive action. The model can't find a stable pattern.",
       "A new colour appearing and staying = the market transitioned into a behaviour the model treats as distinct.",
       "Watch for colour changes that coincide with MSE spikes — a regime change often shows up in both at the same time.",
     ],
   },
-];
-
-function ChartGuide() {
-  const [open, setOpen] = useState(false);
-
-  return (
-    <div className="bg-gray-900 border border-gray-800 rounded-xl mb-6 overflow-hidden">
-      <button
-        onClick={() => setOpen((v) => !v)}
-        className="w-full flex items-center justify-between px-4 py-3 text-sm font-semibold text-gray-300 hover:text-gray-100 hover:bg-gray-800/40 transition-colors"
-      >
-        <span className="flex items-center gap-2">
-          <span className="text-indigo-400 text-base">?</span>
-          How to read these charts
-        </span>
-        <span className="text-gray-500 text-xs">{open ? "▲ Hide" : "▼ Show"}</span>
-      </button>
-
-      {open && (
-        <div className="border-t border-gray-800 px-4 py-4 space-y-5">
-          {GUIDE.map((g) => (
-            <div key={g.id}>
-              <div className="flex items-baseline gap-2 mb-1">
-                <span className="text-[10px] font-mono text-gray-600 uppercase tracking-wider">{g.panel}</span>
-                <span className="text-sm font-semibold text-gray-200">{g.label}</span>
-              </div>
-              <p className="text-xs text-gray-400 leading-relaxed mb-2">{g.what}</p>
-              <ul className="space-y-1">
-                {g.watch.map((w, i) => (
-                  <li key={i} className="flex gap-2 text-xs text-gray-500 leading-relaxed">
-                    <span className="text-indigo-500 shrink-0 mt-0.5">›</span>
-                    {w}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ))}
-        </div>
-      )}
-    </div>
-  );
-}
+};
 
 export default function InferencePage() {
   const [form, setForm]       = useState({ infer_start: "2024-01-01", infer_end: "2024-06-30" });
@@ -121,7 +71,7 @@ export default function InferencePage() {
   const [state, setState]     = useState("idle");
   const [error, setError]     = useState("");
   const canvasRef             = useRef(null);
-  const activeRef             = useRef(false);   // tracks whether inference is running (avoids stale closure)
+  const activeRef             = useRef(false);
 
   const p95 = mseData.length
     ? [...mseData].sort((a, b) => a.mse - b.mse)[Math.floor(mseData.length * 0.95)]?.mse
@@ -147,16 +97,16 @@ export default function InferencePage() {
     if (!canvas || !data.window_pixels) return;
     const win = data.window_pixels;
     const H = win.length, W = win[0].length;
-    canvas.width  = W * 8;
-    canvas.height = H * 8;
+    canvas.width  = W * 6;
+    canvas.height = H * 6;
     const ctx = canvas.getContext("2d");
-    const img = ctx.createImageData(W * 8, H * 8);
+    const img = ctx.createImageData(W * 6, H * 6);
     for (let r = 0; r < H; r++) {
       for (let c = 0; c < W; c++) {
         const v = win[r][c];
-        for (let dy = 0; dy < 8; dy++) {
-          for (let dx = 0; dx < 8; dx++) {
-            const i = ((r * 8 + dy) * W * 8 + c * 8 + dx) * 4;
+        for (let dy = 0; dy < 6; dy++) {
+          for (let dx = 0; dx < 6; dx++) {
+            const i = ((r * 6 + dy) * W * 6 + c * 6 + dx) * 4;
             img.data[i] = img.data[i+1] = img.data[i+2] = v;
             img.data[i+3] = 255;
           }
@@ -224,11 +174,12 @@ export default function InferencePage() {
         </button>
       </div>
 
-      <ChartGuide />
-
       {/* Panel A — MSE Timeline */}
       <div className="bg-gray-900 rounded-xl p-4 mb-6">
-        <p className="text-sm text-gray-400 mb-3">MSE Timeline</p>
+        <p className="text-sm text-gray-400 mb-3 flex items-center">
+          MSE Timeline
+          <PanelInfo {...PANEL_INFO.mse} />
+        </p>
         <ResponsiveContainer width="100%" height={240}>
           <LineChart data={mseData}>
             <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
@@ -244,7 +195,10 @@ export default function InferencePage() {
       <div className="grid grid-cols-3 gap-6 mb-6">
         {/* Panel B — Current Bar Info */}
         <div className="bg-gray-900 rounded-xl p-4">
-          <p className="text-sm text-gray-400 mb-3">Current Bar</p>
+          <p className="text-sm text-gray-400 mb-3 flex items-center">
+            Current Bar
+            <PanelInfo {...PANEL_INFO.bar} />
+          </p>
           {current ? (
             <table className="text-sm w-full">
               <tbody>
@@ -264,13 +218,20 @@ export default function InferencePage() {
 
         {/* Panel C — Window Image */}
         <div className="bg-gray-900 rounded-xl p-4 flex flex-col items-center">
-          <p className="text-sm text-gray-400 mb-3">Current Window</p>
+          <p className="text-sm text-gray-400 mb-3 flex items-center">
+            Current Window
+            <PanelInfo {...PANEL_INFO.window} />
+          </p>
           <canvas ref={canvasRef} style={{ imageRendering: "pixelated" }} className="border border-gray-700" />
+          {!current && <p className="text-gray-600 text-xs mt-2">No data yet.</p>}
         </div>
 
         {/* Panel D — Latent Vector */}
         <div className="bg-gray-900 rounded-xl p-4">
-          <p className="text-sm text-gray-400 mb-3">Latent Vector</p>
+          <p className="text-sm text-gray-400 mb-3 flex items-center">
+            Latent Vector
+            <PanelInfo {...PANEL_INFO.latent} />
+          </p>
           <ResponsiveContainer width="100%" height={160}>
             <BarChart data={latentData}>
               <XAxis dataKey="i" tick={false} />
@@ -288,7 +249,10 @@ export default function InferencePage() {
 
       {/* Panel E — Cluster History Strip */}
       <div className="bg-gray-900 rounded-xl p-4 mb-6">
-        <p className="text-sm text-gray-400 mb-2">Cluster History (last {HISTORY_LEN})</p>
+        <p className="text-sm text-gray-400 mb-2 flex items-center">
+          Cluster History (last {HISTORY_LEN})
+          <PanelInfo {...PANEL_INFO.history} />
+        </p>
         <div className="flex h-6 rounded overflow-hidden">
           {clusterHistory.map((label, i) => (
             <div
