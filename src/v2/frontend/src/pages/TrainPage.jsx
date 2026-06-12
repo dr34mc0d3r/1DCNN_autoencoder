@@ -144,12 +144,19 @@ function DeltaBadge({ value }) {
 
 export default function TrainPage() {
   const [modelName, setModelName] = useState("");
+  const [csvInfo, setCsvInfo]     = useState(null);
   const [epochs, setEpochs]   = useState([]);
   const [status, setStatus]   = useState("idle");
   const [guard, setGuard]     = useState("");
   const [stopReason, setStop] = useState("");
   const [error, setError]     = useState("");
   const logRef                = useRef(null);
+
+  useEffect(() => {
+    api.getConfig()
+      .then((cfg) => setCsvInfo({ symbol: cfg.symbol, timeframe: cfg.timeframe }))
+      .catch(() => {});
+  }, []);
 
   useEffect(() => {
     const offEpoch = ws.on("training_epoch", (data) => {
@@ -197,6 +204,20 @@ export default function TrainPage() {
     <div>
       <h1 className="text-2xl font-bold mb-6">Train</h1>
 
+      {/* ── CSV info strip ── */}
+      <div className="flex items-center gap-2 mb-5 bg-gray-900 border border-gray-800 rounded-lg px-3 py-2 text-xs w-fit">
+        <span className="text-gray-600 uppercase tracking-wider font-semibold">CSV</span>
+        {csvInfo ? (
+          <>
+            <span className="text-indigo-300 font-mono">{csvInfo.symbol}/{csvInfo.timeframe}.csv</span>
+            <span className="text-gray-600">·</span>
+            <span className="text-gray-500 font-mono">data/{csvInfo.symbol}/{csvInfo.timeframe}.csv</span>
+          </>
+        ) : (
+          <span className="text-gray-600">loading…</span>
+        )}
+      </div>
+
       {/* ── Controls ── */}
       <div className="flex flex-col gap-3 mb-6">
         <div className="flex flex-col gap-1 max-w-xs">
@@ -212,7 +233,7 @@ export default function TrainPage() {
             className="bg-gray-800 border border-gray-700 rounded px-3 py-2 text-sm focus:outline-none focus:border-indigo-500 disabled:opacity-50"
           />
           <p className="text-[11px] text-gray-600">
-            Saved as <code>{modelName.trim() || "…"}_model.pt</code> — required before training
+            Saved to <code>models/{modelName.trim() || "…"}/</code> — required before training
           </p>
         </div>
         <div className="flex gap-3">
