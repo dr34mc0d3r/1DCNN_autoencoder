@@ -712,7 +712,7 @@ export default function ConfigPage() {
   if (!cfg) return <p className="text-gray-400">Loading…</p>;
 
   return (
-    <div className="max-w-2xl">
+    <div className="w-full">
       <h1 className="text-2xl font-bold mb-6">Configuration</h1>
 
       {/* ── Presets ── */}
