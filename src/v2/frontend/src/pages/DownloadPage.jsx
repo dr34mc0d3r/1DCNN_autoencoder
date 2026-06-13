@@ -289,6 +289,12 @@ function AvailableDownloads({ onUse }) {
                         <span className="text-gray-600 shrink-0">Win <span className="text-gray-400">{m.window_size}</span></span>
                         <span className="text-gray-600 shrink-0">Lat <span className="text-gray-400">{m.latent_dim}</span></span>
                         <span className="text-gray-600 shrink-0">K <span className="text-gray-400">{m.n_clusters}</span></span>
+                        {m.scheduler && m.scheduler !== "none" && (
+                          <span className="text-gray-600 shrink-0">Sched <span className="text-green-400">{m.scheduler}</span></span>
+                        )}
+                        {m.final_lr != null && (
+                          <span className="text-gray-600 shrink-0">LR <span className="text-green-400">{m.final_lr.toExponential(2)}</span></span>
+                        )}
                         <span className="text-gray-700 shrink-0">{m.saved_at?.slice(0, 16).replace("T", " ") ?? ""}</span>
                         {m.is_active && <span className="text-indigo-400 font-semibold shrink-0">● active</span>}
                         <span className="flex items-center gap-1 ml-auto shrink-0">
@@ -425,7 +431,7 @@ export default function DownloadPage() {
   ];
 
   return (
-    <div className="max-w-lg">
+    <div className="max-w-2xl">
       <h1 className="text-2xl font-bold mb-6">Download Bars</h1>
 
       <AvailableDownloads onUse={handleUse} />
