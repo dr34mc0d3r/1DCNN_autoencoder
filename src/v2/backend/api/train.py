@@ -22,6 +22,7 @@ _state: dict = {
     "epoch": 0,
     "train_loss": None,
     "val_loss": None,
+    "lr": None,
     "stop_reason": None,
     "error": None,
 }
@@ -39,11 +40,12 @@ async def _run_training(model_name: str) -> None:
     latent_dim  = cfg["latent_dim"]
 
     _state.update({"state": "running", "epoch": 0, "train_loss": None,
-                   "val_loss": None, "stop_reason": None, "error": None})
+                   "val_loss": None, "lr": None, "stop_reason": None, "error": None})
     status_api.set_state("training", "running")
 
     try:
-        X_clean, _, scaler = storage.run_pipeline()
+        train_split = 1.0 - cfg["test_split"]
+        X_clean, _, scaler = storage.run_pipeline(train_split=train_split)
         train_loader, test_loader = ds.make_dataloaders(
             X_clean, cfg["test_split"], cfg["batch_size"]
         )
@@ -59,11 +61,11 @@ async def _run_training(model_name: str) -> None:
             collapse_threshold= cfg["guard_collapse_threshold"],
         )
 
-        async def on_epoch(epoch: int, train_loss: float, val_loss: float, guard_status: str) -> None:
-            _state.update({"epoch": epoch, "train_loss": train_loss, "val_loss": val_loss})
+        async def on_epoch(epoch: int, train_loss: float, val_loss: float, guard_status: str, lr: float) -> None:
+            _state.update({"epoch": epoch, "train_loss": train_loss, "val_loss": val_loss, "lr": lr})
             await manager.send("training_epoch", {
                 "epoch": epoch, "train_loss": train_loss,
-                "val_loss": val_loss, "guard_status": guard_status,
+                "val_loss": val_loss, "guard_status": guard_status, "lr": lr,
             })
             if _cancel_event and _cancel_event.is_set():
                 raise asyncio.CancelledError
@@ -71,10 +73,10 @@ async def _run_training(model_name: str) -> None:
         stop_reason = await train(
             model, train_loader, test_loader,
             epochs=cfg["epochs"], lr=cfg["lr"], device=device,
-            guard=guard, progress_cb=on_epoch,
+            guard=guard, progress_cb=on_epoch, scheduler_cfg=cfg,
         )
 
-        storage.save_named_model(model_name, model, scaler, cfg)
+        storage.save_named_model(model_name, model, scaler, cfg, final_lr=_state["lr"])
 
         _state.update({"state": "done", "stop_reason": stop_reason})
         await manager.send("training_complete", {

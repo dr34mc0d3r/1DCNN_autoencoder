@@ -41,7 +41,8 @@ def run_reconstruct(req: ReconstructRequest) -> dict:
     latent_dim = cfg["latent_dim"]
     device    = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-    X_clean, _, _ = storage.run_pipeline()
+    saved_scaler = storage.load_scaler()
+    X_clean, _, _ = storage.run_pipeline(scaler=saved_scaler)
     n = min(req.n or 500, len(X_clean))
     sample = X_clean[:n]  # (N, window_size, n_features)
 
@@ -77,7 +78,8 @@ def get_temporal() -> dict:
     window_size = cfg["window_size"]
     device     = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-    X_clean, df_full, _ = storage.run_pipeline()
+    saved_scaler = storage.load_scaler()
+    X_clean, df_full, _ = storage.run_pipeline(scaler=saved_scaler)
     model  = storage.load_model(len(feat_cols), latent_dim, device)
     kmeans = storage.load_kmeans()
 
