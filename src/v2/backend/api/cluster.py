@@ -30,7 +30,8 @@ async def _run_cluster() -> None:
         latent_dim = cfg["latent_dim"]
         device     = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-        X_clean, _, scaler = storage.run_pipeline()
+        saved_scaler = storage.load_scaler()
+        X_clean, _, _ = storage.run_pipeline(scaler=saved_scaler)
         model = storage.load_model(len(feat_cols), latent_dim, device)
 
         # Extract latent vectors for all clean windows
@@ -100,7 +101,8 @@ def get_cluster_quality() -> dict:
     latent_dim = cfg["latent_dim"]
     device    = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-    X_clean, _, _ = storage.run_pipeline()
+    saved_scaler = storage.load_scaler()
+    X_clean, _, _ = storage.run_pipeline(scaler=saved_scaler)
     model = storage.load_model(len(feat_cols), latent_dim, device)
 
     X_t = torch.tensor(X_clean).permute(0, 2, 1).to(device)

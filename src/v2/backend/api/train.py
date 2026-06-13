@@ -43,7 +43,8 @@ async def _run_training(model_name: str) -> None:
     status_api.set_state("training", "running")
 
     try:
-        X_clean, _, scaler = storage.run_pipeline()
+        train_split = 1.0 - cfg["test_split"]
+        X_clean, _, scaler = storage.run_pipeline(train_split=train_split)
         train_loader, test_loader = ds.make_dataloaders(
             X_clean, cfg["test_split"], cfg["batch_size"]
         )
