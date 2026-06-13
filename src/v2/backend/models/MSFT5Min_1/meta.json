@@ -1,0 +1,10 @@
+{
+  "name": "MSFT5Min_1",
+  "symbol": "MSFT",
+  "timeframe": "5Min",
+  "window_size": 64,
+  "latent_dim": 32,
+  "n_clusters": 8,
+  "saved_at": "2026-06-12T18:24:21",
+  "has_kmeans": false
+}

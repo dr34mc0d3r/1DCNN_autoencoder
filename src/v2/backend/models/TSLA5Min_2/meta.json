@@ -1,0 +1,10 @@
+{
+  "name": "TSLA5Min_2",
+  "symbol": "TSLA",
+  "timeframe": "5Min",
+  "window_size": 64,
+  "latent_dim": 32,
+  "n_clusters": 8,
+  "saved_at": "2026-06-12T20:10:48",
+  "has_kmeans": false
+}

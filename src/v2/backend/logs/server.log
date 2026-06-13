@@ -1,0 +1,616 @@
+2026-06-12 13:01:22,461 INFO     app: v2 backend starting — config loaded from /Volumes/My SSD/Chris Stuff/DEV/1DCNN_A/src/v2/backend/services/../config/config.json
+2026-06-12 13:02:26,281 INFO     websocket.live: WebSocket connected  (total: 1)
+2026-06-12 13:04:03,192 INFO     services.downloader: Downloading TSLA 5Min  2024-01-01 → 2026-06-12
+2026-06-12 13:04:04,599 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2024-01-01&end=2026-06-12&adjustment=split&feed=iex&limit=10000 "HTTP/1.1 200 OK"
+2026-06-12 13:04:05,700 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2024-01-01&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3MDc0MTE2MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 13:04:06,851 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2024-01-01&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3MTA3ODcyMDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 13:04:08,079 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2024-01-01&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3MTM5ODM0MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 13:04:09,159 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2024-01-01&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3MTc0NDA5MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 13:04:10,127 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2024-01-01&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3MjA4MDI0MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 13:04:10,947 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2024-01-01&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3MjQwODk1MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 13:04:11,766 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2024-01-01&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3MjcyOTQxMDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 13:04:12,524 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2024-01-01&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3MzA0MDQyMDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 13:04:13,613 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2024-01-01&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3MzM4NTEyMDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 13:04:14,428 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2024-01-01&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3Mzc1NzQ1NjAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 13:04:15,452 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2024-01-01&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3NDA3NzMxMDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 13:04:16,476 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2024-01-01&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3NDQxMjE0MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 13:04:17,500 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2024-01-01&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3NDcyNDI5MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 13:04:18,320 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2024-01-01&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3NTA0NDkzMDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 13:04:19,345 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2024-01-01&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3NTM4ODg4MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 13:04:20,163 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2024-01-01&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3NTcwOTEzMDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 13:04:20,777 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2024-01-01&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3NjAzNjg1MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 13:04:21,596 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2024-01-01&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3NjM0MDQ1MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 13:04:22,416 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2024-01-01&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3NjY1MjU0MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 13:04:22,901 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2024-01-01&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3NzAwNjAwMDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 13:04:23,645 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2024-01-01&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3NzMxNzAxMDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 13:04:24,259 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2024-01-01&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3NzYyODI2MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 13:04:24,674 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2024-01-01&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3NzkzMDYzMDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 13:04:25,910 INFO     services.downloader: Saved 49556 bars → /Volumes/My SSD/Chris Stuff/DEV/1DCNN_A/src/v2/backend/downloads/TSLA/5Min.csv
+2026-06-12 13:07:14,695 INFO     websocket.live: WebSocket disconnected  (total: 0)
+2026-06-12 13:08:31,950 INFO     app: v2 backend starting — config loaded from /Volumes/My SSD/Chris Stuff/DEV/1DCNN_A/src/v2/backend/services/../config/config.json
+2026-06-12 13:08:31,977 INFO     websocket.live: WebSocket connected  (total: 1)
+2026-06-12 13:08:32,920 INFO     websocket.live: WebSocket connected  (total: 2)
+2026-06-12 13:08:32,922 INFO     websocket.live: WebSocket disconnected  (total: 1)
+2026-06-12 13:08:51,539 INFO     services.downloader: Downloading TSLA 5Min  2024-01-01 → 2026-06-12
+2026-06-12 13:08:52,093 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2024-01-01&end=2026-06-12&adjustment=split&feed=iex&limit=10000 "HTTP/1.1 200 OK"
+2026-06-12 13:08:52,720 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2024-01-01&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3MDc0MTE2MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 13:08:53,260 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2024-01-01&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3MTA3ODcyMDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 13:08:53,949 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2024-01-01&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3MTM5ODM0MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 13:08:54,217 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2024-01-01&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3MTc0NDA5MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 13:08:54,387 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2024-01-01&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3MjA4MDI0MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 13:08:54,618 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2024-01-01&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3MjQwODk1MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 13:08:54,854 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2024-01-01&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3MjcyOTQxMDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 13:08:55,063 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2024-01-01&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3MzA0MDQyMDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 13:08:55,249 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2024-01-01&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3MzM4NTEyMDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 13:08:55,587 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2024-01-01&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3Mzc1NzQ1NjAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 13:08:56,000 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2024-01-01&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3NDA3NzMxMDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 13:08:56,407 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2024-01-01&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3NDQxMjE0MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 13:08:56,632 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2024-01-01&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3NDcyNDI5MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 13:08:57,021 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2024-01-01&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3NTA0NDkzMDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 13:08:57,435 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2024-01-01&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3NTM4ODg4MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 13:08:57,696 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2024-01-01&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3NTcwOTEzMDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 13:08:57,850 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2024-01-01&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3NjAzNjg1MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 13:08:58,016 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2024-01-01&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3NjM0MDQ1MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 13:08:58,174 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2024-01-01&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3NjY1MjU0MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 13:08:58,418 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2024-01-01&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3NzAwNjAwMDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 13:08:58,597 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2024-01-01&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3NzMxNzAxMDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 13:08:58,728 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2024-01-01&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3NzYyODI2MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 13:08:58,839 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2024-01-01&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3NzkzMDYzMDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 13:08:59,416 INFO     services.downloader: Saved 49557 bars → /Volumes/My SSD/Chris Stuff/DEV/1DCNN_A/src/v2/backend/downloads/TSLA/5Min.csv
+2026-06-12 13:09:34,874 ERROR    api.train: Training failed
+Traceback (most recent call last):
+  File "/Volumes/My SSD/Chris Stuff/DEV/1DCNN_A/src/v2/backend/api/train.py", line 45, in _run_training
+    X_clean, _, scaler = storage.run_pipeline()
+                         ^^^^^^^^^^^^^^^^^^^^^^
+  File "/Volumes/My SSD/Chris Stuff/DEV/1DCNN_A/src/v2/backend/services/storage.py", line 137, in run_pipeline
+    df = load_bars(symbol, timeframe, max_bars)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Volumes/My SSD/Chris Stuff/DEV/1DCNN_A/src/v2/backend/services/storage.py", line 46, in load_bars
+    df = pd.read_csv(path, parse_dates=["timestamp"], nrows=max_bars)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Volumes/My SSD/Chris Stuff/DEV/1DCNN_A/.venv/lib/python3.12/site-packages/pandas/io/parsers/readers.py", line 1026, in read_csv
+    return _read(filepath_or_buffer, kwds)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Volumes/My SSD/Chris Stuff/DEV/1DCNN_A/.venv/lib/python3.12/site-packages/pandas/io/parsers/readers.py", line 620, in _read
+    parser = TextFileReader(filepath_or_buffer, **kwds)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Volumes/My SSD/Chris Stuff/DEV/1DCNN_A/.venv/lib/python3.12/site-packages/pandas/io/parsers/readers.py", line 1620, in __init__
+    self._engine = self._make_engine(f, self.engine)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Volumes/My SSD/Chris Stuff/DEV/1DCNN_A/.venv/lib/python3.12/site-packages/pandas/io/parsers/readers.py", line 1880, in _make_engine
+    self.handles = get_handle(
+                   ^^^^^^^^^^^
+  File "/Volumes/My SSD/Chris Stuff/DEV/1DCNN_A/.venv/lib/python3.12/site-packages/pandas/io/common.py", line 873, in get_handle
+    handle = open(
+             ^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/Volumes/My SSD/Chris Stuff/DEV/1DCNN_A/src/v2/backend/downloads/TSLA/1Min.csv'
+2026-06-12 13:10:15,463 INFO     services.downloader: Downloading TSLA 5Min  2024-01-01 → 2026-06-12
+2026-06-12 13:10:16,330 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2024-01-01&end=2026-06-12&adjustment=split&feed=iex&limit=10000 "HTTP/1.1 200 OK"
+2026-06-12 13:10:17,507 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2024-01-01&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3MDc0MTE2MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 13:10:18,524 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2024-01-01&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3MTA3ODcyMDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 13:10:19,146 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2024-01-01&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3MTM5ODM0MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 13:10:19,765 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2024-01-01&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3MTc0NDA5MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 13:10:20,525 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2024-01-01&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3MjA4MDI0MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 13:10:21,196 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2024-01-01&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3MjQwODk1MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 13:10:21,793 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2024-01-01&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3MjcyOTQxMDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 13:10:22,422 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2024-01-01&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3MzA0MDQyMDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 13:10:23,446 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2024-01-01&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3MzM4NTEyMDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 13:10:24,136 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2024-01-01&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3Mzc1NzQ1NjAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 13:10:24,765 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2024-01-01&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3NDA3NzMxMDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 13:10:25,289 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2024-01-01&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3NDQxMjE0MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 13:10:25,912 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2024-01-01&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3NDcyNDI5MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 13:10:26,518 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2024-01-01&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3NTA0NDkzMDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 13:10:26,829 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2024-01-01&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3NTM4ODg4MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 13:10:27,202 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2024-01-01&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3NTcwOTEzMDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 13:10:27,746 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2024-01-01&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3NjAzNjg1MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 13:10:28,381 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2024-01-01&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3NjM0MDQ1MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 13:10:28,975 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2024-01-01&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3NjY1MjU0MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 13:10:29,590 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2024-01-01&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3NzAwNjAwMDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 13:10:30,038 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2024-01-01&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3NzMxNzAxMDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 13:10:30,368 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2024-01-01&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3NzYyODI2MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 13:10:30,629 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2024-01-01&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3NzkzMDYzMDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 13:10:31,305 INFO     services.downloader: Saved 49557 bars → /Volumes/My SSD/Chris Stuff/DEV/1DCNN_A/src/v2/backend/downloads/TSLA/5Min.csv
+2026-06-12 13:10:45,527 INFO     neural.trainer: Epoch    1 | train=3.16762  val=9.20220 | overfit=2.91× | patience [-------]
+2026-06-12 13:10:45,528 INFO     neural.trainer: Early stop: Overfitting at epoch 1 (val/train=2.91)
+2026-06-12 13:14:19,624 INFO     neural.trainer: Epoch    1 | train=3.14731  val=9.54530 | overfit=3.03× | patience [-------]
+2026-06-12 13:14:19,625 INFO     neural.trainer: Early stop: Overfitting at epoch 1 (val/train=3.03)
+2026-06-12 13:16:49,201 INFO     neural.trainer: Epoch    1 | train=3.19688  val=9.98315 | overfit=3.12× | patience [-------]
+2026-06-12 13:16:52,437 INFO     neural.trainer: Epoch    2 | train=3.12908  val=9.74318 | overfit=3.11× | patience [-------]
+2026-06-12 13:16:55,642 INFO     neural.trainer: Epoch    3 | train=2.92704  val=8.95052 | overfit=3.06× | patience [-------]
+2026-06-12 13:16:58,832 INFO     neural.trainer: Epoch    4 | train=2.33758  val=6.73987 | overfit=2.88× | patience [-------]
+2026-06-12 13:17:02,029 INFO     neural.trainer: Epoch    5 | train=1.44367  val=4.43368 | overfit=3.07× | patience [-------]
+2026-06-12 13:17:05,205 INFO     neural.trainer: Epoch    6 | train=1.01614  val=3.73753 | overfit=3.68× | patience [-------]
+2026-06-12 13:17:08,422 INFO     neural.trainer: Epoch    7 | train=0.91888  val=3.61488 | overfit=3.93× | patience [-------]
+2026-06-12 13:17:08,423 INFO     neural.trainer: Early stop: Oscillating at epoch 7 (CV=0.45)
+2026-06-12 13:40:04,476 INFO     websocket.live: WebSocket disconnected  (total: 0)
+2026-06-12 13:40:04,883 INFO     websocket.live: WebSocket connected  (total: 1)
+2026-06-12 13:41:01,557 INFO     services.downloader: Downloading TSLA 5Min  2024-06-12 → 2026-06-12
+2026-06-12 13:41:02,328 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2024-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000 "HTTP/1.1 200 OK"
+2026-06-12 13:41:02,942 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2024-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3MjE2NjQzMDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 13:41:03,761 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2024-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3MjQ3NzU2MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 13:41:04,596 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2024-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3Mjc5ODExMDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 13:41:05,605 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2024-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3MzEwOTIxMDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 13:41:06,326 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2024-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3MzQ1MzY0MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 13:41:07,038 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2024-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3MzgyNjIxMDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 13:41:07,652 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2024-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3NDE3MTAzMDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 13:41:08,267 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2024-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3NDQ3Mzc2MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 13:41:08,882 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2024-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3NDc5MjcyMDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 13:41:09,701 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2024-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3NTEzMDg1MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 13:41:10,318 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2024-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3NTQ1NzQ2MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 13:41:10,929 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2024-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3NTc5NDg3MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 13:41:11,545 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2024-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3NjA5ODkyMDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 13:41:12,364 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2024-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3NjQwODI4MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 13:41:12,978 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2024-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3Njc2MjUyMDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 13:41:13,592 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2024-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3NzA3NDA0MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 13:41:14,002 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2024-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3NzM4NTA4MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 13:41:14,258 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2024-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3NzY5NjA2MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 13:41:14,455 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2024-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3ODAwNzI4MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 13:41:15,122 INFO     services.downloader: Saved 40701 bars → /Volumes/My SSD/Chris Stuff/DEV/1DCNN_A/src/v2/backend/downloads/TSLA/5Min.csv
+2026-06-12 13:41:28,791 INFO     neural.trainer: Epoch    1 | train=3.35576  val=12.53849 | overfit=3.74× | patience [-------]
+2026-06-12 13:41:31,402 INFO     neural.trainer: Epoch    2 | train=3.34962  val=12.52694 | overfit=3.74× | patience [-------]
+2026-06-12 13:41:34,104 INFO     neural.trainer: Epoch    3 | train=3.33338  val=12.48445 | overfit=3.75× | patience [-------]
+2026-06-12 13:41:36,656 INFO     neural.trainer: Epoch    4 | train=3.29391  val=12.39055 | overfit=3.76× | patience [-------]
+2026-06-12 13:41:39,227 INFO     neural.trainer: Epoch    5 | train=3.23694  val=12.20429 | overfit=3.77× | patience [-------]
+2026-06-12 13:41:41,789 INFO     neural.trainer: Epoch    6 | train=3.13163  val=11.87488 | overfit=3.79× | patience [-------]
+2026-06-12 13:41:44,411 INFO     neural.trainer: Epoch    7 | train=2.97342  val=11.29974 | overfit=3.80× | patience [-------]
+2026-06-12 13:41:46,998 INFO     neural.trainer: Epoch    8 | train=2.76702  val=10.35897 | overfit=3.74× | patience [-------]
+2026-06-12 13:41:49,603 INFO     neural.trainer: Epoch    9 | train=2.40304  val=9.13903 | overfit=3.80× | patience [-------]
+2026-06-12 13:41:52,195 INFO     neural.trainer: Epoch   10 | train=1.99983  val=7.76574 | overfit=3.88× | patience [-------]
+2026-06-12 13:44:27,080 INFO     websocket.live: WebSocket disconnected  (total: 0)
+2026-06-12 13:44:27,088 INFO     websocket.live: WebSocket connected  (total: 1)
+2026-06-12 13:44:27,089 INFO     websocket.live: WebSocket disconnected  (total: 1)
+2026-06-12 13:44:47,242 INFO     services.downloader: Downloading TSLA 5Min  2024-06-12 → 2026-06-12
+2026-06-12 13:44:47,716 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2024-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000 "HTTP/1.1 200 OK"
+2026-06-12 13:44:48,240 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2024-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3MjE2NjQzMDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 13:44:48,488 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2024-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3MjQ3NzU2MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 13:44:48,775 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2024-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3Mjc5ODExMDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 13:44:49,009 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2024-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3MzEwOTIxMDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 13:44:49,260 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2024-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3MzQ1MzY0MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 13:44:49,517 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2024-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3MzgyNjIxMDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 13:44:49,858 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2024-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3NDE3MTAzMDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 13:44:50,268 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2024-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3NDQ3Mzc2MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 13:44:50,883 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2024-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3NDc5MjcyMDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 13:44:51,292 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2024-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3NTEzMDg1MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 13:44:51,702 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2024-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3NTQ1NzQ2MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 13:44:52,025 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2024-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3NTc5NDg3MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 13:44:52,522 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2024-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3NjA5ODkyMDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 13:44:52,943 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2024-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3NjQwODI4MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 13:44:53,206 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2024-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3Njc2MjUyMDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 13:44:53,458 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2024-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3NzA3NDA0MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 13:44:53,668 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2024-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3NzM4NTA4MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 13:44:53,845 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2024-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3NzY5NjA2MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 13:44:53,970 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2024-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3ODAwNzI4MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 13:44:54,515 INFO     services.downloader: Saved 40701 bars → /Volumes/My SSD/Chris Stuff/DEV/1DCNN_A/src/v2/backend/downloads/TSLA/5Min.csv
+2026-06-12 13:45:17,242 INFO     neural.trainer: Epoch    1 | train=3.34914  val=12.54236 | overfit=3.74× | patience [-------]
+2026-06-12 13:45:19,834 INFO     neural.trainer: Epoch    2 | train=3.34454  val=12.53175 | overfit=3.75× | patience [-------]
+2026-06-12 13:45:22,435 INFO     neural.trainer: Epoch    3 | train=3.33135  val=12.50374 | overfit=3.75× | patience [-------]
+2026-06-12 13:45:25,054 INFO     neural.trainer: Epoch    4 | train=3.30445  val=12.44086 | overfit=3.76× | patience [-------]
+2026-06-12 13:45:27,682 INFO     neural.trainer: Epoch    5 | train=3.26366  val=12.34018 | overfit=3.78× | patience [-------]
+2026-06-12 13:45:30,241 INFO     neural.trainer: Epoch    6 | train=3.20556  val=12.15264 | overfit=3.79× | patience [-------]
+2026-06-12 13:45:32,842 INFO     neural.trainer: Epoch    7 | train=3.12012  val=11.80486 | overfit=3.78× | patience [-------]
+2026-06-12 13:45:35,437 INFO     neural.trainer: Epoch    8 | train=2.97838  val=11.23643 | overfit=3.77× | patience [-------]
+2026-06-12 13:45:38,082 INFO     neural.trainer: Epoch    9 | train=2.74203  val=10.36731 | overfit=3.78× | patience [-------]
+2026-06-12 13:45:40,653 INFO     neural.trainer: Epoch   10 | train=2.36980  val=8.92417 | overfit=3.77× | patience [-------]
+2026-06-12 13:48:16,810 INFO     websocket.live: WebSocket disconnected  (total: 0)
+2026-06-12 13:48:25,474 INFO     app: v2 backend starting — config loaded from /Volumes/My SSD/Chris Stuff/DEV/1DCNN_A/src/v2/backend/services/../config/config.json
+2026-06-12 13:48:25,480 INFO     websocket.live: WebSocket connected  (total: 1)
+2026-06-12 13:48:41,416 INFO     websocket.live: WebSocket disconnected  (total: 0)
+2026-06-12 13:48:41,986 INFO     websocket.live: WebSocket connected  (total: 1)
+2026-06-12 13:48:55,096 INFO     services.downloader: Downloading TSLA 5Min  2024-06-12 → 2026-06-12
+2026-06-12 13:48:56,934 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2024-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000 "HTTP/1.1 200 OK"
+2026-06-12 13:48:58,985 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2024-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3MjE2NjQzMDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 13:49:00,743 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2024-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3MjQ3NzU2MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 13:49:03,602 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2024-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3Mjc5ODExMDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 13:49:06,471 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2024-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3MzEwOTIxMDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 13:49:09,052 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2024-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3MzQ1MzY0MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 13:49:11,795 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2024-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3MzgyNjIxMDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 13:49:13,639 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2024-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3NDE3MTAzMDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 13:49:16,105 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2024-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3NDQ3Mzc2MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 13:49:19,272 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2024-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3NDc5MjcyMDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 13:49:21,830 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2024-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3NTEzMDg1MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 13:49:24,492 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2024-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3NTQ1NzQ2MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 13:49:26,949 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2024-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3NTc5NDg3MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 13:49:28,699 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2024-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3NjA5ODkyMDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 13:49:31,049 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2024-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3NjQwODI4MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 13:49:33,094 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2024-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3Njc2MjUyMDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 13:49:34,670 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2024-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3NzA3NDA0MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 13:49:36,166 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2024-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3NzM4NTA4MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 13:49:37,190 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2024-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3NzY5NjA2MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 13:49:37,804 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2024-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3ODAwNzI4MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 13:49:38,336 INFO     services.downloader: Saved 40702 bars → /Volumes/My SSD/Chris Stuff/DEV/1DCNN_A/src/v2/backend/downloads/TSLA/5Min.csv
+2026-06-12 13:49:47,378 INFO     neural.trainer: Epoch    1 | train=3.34708  val=12.53338 | overfit=3.74× | patience [-------]
+2026-06-12 13:49:50,057 INFO     neural.trainer: Epoch    2 | train=3.34251  val=12.52481 | overfit=3.75× | patience [-------]
+2026-06-12 13:49:53,223 INFO     neural.trainer: Epoch    3 | train=3.33055  val=12.50064 | overfit=3.75× | patience [-------]
+2026-06-12 13:49:56,333 INFO     neural.trainer: Epoch    4 | train=3.29477  val=12.42036 | overfit=3.77× | patience [-------]
+2026-06-12 13:49:59,485 INFO     neural.trainer: Epoch    5 | train=3.22997  val=12.21012 | overfit=3.78× | patience [-------]
+2026-06-12 13:50:02,880 INFO     neural.trainer: Epoch    6 | train=3.14299  val=11.83126 | overfit=3.76× | patience [-------]
+2026-06-12 13:50:05,991 INFO     neural.trainer: Epoch    7 | train=2.99840  val=11.17820 | overfit=3.73× | patience [-------]
+2026-06-12 13:50:09,193 INFO     neural.trainer: Epoch    8 | train=2.70939  val=10.10941 | overfit=3.73× | patience [-------]
+2026-06-12 13:50:13,286 INFO     neural.trainer: Epoch    9 | train=2.26659  val=8.10510 | overfit=3.58× | patience [-------]
+2026-06-12 13:50:16,662 INFO     neural.trainer: Epoch   10 | train=1.65421  val=6.61940 | overfit=4.00× | patience [-------]
+2026-06-12 14:04:15,533 INFO     websocket.live: WebSocket disconnected  (total: 0)
+2026-06-12 14:04:24,532 INFO     app: v2 backend starting — config loaded from /Volumes/My SSD/Chris Stuff/DEV/1DCNN_A/src/v2/backend/services/../config/config.json
+2026-06-12 14:04:24,635 INFO     websocket.live: WebSocket connected  (total: 1)
+2026-06-12 14:04:28,272 INFO     websocket.live: WebSocket disconnected  (total: 0)
+2026-06-12 14:04:28,535 INFO     websocket.live: WebSocket connected  (total: 1)
+2026-06-12 14:05:03,199 INFO     services.downloader: Downloading TSLA 5Min  2024-06-12 → 2026-06-12
+2026-06-12 14:05:04,929 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2024-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000 "HTTP/1.1 200 OK"
+2026-06-12 14:05:06,165 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2024-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3MjE2NjQzMDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 14:05:07,158 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2024-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3MjQ3NzU2MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 14:05:08,000 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2024-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3Mjc5ODExMDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 14:05:09,165 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2024-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3MzEwOTIxMDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 14:05:10,458 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2024-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3MzQ1MzY0MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 14:05:11,226 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2024-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3MzgyNjIxMDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 14:05:11,882 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2024-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3NDE3MTAzMDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 14:05:12,826 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2024-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3NDQ3Mzc2MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 14:05:13,735 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2024-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3NDc5MjcyMDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 14:05:14,649 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2024-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3NTEzMDg1MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 14:05:15,758 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2024-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3NTQ1NzQ2MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 14:05:17,012 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2024-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3NTc5NDg3MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 14:05:18,444 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2024-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3NjA5ODkyMDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 14:05:19,821 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2024-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3NjQwODI4MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 14:05:21,028 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2024-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3Njc2MjUyMDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 14:05:21,975 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2024-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3NzA3NDA0MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 14:05:22,950 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2024-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3NzM4NTA4MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 14:05:23,564 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2024-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3NzY5NjA2MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 14:05:23,789 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2024-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3ODAwNzI4MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 14:05:24,242 INFO     services.downloader: Saved 40705 bars → /Volumes/My SSD/Chris Stuff/DEV/1DCNN_A/src/v2/backend/downloads/TSLA/5Min.csv
+2026-06-12 14:05:39,608 INFO     neural.trainer: Epoch    1 | train=3.36269  val=12.52514 | overfit=3.72× | patience [-------]
+2026-06-12 14:05:44,251 INFO     neural.trainer: Epoch    2 | train=3.35502  val=12.52479 | overfit=3.73× | patience [-------]
+2026-06-12 14:05:47,885 INFO     neural.trainer: Epoch    3 | train=3.33334  val=12.50978 | overfit=3.75× | patience [-------]
+2026-06-12 14:05:51,094 INFO     neural.trainer: Epoch    4 | train=3.30366  val=12.47372 | overfit=3.78× | patience [-------]
+2026-06-12 14:05:54,138 INFO     neural.trainer: Epoch    5 | train=3.27100  val=12.39918 | overfit=3.79× | patience [-------]
+2026-06-12 14:05:57,139 INFO     neural.trainer: Epoch    6 | train=3.21564  val=12.21224 | overfit=3.80× | patience [-------]
+2026-06-12 14:06:00,179 INFO     neural.trainer: Epoch    7 | train=3.13573  val=11.85858 | overfit=3.78× | patience [-------]
+2026-06-12 14:06:03,320 INFO     neural.trainer: Epoch    8 | train=2.96859  val=11.26411 | overfit=3.79× | patience [-------]
+2026-06-12 14:06:06,403 INFO     neural.trainer: Epoch    9 | train=2.70704  val=10.01414 | overfit=3.70× | patience [-------]
+2026-06-12 14:06:09,434 INFO     neural.trainer: Epoch   10 | train=2.29738  val=8.29358 | overfit=3.61× | patience [-------]
+2026-06-12 14:27:38,843 INFO     websocket.live: WebSocket disconnected  (total: 0)
+2026-06-12 14:27:47,226 INFO     app: v2 backend starting — config loaded from /Volumes/My SSD/Chris Stuff/DEV/1DCNN_A/src/v2/backend/services/../config/config.json
+2026-06-12 14:27:47,298 INFO     websocket.live: WebSocket connected  (total: 1)
+2026-06-12 14:47:03,306 INFO     websocket.live: WebSocket disconnected  (total: 0)
+2026-06-12 14:47:03,508 INFO     websocket.live: WebSocket connected  (total: 1)
+2026-06-12 14:47:05,530 INFO     websocket.live: WebSocket disconnected  (total: 0)
+2026-06-12 14:47:05,757 INFO     websocket.live: WebSocket connected  (total: 1)
+2026-06-12 14:47:50,351 INFO     services.downloader: Downloading TSLA 5Min  2020-06-12 → 2026-06-12
+2026-06-12 14:47:51,481 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2020-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000 "HTTP/1.1 200 OK"
+2026-06-12 14:47:52,504 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2020-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE2MDAyODEwMDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 14:47:53,528 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2020-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE2MDM0NjQ5MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 14:47:54,348 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2020-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE2MDcwMjUzMDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 14:47:55,166 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2020-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE2MTA1NTYwMDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 14:47:55,777 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2020-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE2MTQxMDE3MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 14:47:56,399 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2020-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE2MTcyMDk0MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 14:47:57,214 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2020-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE2MjA0MTM0MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 14:47:58,034 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2020-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE2MjM4NTg2MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 14:47:59,059 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2020-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE2MjczOTg5MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 14:47:59,877 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2020-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE2MzEwMzQwMDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 14:48:01,206 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2020-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE2MzQ1ODQ4MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 14:48:02,950 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2020-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE2Mzc5NDcyMDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 14:48:04,997 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2020-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE2NDE4MjU2MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 14:48:06,434 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2020-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE2NDUxMzEwMDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 14:48:07,511 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2020-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE2NDg2NjExMDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 14:48:08,536 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2020-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE2NTIyODQ1MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 14:48:09,402 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2020-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE2NTU0OTAzMDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 14:48:10,267 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2020-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE2NTkwMjI4MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 14:48:10,998 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2020-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE2NjI0Nzg1MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 14:48:11,775 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2020-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE2NjU1MTgxMDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 14:48:12,550 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2020-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE2Njg2MjE2MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 14:48:13,398 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2020-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE2NzE4MTkzMDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 14:48:14,213 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2020-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE2NzUyODE5MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 14:48:14,827 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2020-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE2Nzg0Njg1MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 14:48:15,594 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2020-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE2ODE3NjE2NjAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 14:48:16,261 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2020-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE2ODQ4NzE3MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 14:48:16,882 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2020-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE2ODgxNDk1MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 14:48:17,343 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2020-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE2OTE2MDU1MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 14:48:17,930 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2020-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE2OTUwNTE5MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 14:48:18,719 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2020-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE2OTgxNjgzMDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 14:48:19,368 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2020-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3MDE0NDIyMDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 14:48:20,098 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2020-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3MDQ5MTgwNjAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 14:48:20,909 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2020-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3MDg0NDI0MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 14:48:22,001 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2020-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3MTE1NTc5MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 14:48:23,020 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2020-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3MTQ3NDkzMDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 14:48:23,821 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2020-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3MTgyMTY3MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 14:48:24,526 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2020-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3MjE3NDU2MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 14:48:25,201 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2020-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3MjQ4NTc4MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 14:48:26,095 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2020-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3MjgwNjI0MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 14:48:26,919 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2020-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3MzEzNDQxMDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 14:48:27,730 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2020-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3MzQ1NTQ3MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 14:48:28,345 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2020-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3MzgzNDMxMDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 14:48:28,959 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2020-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3NDE3OTA3MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 14:48:29,533 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2020-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3NDQ4MTg2MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 14:48:30,214 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2020-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3NDgwMDgyMDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 14:48:30,726 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2020-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3NTEzODg2MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 14:48:31,213 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2020-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3NTQ1OTI3MjAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 14:48:31,666 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2020-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3NTgwMjUxNDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 14:48:32,112 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2020-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3NjEwNjk2MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 14:48:32,338 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2020-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3NjQxMDA1MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 14:48:32,600 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2020-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3Njc2NDI5MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 14:48:32,838 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2020-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3NzA4MjA4MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 14:48:33,047 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2020-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3NzM5MzEyMDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 14:48:33,227 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2020-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3NzcwNDEwMDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 14:48:33,368 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2020-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3ODAzMjU3MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 14:48:34,898 INFO     services.downloader: Saved 117833 bars → /Volumes/My SSD/Chris Stuff/DEV/1DCNN_A/src/v2/backend/downloads/TSLA/5Min.csv
+2026-06-12 14:49:15,708 INFO     neural.trainer: Epoch    1 | train=2.87895  val=5.07951 | overfit=1.76× | patience [-------]
+2026-06-12 14:49:25,148 INFO     neural.trainer: Epoch    2 | train=2.79280  val=4.76686 | overfit=1.71× | patience [-------]
+2026-06-12 14:49:35,638 INFO     neural.trainer: Epoch    3 | train=2.35620  val=3.41235 | overfit=1.45× | patience [-------]
+2026-06-12 14:49:46,402 INFO     neural.trainer: Epoch    4 | train=1.28425  val=2.25826 | overfit=1.76× | patience [-------]
+2026-06-12 14:49:56,594 INFO     neural.trainer: Epoch    5 | train=0.85711  val=2.03821 | overfit=2.38× | patience [-------]
+2026-06-12 14:50:07,015 INFO     neural.trainer: Epoch    6 | train=0.80136  val=1.94661 | overfit=2.43× | patience [-------]
+2026-06-12 14:50:18,651 INFO     neural.trainer: Epoch    7 | train=0.77641  val=1.88225 | overfit=2.42× | patience [-------]
+2026-06-12 14:50:31,289 INFO     neural.trainer: Epoch    8 | train=0.76221  val=1.84763 | overfit=2.42× | patience [-------]
+2026-06-12 14:50:42,538 INFO     neural.trainer: Epoch    9 | train=0.74439  val=1.80995 | overfit=2.43× | patience [-------]
+2026-06-12 14:50:53,892 INFO     neural.trainer: Epoch   10 | train=0.73081  val=1.78194 | overfit=2.44× | patience [-------]
+2026-06-12 14:50:53,893 INFO     neural.trainer: Early stop: Oscillating at epoch 10 (CV=0.61)
+2026-06-12 14:58:37,737 INFO     websocket.live: WebSocket disconnected  (total: 0)
+2026-06-12 15:37:28,221 INFO     websocket.live: WebSocket connected  (total: 1)
+2026-06-12 15:37:30,058 INFO     websocket.live: WebSocket disconnected  (total: 0)
+2026-06-12 15:37:37,647 INFO     websocket.live: WebSocket connected  (total: 1)
+2026-06-12 15:56:46,421 INFO     websocket.live: WebSocket disconnected  (total: 0)
+2026-06-12 16:03:02,596 INFO     app: v2 backend starting — config loaded from /Volumes/My SSD/Chris Stuff/DEV/1DCNN_A/src/v2/backend/services/../config/config.json
+2026-06-12 16:03:21,306 INFO     websocket.live: WebSocket connected  (total: 1)
+2026-06-12 16:06:52,707 INFO     services.downloader: Downloading MSFT 5Min  2020-06-12 → 2026-06-12
+2026-06-12 16:06:53,321 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=MSFT&timeframe=5Min&start=2020-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000 "HTTP/1.1 200 OK"
+2026-06-12 16:06:53,731 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=MSFT&timeframe=5Min&start=2020-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=TVNGVHxNfDE1OTkxNDU4MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 16:06:54,227 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=MSFT&timeframe=5Min&start=2020-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=TVNGVHxNfDE2MDI2MDUxMDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 16:06:54,580 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=MSFT&timeframe=5Min&start=2020-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=TVNGVHxNfDE2MDU3MTQ5MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 16:06:55,097 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=MSFT&timeframe=5Min&start=2020-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=TVNGVHxNfDE2MDkyNTc5MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 16:06:55,505 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=MSFT&timeframe=5Min&start=2020-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=TVNGVHxNfDE2MTI1Mzc1MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 16:06:55,916 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=MSFT&timeframe=5Min&start=2020-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=TVNGVHxNfDE2MTU5MDYyMDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 16:06:56,324 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=MSFT&timeframe=5Min&start=2020-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=TVNGVHxNfDE2MTkxMTIwMDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 16:06:56,731 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=MSFT&timeframe=5Min&start=2020-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=TVNGVHxNfDE2MjI1NTkzMDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 16:06:57,019 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=MSFT&timeframe=5Min&start=2020-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=TVNGVHxNfDE2MjU4NDIyMDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 16:06:57,349 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=MSFT&timeframe=5Min&start=2020-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=TVNGVHxNfDE2MjkyMTc1MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 16:06:57,597 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=MSFT&timeframe=5Min&start=2020-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=TVNGVHxNfDE2MzI1MDEzMDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 16:06:57,868 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=MSFT&timeframe=5Min&start=2020-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=TVNGVHxNfDE2MzU3OTU2MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 16:06:58,113 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=MSFT&timeframe=5Min&start=2020-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=TVNGVHxNfDE2MzkwODA5MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 16:06:58,317 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=MSFT&timeframe=5Min&start=2020-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=TVNGVHxNfDE2NDI2MDgzMDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 16:06:58,553 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=MSFT&timeframe=5Min&start=2020-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=TVNGVHxNfDE2NDU3MzQzMDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 16:06:58,811 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=MSFT&timeframe=5Min&start=2020-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=TVNGVHxNfDE2NDkwODExMDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 16:06:59,026 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=MSFT&timeframe=5Min&start=2020-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=TVNGVHxNfDE2NTIyODI0MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 16:06:59,602 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=MSFT&timeframe=5Min&start=2020-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=TVNGVHxNfDE2NTU0NzY1MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 16:06:59,880 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=MSFT&timeframe=5Min&start=2020-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=TVNGVHxNfDE2NTg4NjgwMDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 16:07:00,167 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=MSFT&timeframe=5Min&start=2020-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=TVNGVHxNfDE2NjIxMjYzMDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 16:07:00,625 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=MSFT&timeframe=5Min&start=2020-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=TVNGVHxNfDE2NjU1MDc2MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 16:07:01,238 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=MSFT&timeframe=5Min&start=2020-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=TVNGVHxNfDE2Njg2MTg5MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 16:07:01,853 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=MSFT&timeframe=5Min&start=2020-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=TVNGVHxNfDE2NzIxNjQ5MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 16:07:02,467 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=MSFT&timeframe=5Min&start=2020-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=TVNGVHxNfDE2NzU0NTUzMDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 16:07:02,756 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=MSFT&timeframe=5Min&start=2020-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=TVNGVHxNfDE2Nzg5MDMyMDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 16:07:02,920 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=MSFT&timeframe=5Min&start=2020-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=TVNGVHxNfDE2ODIzNjM0MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 16:07:03,103 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=MSFT&timeframe=5Min&start=2020-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=TVNGVHxNfDE2ODU3MzM5MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 16:07:03,365 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=MSFT&timeframe=5Min&start=2020-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=TVNGVHxNfDE2ODk2MjE5MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 16:07:03,696 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=MSFT&timeframe=5Min&start=2020-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=TVNGVHxNfDE2OTI5MDMwMDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 16:07:04,017 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=MSFT&timeframe=5Min&start=2020-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=TVNGVHxNfDE2OTY1MjQ2MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 16:07:04,515 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=MSFT&timeframe=5Min&start=2020-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=TVNGVHxNfDE2OTk5ODA2MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 16:07:04,751 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=MSFT&timeframe=5Min&start=2020-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=TVNGVHxNfDE3MDM2MTgxNjAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 16:07:04,990 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=MSFT&timeframe=5Min&start=2020-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=TVNGVHxNfDE3MDczMzg0MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 16:07:05,281 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=MSFT&timeframe=5Min&start=2020-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=TVNGVHxNfDE3MTA5NTcwMDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 16:07:05,544 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=MSFT&timeframe=5Min&start=2020-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=TVNGVHxNfDE3MTQ2NzcwMDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 16:07:05,815 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=MSFT&timeframe=5Min&start=2020-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=TVNGVHxNfDE3MTg4OTA4MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 16:07:06,027 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=MSFT&timeframe=5Min&start=2020-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=TVNGVHxNfDE3MjI2MTE3MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 16:07:06,304 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=MSFT&timeframe=5Min&start=2020-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=TVNGVHxNfDE3MjYyNDIzMDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 16:07:06,768 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=MSFT&timeframe=5Min&start=2020-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=TVNGVHxNfDE3Mjk3MDc2MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 16:07:07,179 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=MSFT&timeframe=5Min&start=2020-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=TVNGVHxNfDE3MzMyMzc0MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 16:07:07,587 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=MSFT&timeframe=5Min&start=2020-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=TVNGVHxNfDE3MzcwNDE0MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 16:07:07,834 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=MSFT&timeframe=5Min&start=2020-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=TVNGVHxNfDE3NDA1ODExMDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 16:07:08,032 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=MSFT&timeframe=5Min&start=2020-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=TVNGVHxNfDE3NDM3ODYwMDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 16:07:08,295 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=MSFT&timeframe=5Min&start=2020-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=TVNGVHxNfDE3NDcyMzkwMDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 16:07:08,583 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=MSFT&timeframe=5Min&start=2020-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=TVNGVHxNfDE3NTA4Njc1NjAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 16:07:08,885 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=MSFT&timeframe=5Min&start=2020-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=TVNGVHxNfDE3NTQ0OTI0MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 16:07:09,227 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=MSFT&timeframe=5Min&start=2020-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=TVNGVHxNfDE3NTc5NTgzMDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 16:07:09,520 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=MSFT&timeframe=5Min&start=2020-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=TVNGVHxNfDE3NjEyNDEyMDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 16:07:10,045 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=MSFT&timeframe=5Min&start=2020-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=TVNGVHxNfDE3NjQ2MjA0MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 16:07:10,300 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=MSFT&timeframe=5Min&start=2020-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=TVNGVHxNfDE3Njc5NzU5MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 16:07:10,545 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=MSFT&timeframe=5Min&start=2020-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=TVNGVHxNfDE3NzEzNDgyMDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 16:07:10,741 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=MSFT&timeframe=5Min&start=2020-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=TVNGVHxNfDE3NzQzNzcwMDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 16:07:10,907 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=MSFT&timeframe=5Min&start=2020-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=TVNGVHxNfDE3Nzc1NTE3MjAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 16:07:11,014 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=MSFT&timeframe=5Min&start=2020-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=TVNGVHxNfDE3ODA2NzAxMDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 16:07:12,397 INFO     services.downloader: Saved 115848 bars → /Volumes/My SSD/Chris Stuff/DEV/1DCNN_A/src/v2/backend/downloads/MSFT/5Min.csv
+2026-06-12 16:08:25,124 INFO     websocket.live: WebSocket disconnected  (total: 0)
+2026-06-12 16:08:25,130 INFO     websocket.live: WebSocket disconnected  (total: 0)
+2026-06-12 16:08:25,337 INFO     websocket.live: WebSocket connected  (total: 1)
+2026-06-12 16:22:17,659 INFO     websocket.live: WebSocket disconnected  (total: 0)
+2026-06-12 16:22:29,577 INFO     app: v2 backend starting — config loaded from /Volumes/My SSD/Chris Stuff/DEV/1DCNN_A/src/v2/backend/services/../config/config.json
+2026-06-12 16:22:29,617 INFO     websocket.live: WebSocket connected  (total: 1)
+2026-06-12 16:23:42,049 INFO     websocket.live: WebSocket disconnected  (total: 0)
+2026-06-12 16:24:10,724 INFO     app: v2 backend starting — config loaded from /Volumes/My SSD/Chris Stuff/DEV/1DCNN_A/src/v2/backend/services/../config/config.json
+2026-06-12 16:24:12,116 INFO     websocket.live: WebSocket connected  (total: 1)
+2026-06-12 16:25:08,796 INFO     neural.trainer: Epoch    1 | train=2.87104  val=5.07374 | overfit=1.77× | patience [-------]
+2026-06-12 16:25:18,859 INFO     neural.trainer: Epoch    2 | train=2.77712  val=4.74198 | overfit=1.71× | patience [-------]
+2026-06-12 16:25:27,305 INFO     neural.trainer: Epoch    3 | train=2.37628  val=3.46326 | overfit=1.46× | patience [-------]
+2026-06-12 16:25:35,763 INFO     neural.trainer: Epoch    4 | train=1.22484  val=2.35642 | overfit=1.92× | patience [-------]
+2026-06-12 16:25:44,128 INFO     neural.trainer: Epoch    5 | train=0.85979  val=2.05858 | overfit=2.39× | patience [-------]
+2026-06-12 16:25:52,387 INFO     neural.trainer: Epoch    6 | train=0.80516  val=1.96109 | overfit=2.44× | patience [-------]
+2026-06-12 16:26:00,633 INFO     neural.trainer: Epoch    7 | train=0.78345  val=1.90633 | overfit=2.43× | patience [-------]
+2026-06-12 16:26:09,039 INFO     neural.trainer: Epoch    8 | train=0.76821  val=1.87488 | overfit=2.44× | patience [-------]
+2026-06-12 16:26:17,490 INFO     neural.trainer: Epoch    9 | train=0.75783  val=1.84406 | overfit=2.43× | patience [-------]
+2026-06-12 16:26:26,083 INFO     neural.trainer: Epoch   10 | train=0.74604  val=1.81624 | overfit=2.43× | patience [-------]
+2026-06-12 16:26:26,084 INFO     neural.trainer: Early stop: Oscillating at epoch 10 (CV=0.61)
+2026-06-12 16:33:18,838 INFO     websocket.live: WebSocket disconnected  (total: 0)
+2026-06-12 16:33:33,368 INFO     app: v2 backend starting — config loaded from /Volumes/My SSD/Chris Stuff/DEV/1DCNN_A/src/v2/backend/services/../config/config.json
+2026-06-12 16:33:33,378 INFO     websocket.live: WebSocket connected  (total: 1)
+2026-06-12 16:34:43,562 INFO     websocket.live: WebSocket disconnected  (total: 0)
+2026-06-12 16:35:07,120 INFO     app: v2 backend starting — config loaded from /Volumes/My SSD/Chris Stuff/DEV/1DCNN_A/src/v2/backend/services/../config/config.json
+2026-06-12 16:35:07,158 INFO     websocket.live: WebSocket connected  (total: 1)
+2026-06-12 16:35:52,446 INFO     neural.trainer: Epoch    1 | train=2.87558  val=5.03827 | overfit=1.75× | patience [-------]
+2026-06-12 16:36:00,710 INFO     neural.trainer: Epoch    2 | train=2.78835  val=4.63003 | overfit=1.66× | patience [-------]
+2026-06-12 16:36:09,443 INFO     neural.trainer: Epoch    3 | train=2.49656  val=3.90381 | overfit=1.56× | patience [-------]
+2026-06-12 16:36:18,029 INFO     neural.trainer: Epoch    4 | train=1.58311  val=2.55758 | overfit=1.62× | patience [-------]
+2026-06-12 16:36:27,110 INFO     neural.trainer: Epoch    5 | train=0.91835  val=2.07663 | overfit=2.26× | patience [-------]
+2026-06-12 16:36:35,793 INFO     neural.trainer: Epoch    6 | train=0.81200  val=1.96049 | overfit=2.41× | patience [-------]
+2026-06-12 16:36:44,337 INFO     neural.trainer: Epoch    7 | train=0.78808  val=1.92658 | overfit=2.44× | patience [-------]
+2026-06-12 16:36:53,007 INFO     neural.trainer: Epoch    8 | train=0.77750  val=1.87215 | overfit=2.41× | patience [-------]
+2026-06-12 16:37:01,485 INFO     neural.trainer: Epoch    9 | train=0.76270  val=1.87221 | overfit=2.45× | patience [-------]
+2026-06-12 16:37:10,033 INFO     neural.trainer: Epoch   10 | train=0.75433  val=1.82093 | overfit=2.41× | patience [#------]
+2026-06-12 17:41:28,348 INFO     websocket.live: WebSocket disconnected  (total: 0)
+2026-06-12 17:41:28,537 INFO     websocket.live: WebSocket connected  (total: 1)
+2026-06-12 17:46:45,379 INFO     websocket.live: WebSocket disconnected  (total: 0)
+2026-06-12 17:46:45,383 INFO     websocket.live: WebSocket disconnected  (total: 0)
+2026-06-12 17:47:59,327 INFO     app: v2 backend starting — config loaded from /Volumes/My SSD/Chris Stuff/DEV/1DCNN_A/src/v2/backend/services/../config/config.json
+2026-06-12 17:48:20,964 INFO     app: v2 backend starting — config loaded from /Volumes/My SSD/Chris Stuff/DEV/1DCNN_A/src/v2/backend/services/../config/config.json
+2026-06-12 17:48:24,062 INFO     websocket.live: WebSocket connected  (total: 1)
+2026-06-12 17:48:26,189 INFO     websocket.live: WebSocket disconnected  (total: 0)
+2026-06-12 17:48:26,319 INFO     websocket.live: WebSocket connected  (total: 1)
+2026-06-12 17:52:22,840 INFO     websocket.live: WebSocket disconnected  (total: 0)
+2026-06-12 17:52:22,974 INFO     websocket.live: WebSocket connected  (total: 1)
+2026-06-12 17:53:08,442 INFO     websocket.live: WebSocket disconnected  (total: 0)
+2026-06-12 17:53:14,458 INFO     websocket.live: WebSocket connected  (total: 1)
+2026-06-12 17:53:14,665 INFO     websocket.live: WebSocket disconnected  (total: 0)
+2026-06-12 17:53:17,203 INFO     websocket.live: WebSocket connected  (total: 1)
+2026-06-12 17:54:15,023 INFO     websocket.live: WebSocket connected  (total: 2)
+2026-06-12 17:58:46,938 INFO     websocket.live: WebSocket disconnected  (total: 1)
+2026-06-12 17:58:47,202 INFO     websocket.live: WebSocket connected  (total: 2)
+2026-06-12 17:59:17,016 INFO     websocket.live: WebSocket disconnected  (total: 1)
+2026-06-12 17:59:17,608 INFO     websocket.live: WebSocket connected  (total: 2)
+2026-06-12 18:00:19,787 INFO     websocket.live: WebSocket disconnected  (total: 1)
+2026-06-12 18:00:19,788 INFO     websocket.live: WebSocket disconnected  (total: 0)
+2026-06-12 18:00:32,515 INFO     app: v2 backend starting — config loaded from /Volumes/My SSD/Chris Stuff/DEV/1DCNN_A/src/v2/backend/services/../config/config.json
+2026-06-12 18:00:32,610 INFO     websocket.live: WebSocket connected  (total: 1)
+2026-06-12 18:00:32,747 INFO     websocket.live: WebSocket connected  (total: 2)
+2026-06-12 18:00:34,947 INFO     websocket.live: WebSocket disconnected  (total: 1)
+2026-06-12 18:00:35,354 INFO     websocket.live: WebSocket connected  (total: 2)
+2026-06-12 18:02:04,562 INFO     neural.trainer: Epoch    1 | train=2.87839  val=5.08321 | overfit=1.77× | patience [-------]
+2026-06-12 18:02:13,893 INFO     neural.trainer: Epoch    2 | train=2.79908  val=4.79318 | overfit=1.71× | patience [-------]
+2026-06-12 18:02:24,708 INFO     neural.trainer: Epoch    3 | train=2.46795  val=3.96899 | overfit=1.61× | patience [-------]
+2026-06-12 18:02:36,632 INFO     neural.trainer: Epoch    4 | train=1.69934  val=2.79957 | overfit=1.65× | patience [-------]
+2026-06-12 18:03:14,892 INFO     services.downloader: Downloading MSFT 5Min  2020-06-12 → 2026-06-12
+2026-06-12 18:03:15,452 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=MSFT&timeframe=5Min&start=2020-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000 "HTTP/1.1 200 OK"
+2026-06-12 18:03:15,827 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=MSFT&timeframe=5Min&start=2020-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=TVNGVHxNfDE1OTkxNDU4MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 18:03:16,082 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=MSFT&timeframe=5Min&start=2020-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=TVNGVHxNfDE2MDI2MDUxMDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 18:03:16,615 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=MSFT&timeframe=5Min&start=2020-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=TVNGVHxNfDE2MDU3MTQ5MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 18:03:18,051 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=MSFT&timeframe=5Min&start=2020-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=TVNGVHxNfDE2MDkyNTc5MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 18:03:19,281 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=MSFT&timeframe=5Min&start=2020-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=TVNGVHxNfDE2MTI1Mzc1MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 18:03:20,508 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=MSFT&timeframe=5Min&start=2020-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=TVNGVHxNfDE2MTU5MDYyMDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 18:03:21,945 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=MSFT&timeframe=5Min&start=2020-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=TVNGVHxNfDE2MTkxMTIwMDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 18:03:23,433 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=MSFT&timeframe=5Min&start=2020-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=TVNGVHxNfDE2MjI1NTkzMDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 18:03:24,961 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=MSFT&timeframe=5Min&start=2020-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=TVNGVHxNfDE2MjU4NDIyMDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 18:03:26,561 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=MSFT&timeframe=5Min&start=2020-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=TVNGVHxNfDE2MjkyMTc1MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 18:03:27,678 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=MSFT&timeframe=5Min&start=2020-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=TVNGVHxNfDE2MzI1MDEzMDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 18:03:28,217 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=MSFT&timeframe=5Min&start=2020-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=TVNGVHxNfDE2MzU3OTU2MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 18:03:28,903 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=MSFT&timeframe=5Min&start=2020-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=TVNGVHxNfDE2MzkwODA5MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 18:03:29,517 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=MSFT&timeframe=5Min&start=2020-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=TVNGVHxNfDE2NDI2MDgzMDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 18:03:30,131 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=MSFT&timeframe=5Min&start=2020-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=TVNGVHxNfDE2NDU3MzQzMDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 18:03:30,757 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=MSFT&timeframe=5Min&start=2020-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=TVNGVHxNfDE2NDkwODExMDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 18:03:31,570 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=MSFT&timeframe=5Min&start=2020-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=TVNGVHxNfDE2NTIyODI0MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 18:03:33,208 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=MSFT&timeframe=5Min&start=2020-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=TVNGVHxNfDE2NTU0NzY1MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 18:03:34,432 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=MSFT&timeframe=5Min&start=2020-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=TVNGVHxNfDE2NTg4NjgwMDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 18:03:35,663 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=MSFT&timeframe=5Min&start=2020-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=TVNGVHxNfDE2NjIxMjYzMDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 18:03:36,890 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=MSFT&timeframe=5Min&start=2020-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=TVNGVHxNfDE2NjU1MDc2MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 18:03:38,528 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=MSFT&timeframe=5Min&start=2020-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=TVNGVHxNfDE2Njg2MTg5MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 18:03:39,962 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=MSFT&timeframe=5Min&start=2020-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=TVNGVHxNfDE2NzIxNjQ5MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 18:03:42,215 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=MSFT&timeframe=5Min&start=2020-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=TVNGVHxNfDE2NzU0NTUzMDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 18:03:44,058 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=MSFT&timeframe=5Min&start=2020-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=TVNGVHxNfDE2Nzg5MDMyMDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 18:03:45,143 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=MSFT&timeframe=5Min&start=2020-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=TVNGVHxNfDE2ODIzNjM0MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 18:03:45,901 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=MSFT&timeframe=5Min&start=2020-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=TVNGVHxNfDE2ODU3MzM5MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 18:03:46,297 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=MSFT&timeframe=5Min&start=2020-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=TVNGVHxNfDE2ODk2MjE5MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 18:03:46,702 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=MSFT&timeframe=5Min&start=2020-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=TVNGVHxNfDE2OTI5MDMwMDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 18:03:47,334 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=MSFT&timeframe=5Min&start=2020-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=TVNGVHxNfDE2OTY1MjQ2MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 18:03:47,768 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=MSFT&timeframe=5Min&start=2020-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=TVNGVHxNfDE2OTk5ODA2MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 18:03:48,359 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=MSFT&timeframe=5Min&start=2020-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=TVNGVHxNfDE3MDM2MTgxNjAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 18:03:49,812 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=MSFT&timeframe=5Min&start=2020-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=TVNGVHxNfDE3MDczMzg0MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 18:03:51,640 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=MSFT&timeframe=5Min&start=2020-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=TVNGVHxNfDE3MTA5NTcwMDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 18:03:52,863 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=MSFT&timeframe=5Min&start=2020-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=TVNGVHxNfDE3MTQ2NzcwMDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 18:03:54,166 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=MSFT&timeframe=5Min&start=2020-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=TVNGVHxNfDE3MTg4OTA4MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 18:03:55,735 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=MSFT&timeframe=5Min&start=2020-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=TVNGVHxNfDE3MjI2MTE3MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 18:03:57,373 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=MSFT&timeframe=5Min&start=2020-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=TVNGVHxNfDE3MjYyNDIzMDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 18:03:59,583 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=MSFT&timeframe=5Min&start=2020-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=TVNGVHxNfDE3Mjk3MDc2MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 18:04:02,086 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=MSFT&timeframe=5Min&start=2020-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=TVNGVHxNfDE3MzMyMzc0MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 18:04:04,128 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=MSFT&timeframe=5Min&start=2020-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=TVNGVHxNfDE3MzcwNDE0MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 18:04:05,972 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=MSFT&timeframe=5Min&start=2020-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=TVNGVHxNfDE3NDA1ODExMDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 18:04:07,704 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=MSFT&timeframe=5Min&start=2020-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=TVNGVHxNfDE3NDM3ODYwMDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 18:04:08,637 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=MSFT&timeframe=5Min&start=2020-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=TVNGVHxNfDE3NDcyMzkwMDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 18:04:09,457 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=MSFT&timeframe=5Min&start=2020-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=TVNGVHxNfDE3NTA4Njc1NjAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 18:04:10,180 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=MSFT&timeframe=5Min&start=2020-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=TVNGVHxNfDE3NTQ0OTI0MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 18:04:10,887 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=MSFT&timeframe=5Min&start=2020-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=TVNGVHxNfDE3NTc5NTgzMDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 18:04:12,530 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=MSFT&timeframe=5Min&start=2020-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=TVNGVHxNfDE3NjEyNDEyMDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 18:04:14,173 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=MSFT&timeframe=5Min&start=2020-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=TVNGVHxNfDE3NjQ2MjA0MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 18:04:15,597 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=MSFT&timeframe=5Min&start=2020-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=TVNGVHxNfDE3Njc5NzU5MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 18:04:16,826 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=MSFT&timeframe=5Min&start=2020-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=TVNGVHxNfDE3NzEzNDgyMDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 18:04:17,645 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=MSFT&timeframe=5Min&start=2020-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=TVNGVHxNfDE3NzQzNzcwMDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 18:04:18,055 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=MSFT&timeframe=5Min&start=2020-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=TVNGVHxNfDE3Nzc1NTE3MjAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 18:04:18,222 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=MSFT&timeframe=5Min&start=2020-06-12&end=2026-06-12&adjustment=split&feed=iex&limit=10000&page_token=TVNGVHxNfDE3ODA2NzAxMDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-12 18:04:20,027 INFO     services.downloader: Saved 115852 bars → /Volumes/My SSD/Chris Stuff/DEV/1DCNN_A/src/v2/backend/downloads/MSFT/5Min.csv
+2026-06-12 18:08:44,659 INFO     websocket.live: WebSocket disconnected  (total: 1)
+2026-06-12 18:08:44,660 INFO     websocket.live: WebSocket disconnected  (total: 0)
+2026-06-12 18:08:57,905 INFO     app: v2 backend starting — config loaded from /Volumes/My SSD/Chris Stuff/DEV/1DCNN_A/src/v2/backend/services/../config/config.json
+2026-06-12 18:08:57,943 INFO     websocket.live: WebSocket connected  (total: 1)
+2026-06-12 18:08:58,002 INFO     websocket.live: WebSocket connected  (total: 2)
+2026-06-12 18:09:14,249 INFO     websocket.live: WebSocket disconnected  (total: 1)
+2026-06-12 18:09:15,203 INFO     websocket.live: WebSocket connected  (total: 2)
+2026-06-12 18:09:18,730 INFO     websocket.live: WebSocket disconnected  (total: 1)
+2026-06-12 18:09:19,135 INFO     websocket.live: WebSocket connected  (total: 2)
+2026-06-12 18:11:13,360 INFO     websocket.live: WebSocket disconnected  (total: 1)
+2026-06-12 18:11:13,700 INFO     websocket.live: WebSocket connected  (total: 2)
+2026-06-12 18:12:55,114 INFO     websocket.live: WebSocket disconnected  (total: 1)
+2026-06-12 18:12:56,216 INFO     websocket.live: WebSocket connected  (total: 2)
+2026-06-12 18:16:24,907 INFO     websocket.live: WebSocket disconnected  (total: 1)
+2026-06-12 18:16:24,908 INFO     websocket.live: WebSocket disconnected  (total: 0)
+2026-06-12 18:16:38,188 INFO     app: v2 backend starting — config loaded from /Volumes/My SSD/Chris Stuff/DEV/1DCNN_A/src/v2/backend/services/../config/config.json
+2026-06-12 18:16:38,287 INFO     websocket.live: WebSocket connected  (total: 1)
+2026-06-12 18:16:38,336 INFO     websocket.live: WebSocket connected  (total: 2)
+2026-06-12 18:16:44,393 INFO     websocket.live: WebSocket disconnected  (total: 1)
+2026-06-12 18:16:45,081 INFO     websocket.live: WebSocket connected  (total: 2)
+2026-06-12 18:19:13,572 INFO     neural.trainer: Epoch    1 | train=2.88169  val=5.05775 | overfit=1.76× | patience [-------]
+2026-06-12 18:21:15,911 INFO     websocket.live: WebSocket disconnected  (total: 1)
+2026-06-12 18:21:16,289 INFO     websocket.live: WebSocket connected  (total: 2)
+2026-06-12 18:22:43,452 INFO     neural.trainer: Epoch    1 | train=1.59091  val=3.33911 | overfit=2.10× | patience [-------]
+2026-06-12 18:22:53,619 INFO     neural.trainer: Epoch    2 | train=1.54360  val=3.21604 | overfit=2.08× | patience [-------]
+2026-06-12 18:23:06,410 INFO     neural.trainer: Epoch    3 | train=1.41718  val=2.73490 | overfit=1.93× | patience [-------]
+2026-06-12 18:23:16,596 INFO     neural.trainer: Epoch    4 | train=1.19819  val=2.03540 | overfit=1.70× | patience [-------]
+2026-06-12 18:23:26,819 INFO     neural.trainer: Epoch    5 | train=0.99558  val=1.68774 | overfit=1.70× | patience [-------]
+2026-06-12 18:23:38,397 INFO     neural.trainer: Epoch    6 | train=0.88891  val=1.44159 | overfit=1.62× | patience [-------]
+2026-06-12 18:23:49,132 INFO     neural.trainer: Epoch    7 | train=0.82644  val=1.31719 | overfit=1.59× | patience [-------]
+2026-06-12 18:23:59,842 INFO     neural.trainer: Epoch    8 | train=0.79296  val=1.24469 | overfit=1.57× | patience [-------]
+2026-06-12 18:24:10,724 INFO     neural.trainer: Epoch    9 | train=0.77169  val=1.20590 | overfit=1.56× | patience [-------]
+2026-06-12 18:24:21,864 INFO     neural.trainer: Epoch   10 | train=0.75897  val=1.18131 | overfit=1.56× | patience [-------]
+2026-06-12 18:25:16,093 INFO     neural.trainer: Epoch    1 | train=2.87047  val=5.07945 | overfit=1.77× | patience [-------]
+2026-06-12 18:25:25,977 INFO     neural.trainer: Epoch    2 | train=2.77271  val=4.70217 | overfit=1.70× | patience [-------]
+2026-06-12 18:25:35,848 INFO     neural.trainer: Epoch    3 | train=2.23244  val=3.39910 | overfit=1.52× | patience [-------]
+2026-06-12 18:25:45,478 INFO     neural.trainer: Epoch    4 | train=1.28808  val=2.37674 | overfit=1.85× | patience [-------]
+2026-06-12 18:25:55,417 INFO     neural.trainer: Epoch    5 | train=0.89612  val=2.04788 | overfit=2.29× | patience [-------]
+2026-06-12 18:26:06,806 INFO     neural.trainer: Epoch    6 | train=0.80001  val=1.92826 | overfit=2.41× | patience [-------]
+2026-06-12 18:26:17,745 INFO     neural.trainer: Epoch    7 | train=0.76766  val=1.86444 | overfit=2.43× | patience [-------]
+2026-06-12 18:26:28,623 INFO     neural.trainer: Epoch    8 | train=0.74959  val=1.83058 | overfit=2.44× | patience [-------]
+2026-06-12 18:26:39,933 INFO     neural.trainer: Epoch    9 | train=0.74177  val=1.79008 | overfit=2.41× | patience [-------]
+2026-06-12 18:26:50,810 INFO     neural.trainer: Epoch   10 | train=0.72526  val=1.75378 | overfit=2.42× | patience [-------]
+2026-06-12 18:26:50,811 INFO     neural.trainer: Early stop: Oscillating at epoch 10 (CV=0.61)
+2026-06-12 18:34:28,402 INFO     websocket.live: WebSocket disconnected  (total: 1)
+2026-06-12 18:34:29,313 INFO     websocket.live: WebSocket connected  (total: 2)
+2026-06-12 18:38:25,423 INFO     websocket.live: WebSocket disconnected  (total: 1)
+2026-06-12 18:38:25,766 INFO     websocket.live: WebSocket connected  (total: 2)
+2026-06-12 18:38:39,642 INFO     websocket.live: WebSocket disconnected  (total: 1)
+2026-06-12 18:38:40,283 INFO     websocket.live: WebSocket connected  (total: 2)
+2026-06-12 18:39:02,256 INFO     websocket.live: WebSocket disconnected  (total: 1)
+2026-06-12 18:39:02,774 INFO     websocket.live: WebSocket connected  (total: 2)
+2026-06-12 18:39:18,848 INFO     websocket.live: WebSocket disconnected  (total: 1)
+2026-06-12 18:39:19,097 INFO     websocket.live: WebSocket connected  (total: 2)
+2026-06-12 18:39:23,191 INFO     websocket.live: WebSocket disconnected  (total: 1)
+2026-06-12 18:39:23,491 INFO     websocket.live: WebSocket connected  (total: 2)
+2026-06-12 18:40:13,233 INFO     websocket.live: WebSocket disconnected  (total: 1)
+2026-06-12 18:40:13,523 INFO     websocket.live: WebSocket connected  (total: 2)
+2026-06-12 18:45:12,894 INFO     websocket.live: WebSocket disconnected  (total: 1)
+2026-06-12 18:45:13,287 INFO     websocket.live: WebSocket connected  (total: 2)
+2026-06-12 18:49:43,823 INFO     websocket.live: WebSocket disconnected  (total: 1)
+2026-06-12 18:49:44,245 INFO     websocket.live: WebSocket connected  (total: 2)
+2026-06-12 18:49:52,261 INFO     websocket.live: WebSocket disconnected  (total: 1)
+2026-06-12 18:49:52,767 INFO     websocket.live: WebSocket connected  (total: 2)
+2026-06-12 18:52:38,643 INFO     websocket.live: WebSocket disconnected  (total: 1)
+2026-06-12 18:52:38,976 INFO     websocket.live: WebSocket connected  (total: 2)
+2026-06-12 18:56:21,456 INFO     websocket.live: WebSocket disconnected  (total: 1)
+2026-06-12 18:56:21,732 INFO     websocket.live: WebSocket connected  (total: 2)
+2026-06-12 18:56:25,993 INFO     websocket.live: WebSocket disconnected  (total: 1)
+2026-06-12 18:56:26,237 INFO     websocket.live: WebSocket connected  (total: 2)
+2026-06-12 19:12:42,218 INFO     websocket.live: WebSocket disconnected  (total: 1)
+2026-06-12 19:12:42,334 INFO     websocket.live: WebSocket disconnected  (total: 0)
+2026-06-12 19:12:44,154 INFO     websocket.live: WebSocket connected  (total: 1)
+2026-06-12 19:12:44,434 INFO     websocket.live: WebSocket connected  (total: 2)
+2026-06-12 20:09:13,058 INFO     neural.trainer: Epoch    1 | train=2.71815  val=3.89240 | overfit=1.43× | patience [----------]
+2026-06-12 20:09:23,464 INFO     neural.trainer: Epoch    2 | train=1.10104  val=2.02413 | overfit=1.84× | patience [----------]
+2026-06-12 20:09:34,026 INFO     neural.trainer: Epoch    3 | train=0.79177  val=1.85457 | overfit=2.34× | patience [----------]
+2026-06-12 20:09:44,813 INFO     neural.trainer: Epoch    4 | train=0.76118  val=1.77868 | overfit=2.34× | patience [----------]
+2026-06-12 20:09:55,409 INFO     neural.trainer: Epoch    5 | train=0.73607  val=1.68495 | overfit=2.29× | patience [----------]
+2026-06-12 20:10:06,147 INFO     neural.trainer: Epoch    6 | train=0.70651  val=1.57079 | overfit=2.22× | patience [----------]
+2026-06-12 20:10:16,893 INFO     neural.trainer: Epoch    7 | train=0.68016  val=1.48886 | overfit=2.19× | patience [----------]
+2026-06-12 20:10:27,700 INFO     neural.trainer: Epoch    8 | train=0.65661  val=1.39991 | overfit=2.13× | patience [----------]
+2026-06-12 20:10:38,266 INFO     neural.trainer: Epoch    9 | train=0.64416  val=1.34311 | overfit=2.09× | patience [----------]
+2026-06-12 20:10:48,742 INFO     neural.trainer: Epoch   10 | train=0.62367  val=1.28193 | overfit=2.06× | patience [----------]
+2026-06-12 20:10:48,744 INFO     neural.trainer: Early stop: Oscillating at epoch 10 (CV=0.64)
