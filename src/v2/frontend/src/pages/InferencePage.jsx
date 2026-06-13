@@ -248,7 +248,7 @@ export default function InferencePage() {
     setPaused(false);
     setState("running");
     try {
-      await api.startInfer(form);
+      await api.startInfer({ ...form, speed });
     } catch (e) {
       activeRef.current = false;
       setError(e.message);
