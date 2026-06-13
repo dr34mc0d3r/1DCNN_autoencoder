@@ -2,6 +2,19 @@ import { useEffect, useState } from "react";
 import { api } from "../api.js";
 import FieldInfo from "../components/FieldInfo.jsx";
 
+function numToDecimal(v) {
+  if (v == null || v === "") return "";
+  const s = String(Number(v));
+  if (!s.includes("e")) return s;
+  const [coeff, exp] = s.split("e");
+  const e = parseInt(exp);
+  const [intPart, decPart = ""] = coeff.replace("-", "").split(".");
+  const sign = Number(v) < 0 ? "-" : "";
+  if (e < 0) return sign + "0." + "0".repeat(-e - 1) + intPart + decPart;
+  const full = intPart + decPart.padEnd(e, "0");
+  return sign + full.slice(0, e + 1) + (full.length > e + 1 ? "." + full.slice(e + 1) : "");
+}
+
 // ── Field info content ─────────────────────────────────────────────────────────
 
 const INFO = {
@@ -450,7 +463,7 @@ export default function ConfigPage() {
                 </label>
                 <input
                   type={type}
-                  value={cfg[key] ?? ""}
+                  value={type === "number" ? numToDecimal(cfg[key]) : (cfg[key] ?? "")}
                   step={type === "number" ? "any" : undefined}
                   onChange={(e) =>
                     handleChange(key, type === "number" ? Number(e.target.value) : e.target.value)
@@ -504,7 +517,7 @@ export default function ConfigPage() {
                 </label>
                 <input
                   type={type}
-                  value={cfg[key] ?? ""}
+                  value={type === "number" ? numToDecimal(cfg[key]) : (cfg[key] ?? "")}
                   step={type === "number" ? "any" : undefined}
                   onChange={(e) =>
                     handleChange(key, type === "number" ? Number(e.target.value) : e.target.value)
