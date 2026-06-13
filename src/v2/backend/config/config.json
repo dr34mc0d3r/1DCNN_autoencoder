@@ -15,7 +15,7 @@
   "guard_overfit_ratio": 10,
   "guard_explosion_factor": 10,
   "guard_oscillation_window": 10,
-  "guard_oscillation_cv": 0.6,
+  "guard_oscillation_cv": 0.9,
   "guard_collapse_threshold": 1e-06,
   "alpaca_base_url": "https://data.alpaca.markets"
 }
