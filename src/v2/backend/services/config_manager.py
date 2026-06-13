@@ -43,10 +43,25 @@ _DEFAULTS: dict[str, Any] = {
 }
 
 _FEATURE_COLS = [
+    # Trend
     "ema_9", "ema_21", "ema_50",
+    # MACD
     "macd", "macd_9", "macd_hist",
-    "body", "upper_wick", "lower_wick",
-    "return", "vol_return", "log_return", "volume_ratio",
+    # Candle structure
+    "body", "upper_wick", "lower_wick", "candle_efficiency",
+    # Returns & volume
+    "return", "vol_return", "log_return", "volume_ratio", "trade_count_ratio",
+    # Volatility
+    "atr_14", "rolling_vol",
+    # Bollinger Bands
+    "bb_width", "bb_pct",
+    # VWAP
+    "vwap_dev",
+    # Momentum oscillators
+    "rsi_14", "stoch_k", "stoch_d",
+    # Time of day
+    "hour_sin", "hour_cos",
+    # Price level
     "close",
 ]
 
@@ -112,7 +127,7 @@ def update(partial: dict[str, Any]) -> dict[str, Any]:
 
 
 def feature_cols() -> list[str]:
-    """Return the fixed list of 14 feature column names."""
+    """Return the fixed list of feature column names fed to the model."""
     return list(_FEATURE_COLS)
 
 
