@@ -10,6 +10,12 @@ import PanelInfo from "../components/PanelInfo.jsx";
 const COLORS = ["#6366f1","#f59e0b","#10b981","#ef4444","#3b82f6","#8b5cf6","#ec4899","#14b8a6"];
 const HISTORY_LEN = 200;
 
+const SPEED_OPTIONS = [
+  { value: "full", label: "Full Speed",      delayMs: 0    },
+  { value: "1s",   label: "Every 1 second",  delayMs: 1000 },
+  { value: "5s",   label: "Every 5 seconds", delayMs: 5000 },
+];
+
 // ── Panel info content ─────────────────────────────────────────────────────────
 
 const PANEL_INFO = {
@@ -146,32 +152,66 @@ export default function InferencePage() {
   const [error, setError]     = useState("");
   const [activeModel, setActiveModel] = useState(null);
   const [csvInfo, setCsvInfo]         = useState(null);
+  const [speed, setSpeed]     = useState("full");
+  const [paused, setPaused]   = useState(false);
   const canvasRef             = useRef(null);
   const activeRef             = useRef(false);
+  const pausedRef             = useRef(false);  // mirrors paused for use inside intervals
+  const pendingRef            = useRef(null);   // latest unprocessed infer_step
+  const lastFlushRef          = useRef(0);      // ms timestamp of last UI update
+  const speedRef              = useRef("full"); // mirrors speed for use inside intervals
+
+  useEffect(() => { speedRef.current = speed; }, [speed]);
+  useEffect(() => { pausedRef.current = paused; }, [paused]);
 
   useEffect(() => {
     api.getActiveModel().then(m => setActiveModel(Object.keys(m).length ? m : null)).catch(() => {});
     api.getConfig().then(cfg => setCsvInfo({ symbol: cfg.symbol, timeframe: cfg.timeframe })).catch(() => {});
   }, []);
 
-  const p95 = mseData.length
-    ? [...mseData].sort((a, b) => a.mse - b.mse)[Math.floor(mseData.length * 0.95)]?.mse
-    : null;
-
+  // Collect incoming steps into pendingRef without touching state
   useEffect(() => {
     const offStep = ws.on("infer_step", (data) => {
       if (!activeRef.current) return;
-      setMseData((prev) => [...prev.slice(-999), { timestamp: data.timestamp, mse: data.mse }]);
-      setCurrent(data);
-      setClusterHistory((prev) => [...prev.slice(-(HISTORY_LEN - 1)), data.cluster_label]);
-      drawWindow(data);
+      pendingRef.current = data;
     });
     const offDone = ws.on("infer_complete", () => {
       activeRef.current = false;
       setState("idle");
+      // flush whatever is pending so the final bar always appears
+      if (pendingRef.current) {
+        flushPending(pendingRef.current);
+        pendingRef.current = null;
+      }
     });
     return () => { offStep(); offDone(); };
   }, []);
+
+  // Poll at 50 ms and flush pending data when the chosen interval has elapsed
+  useEffect(() => {
+    const id = setInterval(() => {
+      if (!pendingRef.current || pausedRef.current) return;
+      const opt = SPEED_OPTIONS.find(o => o.value === speedRef.current) ?? SPEED_OPTIONS[0];
+      const now = Date.now();
+      if (now - lastFlushRef.current >= opt.delayMs) {
+        flushPending(pendingRef.current);
+        pendingRef.current = null;
+        lastFlushRef.current = now;
+      }
+    }, 50);
+    return () => clearInterval(id);
+  }, []);
+
+  function flushPending(data) {
+    setMseData((prev) => [...prev.slice(-999), { timestamp: data.timestamp, mse: data.mse }]);
+    setCurrent(data);
+    setClusterHistory((prev) => [...prev.slice(-(HISTORY_LEN - 1)), data.cluster_label]);
+    drawWindow(data);
+  }
+
+  const p95 = mseData.length
+    ? [...mseData].sort((a, b) => a.mse - b.mse)[Math.floor(mseData.length * 0.95)]?.mse
+    : null;
 
   function drawWindow(data) {
     const canvas = canvasRef.current;
@@ -202,7 +242,10 @@ export default function InferencePage() {
     setCurrent(null);
     setClusterHistory([]);
     setError("");
-    activeRef.current = true;
+    pendingRef.current   = null;
+    lastFlushRef.current = 0;
+    activeRef.current    = true;
+    setPaused(false);
     setState("running");
     try {
       await api.startInfer(form);
@@ -256,6 +299,7 @@ export default function InferencePage() {
       {/* ── Cross-symbol guide ── */}
       <CrossSymbolGuide activeModel={activeModel} csvInfo={csvInfo} />
 
+      {/* ── Controls ── */}
       <div className="flex gap-3 items-end mb-6 flex-wrap">
         {[["infer_start", "Start Date", "date"], ["infer_end", "End Date", "date"]].map(([k, label, type]) => (
           <div key={k} className="flex flex-col gap-1">
@@ -268,12 +312,34 @@ export default function InferencePage() {
             />
           </div>
         ))}
+
+        {/* Stream speed dropdown */}
+        <div className="flex flex-col gap-1">
+          <label className="text-xs text-gray-400">Stream Speed</label>
+          <select
+            value={speed}
+            onChange={(e) => setSpeed(e.target.value)}
+            className="bg-gray-800 border border-gray-700 rounded px-3 py-2 text-sm focus:outline-none focus:border-indigo-500"
+          >
+            {SPEED_OPTIONS.map(o => (
+              <option key={o.value} value={o.value}>{o.label}</option>
+            ))}
+          </select>
+        </div>
+
         <button
           onClick={handleStart}
           disabled={state === "running"}
           className="bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 px-5 py-2 rounded text-sm font-semibold"
         >
           {state === "running" ? "Running…" : "Start"}
+        </button>
+        <button
+          onClick={() => setPaused(p => !p)}
+          disabled={state !== "running"}
+          className="bg-gray-700 hover:bg-gray-600 disabled:opacity-50 px-5 py-2 rounded text-sm font-semibold"
+        >
+          {paused ? "Resume" : "Pause"}
         </button>
         <button
           onClick={handleStop}
@@ -368,10 +434,7 @@ export default function InferencePage() {
             <div
               key={i}
               title={`Cluster ${label}`}
-              style={{
-                flex: 1,
-                backgroundColor: COLORS[label % COLORS.length],
-              }}
+              style={{ flex: 1, backgroundColor: COLORS[label % COLORS.length] }}
             />
           ))}
           {clusterHistory.length === 0 && (
