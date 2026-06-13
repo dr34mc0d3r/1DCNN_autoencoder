@@ -62,21 +62,74 @@ def clean_data(df: pd.DataFrame) -> pd.DataFrame:
 
 
 def add_features(df: pd.DataFrame) -> pd.DataFrame:
+    # ── Trend ────────────────────────────────────────────────────────────────
     df["ema_9"]  = df["close"].ewm(span=9,  adjust=False).mean()
     df["ema_21"] = df["close"].ewm(span=21, adjust=False).mean()
     df["ema_50"] = df["close"].ewm(span=50, adjust=False).mean()
-    ema_12         = df["close"].ewm(span=12, adjust=False).mean()
-    ema_26         = df["close"].ewm(span=26, adjust=False).mean()
-    df["macd"]     = ema_12 - ema_26
-    df["macd_9"]   = df["macd"].ewm(span=9, adjust=False).mean()
-    df["macd_hist"]= df["macd"] - df["macd_9"]
-    df["body"]        = df["close"] - df["open"]
-    df["upper_wick"]  = df["high"] - df[["open", "close"]].max(axis=1)
-    df["lower_wick"]  = df[["open", "close"]].min(axis=1) - df["low"]
-    df["return"]      = df["close"].pct_change()
-    df["vol_return"]  = df["volume"].pct_change()
-    df["log_return"]  = np.log(df["close"] / df["close"].shift(1))
-    df["volume_ratio"]= df["volume"] / df["volume"].rolling(20).mean()
+
+    # ── MACD ─────────────────────────────────────────────────────────────────
+    ema_12          = df["close"].ewm(span=12, adjust=False).mean()
+    ema_26          = df["close"].ewm(span=26, adjust=False).mean()
+    df["macd"]      = ema_12 - ema_26
+    df["macd_9"]    = df["macd"].ewm(span=9, adjust=False).mean()
+    df["macd_hist"] = df["macd"] - df["macd_9"]
+
+    # ── Candle structure ─────────────────────────────────────────────────────
+    df["body"]       = df["close"] - df["open"]
+    df["upper_wick"] = df["high"] - df[["open", "close"]].max(axis=1)
+    df["lower_wick"] = df[["open", "close"]].min(axis=1) - df["low"]
+    df["candle_efficiency"] = (
+        df["body"].abs()
+        / (df["upper_wick"] + df["lower_wick"] + df["body"].abs() + 1e-9)
+    )
+
+    # ── Returns & volume ─────────────────────────────────────────────────────
+    df["return"]       = df["close"].pct_change()
+    df["vol_return"]   = df["volume"].pct_change()
+    df["log_return"]   = np.log(df["close"] / df["close"].shift(1))
+    df["volume_ratio"] = df["volume"] / df["volume"].rolling(20).mean()
+    df["trade_count_ratio"] = df["trade_count"] / df["trade_count"].rolling(20).mean()
+
+    # ── Volatility ───────────────────────────────────────────────────────────
+    tr = pd.concat([
+        df["high"] - df["low"],
+        (df["high"] - df["close"].shift(1)).abs(),
+        (df["low"]  - df["close"].shift(1)).abs(),
+    ], axis=1).max(axis=1)
+    df["atr_14"]      = tr.ewm(span=14, adjust=False).mean()
+    df["rolling_vol"] = df["log_return"].rolling(10).std()
+
+    # ── Bollinger Bands (20-period, 2σ) ──────────────────────────────────────
+    bb_mid   = df["close"].rolling(20).mean()
+    bb_std   = df["close"].rolling(20).std()
+    bb_upper = bb_mid + 2 * bb_std
+    bb_lower = bb_mid - 2 * bb_std
+    bb_range = (bb_upper - bb_lower).replace(0, float("nan"))
+    df["bb_width"] = bb_range / bb_mid
+    df["bb_pct"]   = (df["close"] - bb_lower) / bb_range
+
+    # ── VWAP deviation ───────────────────────────────────────────────────────
+    df["vwap_dev"] = (df["close"] - df["vwap"]) / df["vwap"]
+
+    # ── RSI (14-period) ──────────────────────────────────────────────────────
+    delta    = df["close"].diff()
+    avg_gain = delta.clip(lower=0).ewm(span=14, adjust=False).mean()
+    avg_loss = (-delta.clip(upper=0)).ewm(span=14, adjust=False).mean()
+    rs = avg_gain / avg_loss.replace(0, float("nan"))
+    df["rsi_14"] = 100 - (100 / (1 + rs))
+
+    # ── Stochastic oscillator (14-period %K, 3-period %D) ───────────────────
+    low_14  = df["low"].rolling(14).min()
+    high_14 = df["high"].rolling(14).max()
+    hl_range = (high_14 - low_14).replace(0, float("nan"))
+    df["stoch_k"] = 100 * (df["close"] - low_14) / hl_range
+    df["stoch_d"] = df["stoch_k"].rolling(3).mean()
+
+    # ── Time of day (circular, consistent with any UTC-naive timestamp) ──────
+    minute_of_day  = df["timestamp"].dt.hour * 60 + df["timestamp"].dt.minute
+    df["hour_sin"] = np.sin(2 * np.pi * minute_of_day / 1440)
+    df["hour_cos"] = np.cos(2 * np.pi * minute_of_day / 1440)
+
     return df
 
 
