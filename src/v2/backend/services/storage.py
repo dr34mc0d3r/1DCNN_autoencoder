@@ -186,11 +186,10 @@ def run_pipeline(
     Full pipeline: load CSV → clean → features → scale → windows → gap filter.
     Returns (X_clean, df_clean, scaler).
 
-    train_split : if provided, the RobustScaler is fitted only on the first
-                  `train_split` fraction of rows, then applied to all rows.
-                  This prevents test-set statistics from leaking into training.
-    scaler      : if provided, skip fitting and apply this scaler directly
-                  (used by inference/reconstruct callers that hold the saved scaler).
+    train_split : when provided, the RobustScaler is fitted only on the first
+                  `train_split` fraction of rows, preventing test-set leakage.
+    scaler      : when provided, skip fitting and apply this scaler directly
+                  (used by post-training endpoints that hold the saved scaler).
     """
     cfg = config_manager.load()
     symbol    = symbol    or cfg["symbol"]
@@ -258,7 +257,13 @@ def _active_bundle_dir() -> str | None:
     return d if os.path.isdir(d) else None
 
 
-def save_named_model(name: str, model: Any, scaler: RobustScaler, cfg: dict) -> None:
+def save_named_model(
+    name: str,
+    model: Any,
+    scaler: RobustScaler,
+    cfg: dict,
+    final_lr: float | None = None,
+) -> None:
     """Save model + scaler + meta into models/{name}/ and mark it active."""
     d = bundle_dir(name)
     os.makedirs(d, exist_ok=True)
@@ -271,6 +276,8 @@ def save_named_model(name: str, model: Any, scaler: RobustScaler, cfg: dict) -> 
         "window_size": cfg.get("window_size", 0),
         "latent_dim":  cfg.get("latent_dim", 0),
         "n_clusters":  cfg.get("n_clusters", 0),
+        "scheduler":   cfg.get("scheduler", "none"),
+        "final_lr":    final_lr,
         "saved_at":    datetime.now().isoformat(timespec="seconds"),
         "has_kmeans":  False,
     }

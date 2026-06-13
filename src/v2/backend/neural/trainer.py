@@ -15,6 +15,10 @@ from typing import Callable
 import numpy as np
 import torch
 import torch.nn as nn
+from torch.optim.lr_scheduler import (
+    CosineAnnealingLR, CyclicLR, ExponentialLR,
+    LinearLR, MultiStepLR, ReduceLROnPlateau, StepLR,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -112,6 +116,57 @@ class TrainingGuard:
         )
 
 
+# ── LR scheduler factory ──────────────────────────────────────────────────────
+
+def _make_scheduler(optimizer, cfg: dict):
+    """Return a scheduler for optimizer based on cfg['scheduler'], or None."""
+    name = cfg.get("scheduler", "none")
+    if name == "plateau":
+        return ReduceLROnPlateau(
+            optimizer, mode="min",
+            factor=float(cfg.get("scheduler_plateau_factor", 0.5)),
+            patience=int(cfg.get("scheduler_plateau_patience", 5)),
+            min_lr=float(cfg.get("scheduler_plateau_min_lr", 1e-7)),
+        )
+    if name == "step":
+        return StepLR(
+            optimizer,
+            step_size=int(cfg.get("scheduler_step_size", 10)),
+            gamma=float(cfg.get("scheduler_step_gamma", 0.5)),
+        )
+    if name == "multistep":
+        milestones = [int(x) for x in str(cfg.get("scheduler_multistep_milestones", "20,40,60")).split(",")]
+        return MultiStepLR(
+            optimizer, milestones=milestones,
+            gamma=float(cfg.get("scheduler_multistep_gamma", 0.5)),
+        )
+    if name == "cosine":
+        return CosineAnnealingLR(
+            optimizer,
+            T_max=int(cfg.get("scheduler_cosine_t_max", 50)),
+            eta_min=float(cfg.get("scheduler_cosine_eta_min", 1e-7)),
+        )
+    if name == "exponential":
+        return ExponentialLR(optimizer, gamma=float(cfg.get("scheduler_exp_gamma", 0.95)))
+    if name == "warmup":
+        return LinearLR(
+            optimizer,
+            start_factor=float(cfg.get("scheduler_warmup_start_factor", 0.1)),
+            end_factor=1.0,
+            total_iters=int(cfg.get("scheduler_warmup_epochs", 5)),
+        )
+    if name == "cyclic":
+        return CyclicLR(
+            optimizer,
+            base_lr=float(cfg.get("scheduler_cyclic_base_lr", 1e-5)),
+            max_lr=float(cfg.get("scheduler_cyclic_max_lr", 1e-2)),
+            step_size_up=int(cfg.get("scheduler_cyclic_step_size", 10)),
+            mode=str(cfg.get("scheduler_cyclic_mode", "triangular2")),
+            cycle_momentum=False,
+        )
+    return None
+
+
 # ── Synchronous epoch helpers (run in thread pool) ─────────────────────────────
 
 def _train_epoch(model, loader, criterion, optimizer, device) -> float:
@@ -155,18 +210,20 @@ async def train(
     lr: float,
     device: torch.device,
     guard: TrainingGuard,
-    progress_cb: Callable[[int, float, float, str], None] | None = None,
+    progress_cb: Callable[[int, float, float, str, float], None] | None = None,
+    scheduler_cfg: dict | None = None,
 ) -> str:
     """
     Run the autoencoder training loop.
 
     Each epoch's train and validation passes run in a thread pool executor so
     the asyncio event loop stays free to flush WebSocket messages between epochs.
-    progress_cb is awaited after each epoch on the event loop.
+    progress_cb is awaited after each epoch with (epoch, train_loss, val_loss, guard_status, lr).
     """
     model.to(device)
     criterion = nn.MSELoss()
     optimizer = torch.optim.Adam(model.parameters(), lr=lr)
+    scheduler = _make_scheduler(optimizer, scheduler_cfg or {})
     loop = asyncio.get_event_loop()
 
     for epoch in range(1, epochs + 1):
@@ -178,12 +235,18 @@ async def train(
             None, _val_epoch, model, test_loader, criterion, device
         )
 
+        if isinstance(scheduler, ReduceLROnPlateau):
+            scheduler.step(val_loss)
+        elif scheduler is not None:
+            scheduler.step()
+        current_lr = optimizer.param_groups[0]["lr"]
+
         status = guard.status_str(epoch, train_loss, val_loss)
         logger.info(status)
 
         if progress_cb:
             ok_str = "ok" if guard._no_improve == 0 else f"ok - {guard._no_improve}"
-            await progress_cb(epoch, train_loss, val_loss, guard.stop_reason or ok_str)
+            await progress_cb(epoch, train_loss, val_loss, guard.stop_reason or ok_str, current_lr)
 
         if guard.check(epoch, train_loss, val_loss):
             logger.info("Early stop: %s", guard.stop_reason)

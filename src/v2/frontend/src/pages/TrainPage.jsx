@@ -254,7 +254,7 @@ export default function TrainPage() {
 
       {/* ── Live status card ── */}
       {(status === "running" || lastEpoch) && (
-        <div className="bg-gray-900 border border-gray-800 rounded-xl p-4 mb-6 grid grid-cols-4 gap-4">
+        <div className="bg-gray-900 border border-gray-800 rounded-xl p-4 mb-6 grid grid-cols-5 gap-4">
           <div>
             <p className="text-xs text-gray-500 mb-1">Epoch</p>
             <p className="text-2xl font-bold text-gray-100">{lastEpoch?.epoch ?? "—"}</p>
@@ -269,6 +269,12 @@ export default function TrainPage() {
             <p className="text-xs text-gray-500 mb-1">Val loss</p>
             <p className="text-lg font-mono text-amber-400">
               {lastEpoch?.val_loss?.toFixed(6) ?? "—"}
+            </p>
+          </div>
+          <div>
+            <p className="text-xs text-gray-500 mb-1">LR</p>
+            <p className="text-lg font-mono text-green-400">
+              {lastEpoch?.lr != null ? lastEpoch.lr.toExponential(2) : "—"}
             </p>
           </div>
           <div>
@@ -287,11 +293,14 @@ export default function TrainPage() {
           <LineChart data={epochs}>
             <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
             <XAxis dataKey="epoch" stroke="#6B7280" tick={{ fontSize: 11 }} />
-            <YAxis stroke="#6B7280" tick={{ fontSize: 11 }} />
+            <YAxis yAxisId="left"  stroke="#6B7280" tick={{ fontSize: 11 }} />
+            <YAxis yAxisId="right" orientation="right" stroke="#4ade80"
+                   tick={{ fontSize: 10 }} tickFormatter={(v) => v.toExponential(0)} width={58} />
             <Tooltip contentStyle={{ backgroundColor: "#111827", border: "none" }} />
             <Legend />
-            <Line type="monotone" dataKey="train_loss" stroke="#6366f1" dot={false} name="Train" />
-            <Line type="monotone" dataKey="val_loss"   stroke="#f59e0b" dot={false} name="Val" />
+            <Line yAxisId="left"  type="monotone"  dataKey="train_loss" stroke="#6366f1" dot={false} name="Train" />
+            <Line yAxisId="left"  type="monotone"  dataKey="val_loss"   stroke="#f59e0b" dot={false} name="Val" />
+            <Line yAxisId="right" type="stepAfter" dataKey="lr"         stroke="#4ade80" dot={false} name="LR" strokeDasharray="4 2" />
           </LineChart>
         </ResponsiveContainer>
       </div>
@@ -305,11 +314,12 @@ export default function TrainPage() {
             className="overflow-y-auto max-h-64 font-mono text-xs space-y-px"
           >
             {/* Header row */}
-            <div className="grid grid-cols-5 gap-2 text-gray-600 pb-1 border-b border-gray-800 sticky top-0 bg-gray-900">
+            <div className="grid grid-cols-6 gap-2 text-gray-600 pb-1 border-b border-gray-800 sticky top-0 bg-gray-900">
               <span>Epoch</span>
               <span>Train loss</span>
               <span>Val loss</span>
               <span>Val Δ</span>
+              <span>LR</span>
               <span>Guard</span>
             </div>
 
@@ -320,13 +330,14 @@ export default function TrainPage() {
               return (
                 <div
                   key={ep.epoch}
-                  className={`grid grid-cols-5 gap-2 py-0.5 px-1 rounded
+                  className={`grid grid-cols-6 gap-2 py-0.5 px-1 rounded
                     ${isLast ? "bg-gray-800 text-gray-100" : "text-gray-400"}`}
                 >
                   <span>{ep.epoch}</span>
                   <span className="text-indigo-400">{ep.train_loss?.toFixed(6)}</span>
                   <span className="text-amber-400">{ep.val_loss?.toFixed(6)}</span>
                   <span><DeltaBadge value={valDelta} /></span>
+                  <span className="text-green-400">{ep.lr != null ? ep.lr.toExponential(2) : "—"}</span>
                   <span className={guardColor(ep.guard_status)}>{ep.guard_status || "ok"}</span>
                 </div>
               );

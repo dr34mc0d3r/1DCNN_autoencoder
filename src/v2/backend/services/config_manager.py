@@ -40,6 +40,24 @@ _DEFAULTS: dict[str, Any] = {
     "guard_oscillation_window": 5,
     "guard_oscillation_cv": 0.4,
     "guard_collapse_threshold": 1e-6,
+    # LR scheduler
+    "scheduler": "none",
+    "scheduler_plateau_factor":   0.5,
+    "scheduler_plateau_patience": 5,
+    "scheduler_plateau_min_lr":   1e-7,
+    "scheduler_step_size":        10,
+    "scheduler_step_gamma":       0.5,
+    "scheduler_multistep_milestones": "20,40,60",
+    "scheduler_multistep_gamma":  0.5,
+    "scheduler_cosine_t_max":     50,
+    "scheduler_cosine_eta_min":   1e-7,
+    "scheduler_exp_gamma":        0.95,
+    "scheduler_warmup_epochs":    5,
+    "scheduler_warmup_start_factor": 0.1,
+    "scheduler_cyclic_base_lr":   1e-5,
+    "scheduler_cyclic_max_lr":    1e-2,
+    "scheduler_cyclic_step_size": 10,
+    "scheduler_cyclic_mode":      "triangular2",
 }
 
 _FEATURE_COLS = [

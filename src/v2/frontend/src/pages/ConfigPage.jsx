@@ -113,6 +113,108 @@ const INFO = {
     values: "0.0000001–0.001. Typical: 0.000001 (1e-6). Rarely triggered in normal training.",
     affects: "Train page — would appear as the val loss line hitting zero on the chart. Effectively a sanity check.",
   },
+  scheduler: {
+    label: "LR Scheduler",
+    what: "Automatically adjusts the learning rate during training. Each option uses a different decay or cycling strategy.",
+    values: "none (fixed LR), plateau, step, multistep, cosine, exponential, warmup, cyclic.",
+    affects: "Train page LR card and chart. Final LR is saved to the model bundle.",
+  },
+  scheduler_plateau_factor: {
+    label: "Reduce Factor",
+    what: "Multiplicative factor applied to the LR when validation loss plateaus.",
+    values: "0.1–0.9. 0.5 halves the LR each time. Smaller = more aggressive reduction.",
+    affects: "How much the LR drops each time the scheduler fires.",
+  },
+  scheduler_plateau_patience: {
+    label: "Patience (epochs)",
+    what: "Consecutive epochs with no val loss improvement before the LR is reduced.",
+    values: "Positive integer. Typical: 3–10. Independent of the Training Guard patience.",
+    affects: "How long the scheduler waits before stepping down.",
+  },
+  scheduler_plateau_min_lr: {
+    label: "Min LR",
+    what: "Floor below which the LR will not be reduced further.",
+    values: "Small positive float. Typical: 1e-7.",
+    affects: "Prevents the LR from collapsing to zero.",
+  },
+  scheduler_step_size: {
+    label: "Step Size (epochs)",
+    what: "LR is multiplied by gamma every step_size epochs.",
+    values: "Positive integer. Typical: 10–30.",
+    affects: "Frequency of LR decay steps — visible as regular drops on the Train page LR line.",
+  },
+  scheduler_step_gamma: {
+    label: "Gamma",
+    what: "Multiplicative factor applied to the LR at each step.",
+    values: "0.1–0.99. 0.5 halves the LR each step.",
+    affects: "Size of each decay step.",
+  },
+  scheduler_multistep_milestones: {
+    label: "Milestones",
+    what: "Comma-separated list of epoch numbers at which the LR is multiplied by gamma.",
+    values: "e.g. '20,40,60' — fires at epoch 20, 40, and 60.",
+    affects: "Specific epochs where LR drops are visible on the Train page LR line.",
+  },
+  scheduler_multistep_gamma: {
+    label: "Gamma",
+    what: "Multiplicative factor applied to the LR at each milestone.",
+    values: "0.1–0.99. 0.1 reduces LR to 10% at each milestone.",
+    affects: "Size of each scheduled drop.",
+  },
+  scheduler_cosine_t_max: {
+    label: "T Max (epochs)",
+    what: "Half-period of the cosine annealing cycle. LR decays from its initial value to eta_min over T_max epochs.",
+    values: "Positive integer. Set to your expected total epochs for a single smooth decay.",
+    affects: "Shape of the cosine LR curve — visible on the Train page.",
+  },
+  scheduler_cosine_eta_min: {
+    label: "Min LR",
+    what: "Minimum LR value at the trough of the cosine curve.",
+    values: "Small positive float. Typical: 1e-7.",
+    affects: "The floor of the cosine decay.",
+  },
+  scheduler_exp_gamma: {
+    label: "Gamma (per epoch)",
+    what: "LR is multiplied by gamma every epoch, compounding geometrically.",
+    values: "0.8–0.99. 0.95 decays by 5% per epoch. Lower = faster decay.",
+    affects: "Rate of exponential LR decay — visible as a smooth curve on the Train page.",
+  },
+  scheduler_warmup_epochs: {
+    label: "Warmup Epochs",
+    what: "Number of epochs over which the LR ramps linearly from start_factor × lr up to lr.",
+    values: "Positive integer. Typical: 3–10. After this many epochs, LR stays at its initial value.",
+    affects: "Prevents large gradient updates in the first few epochs, useful when starting from random weights.",
+  },
+  scheduler_warmup_start_factor: {
+    label: "Start Factor",
+    what: "Fraction of the initial LR to start from. LR ramps from start_factor × lr to lr over warmup_epochs.",
+    values: "0.01–0.5. 0.1 means warmup starts at 10% of the configured LR.",
+    affects: "Initial LR at the start of training — lower start factor = gentler warmup.",
+  },
+  scheduler_cyclic_base_lr: {
+    label: "Base LR (min)",
+    what: "Lower boundary of the LR cycle. The LR oscillates between base_lr and max_lr.",
+    values: "Positive float, must be less than max_lr. Typical: 1e-5.",
+    affects: "Trough of each cycle — visible on the Train page LR right axis.",
+  },
+  scheduler_cyclic_max_lr: {
+    label: "Max LR",
+    what: "Upper boundary of the LR cycle.",
+    values: "Positive float, must be greater than base_lr. Typical: 1e-2.",
+    affects: "Peak of each cycle. If too high, may cause oscillating loss.",
+  },
+  scheduler_cyclic_step_size: {
+    label: "Step Size (epochs up)",
+    what: "Number of epochs in the ascending half of one cycle. Full cycle = 2 × step_size.",
+    values: "Positive integer. Typical: 5–20. A full triangular cycle is 2 × step_size epochs.",
+    affects: "Width of each LR triangle on the Train page chart.",
+  },
+  scheduler_cyclic_mode: {
+    label: "Cycle Mode",
+    what: "Controls how the LR boundaries change across cycles. triangular: constant bounds. triangular2: max_lr halves each cycle. exp_range: bounds decay exponentially.",
+    values: "triangular, triangular2, exp_range.",
+    affects: "Whether peaks diminish over time — visible on the Train page LR line.",
+  },
 };
 
 // ── Presets ────────────────────────────────────────────────────────────────────
@@ -223,6 +325,40 @@ const SECTIONS = [
   },
 ];
 
+// ── Scheduler field definitions ───────────────────────────────────────────────
+
+const SCHEDULER_FIELDS = {
+  plateau: [
+    { key: "scheduler_plateau_factor",   label: "Reduce Factor",    type: "number" },
+    { key: "scheduler_plateau_patience", label: "Patience (epochs)", type: "number" },
+    { key: "scheduler_plateau_min_lr",   label: "Min LR",           type: "number" },
+  ],
+  step: [
+    { key: "scheduler_step_size",  label: "Step Size (epochs)", type: "number" },
+    { key: "scheduler_step_gamma", label: "Gamma",              type: "number" },
+  ],
+  multistep: [
+    { key: "scheduler_multistep_milestones", label: "Milestones (comma-sep epochs)", type: "text" },
+    { key: "scheduler_multistep_gamma",      label: "Gamma",                         type: "number" },
+  ],
+  cosine: [
+    { key: "scheduler_cosine_t_max",   label: "T Max (epochs)", type: "number" },
+    { key: "scheduler_cosine_eta_min", label: "Min LR",         type: "number" },
+  ],
+  exponential: [
+    { key: "scheduler_exp_gamma", label: "Gamma (per epoch)", type: "number" },
+  ],
+  warmup: [
+    { key: "scheduler_warmup_epochs",       label: "Warmup Epochs", type: "number" },
+    { key: "scheduler_warmup_start_factor", label: "Start Factor",  type: "number" },
+  ],
+  cyclic: [
+    { key: "scheduler_cyclic_base_lr",   label: "Base LR (min)",         type: "number" },
+    { key: "scheduler_cyclic_max_lr",    label: "Max LR",                type: "number" },
+    { key: "scheduler_cyclic_step_size", label: "Step Size (epochs up)", type: "number" },
+  ],
+};
+
 // ── Component ──────────────────────────────────────────────────────────────────
 
 export default function ConfigPage() {
@@ -326,6 +462,79 @@ export default function ConfigPage() {
           </div>
         </section>
       ))}
+
+      {/* ── LR Scheduler ── */}
+      <section className="mb-6">
+        <h2 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3 border-b border-gray-800 pb-1">
+          LR Scheduler
+        </h2>
+
+        {/* Scheduler type selector */}
+        <div className="grid grid-cols-2 gap-4 mb-4">
+          <div className="flex flex-col gap-1">
+            <label className="text-xs text-gray-400 flex items-center">
+              Scheduler Type
+              <FieldInfo info={INFO.scheduler} />
+            </label>
+            <select
+              value={cfg.scheduler ?? "none"}
+              onChange={(e) => handleChange("scheduler", e.target.value)}
+              className="bg-gray-800 border border-gray-700 rounded px-3 py-2 text-sm focus:outline-none focus:border-indigo-500"
+            >
+              <option value="none">None (fixed LR)</option>
+              <option value="plateau">ReduceLROnPlateau</option>
+              <option value="step">Step Decay</option>
+              <option value="multistep">Multi-Step</option>
+              <option value="cosine">Cosine Annealing</option>
+              <option value="exponential">Exponential Decay</option>
+              <option value="warmup">Linear Warmup</option>
+              <option value="cyclic">Cyclic LR</option>
+            </select>
+          </div>
+        </div>
+
+        {/* Per-scheduler param fields */}
+        {SCHEDULER_FIELDS[cfg.scheduler] && (
+          <div className="grid grid-cols-2 gap-4">
+            {SCHEDULER_FIELDS[cfg.scheduler].map(({ key, label, type }) => (
+              <div key={key} className="flex flex-col gap-1">
+                <label className="text-xs text-gray-400 flex items-center">
+                  {label}
+                  <FieldInfo info={INFO[key]} />
+                </label>
+                <input
+                  type={type}
+                  value={cfg[key] ?? ""}
+                  step={type === "number" ? "any" : undefined}
+                  onChange={(e) =>
+                    handleChange(key, type === "number" ? Number(e.target.value) : e.target.value)
+                  }
+                  className="bg-gray-800 border border-gray-700 rounded px-3 py-2 text-sm focus:outline-none focus:border-indigo-500"
+                />
+              </div>
+            ))}
+
+            {/* Cyclic mode select (only for cyclic) */}
+            {cfg.scheduler === "cyclic" && (
+              <div className="flex flex-col gap-1">
+                <label className="text-xs text-gray-400 flex items-center">
+                  Cycle Mode
+                  <FieldInfo info={INFO.scheduler_cyclic_mode} />
+                </label>
+                <select
+                  value={cfg.scheduler_cyclic_mode ?? "triangular2"}
+                  onChange={(e) => handleChange("scheduler_cyclic_mode", e.target.value)}
+                  className="bg-gray-800 border border-gray-700 rounded px-3 py-2 text-sm focus:outline-none focus:border-indigo-500"
+                >
+                  <option value="triangular">Triangular (constant bounds)</option>
+                  <option value="triangular2">Triangular2 (halving peaks)</option>
+                  <option value="exp_range">Exp Range (exponential decay)</option>
+                </select>
+              </div>
+            )}
+          </div>
+        )}
+      </section>
 
       <div className="flex items-center gap-4 mt-2">
         <button
