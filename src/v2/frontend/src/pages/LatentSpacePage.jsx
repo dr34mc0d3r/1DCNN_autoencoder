@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import {
-  ScatterChart, Scatter, XAxis, YAxis, Tooltip, Cell, ResponsiveContainer,
+  ScatterChart, Scatter, XAxis, YAxis, ZAxis, Tooltip, Cell, ResponsiveContainer,
   LineChart, Line, CartesianGrid, Legend,
 } from "recharts";
 import { api } from "../api.js";
@@ -285,10 +285,44 @@ export default function LatentSpacePage() {
         </div>
       )}
 
-      {/* t-SNE Scatter */}
+      {/* t-SNE Cluster View */}
       {scatter.length > 0 && (
         <div className="bg-gray-900 rounded-xl p-4 mb-6">
-          <p className="text-sm text-gray-400 mb-1">t-SNE Projection</p>
+          <p className="text-sm text-gray-400 mb-1">t-SNE Projection — Cluster View</p>
+          <p className="text-xs text-gray-600 mb-3">Small dots + transparency; best for seeing cluster separation.</p>
+          <ResponsiveContainer width="100%" height={480}>
+            <ScatterChart margin={{ top: 10, right: 20, bottom: 20, left: 10 }}>
+              <CartesianGrid strokeDasharray="3 3" stroke="#1f2937" />
+              <XAxis
+                dataKey="x" type="number" name="t-SNE 0"
+                stroke="#6B7280" tick={{ fontSize: 11 }}
+                domain={[d => Math.floor(d - 5), d => Math.ceil(d + 5)]}
+              />
+              <YAxis
+                dataKey="y" type="number" name="t-SNE 1"
+                stroke="#6B7280" tick={{ fontSize: 11 }}
+                domain={[d => Math.floor(d - 5), d => Math.ceil(d + 5)]}
+              />
+              <ZAxis range={[10, 10]} />
+              <Tooltip
+                cursor={{ strokeDasharray: "3 3" }}
+                contentStyle={{ backgroundColor: "#111827", border: "none" }}
+                formatter={(v) => v.toFixed(2)}
+              />
+              <Scatter data={scatter} fillOpacity={0.65}>
+                {scatter.map((p, i) => (
+                  <Cell key={i} fill={COLORS[p.label % COLORS.length]} />
+                ))}
+              </Scatter>
+            </ScatterChart>
+          </ResponsiveContainer>
+        </div>
+      )}
+
+      {/* t-SNE Density View */}
+      {scatter.length > 0 && (
+        <div className="bg-gray-900 rounded-xl p-4 mb-6">
+          <p className="text-sm text-gray-400 mb-1">t-SNE Projection — Density View</p>
           <p className="text-xs text-gray-600 mb-3">Up to 5 000 windows sampled. Each point is one window; colour = cluster.</p>
           <ResponsiveContainer width="100%" height={340}>
             <ScatterChart>
