@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import {
-  LineChart, Line, XAxis, YAxis, Tooltip, Legend, CartesianGrid, ResponsiveContainer, Brush,
+  LineChart, Line, XAxis, YAxis, Tooltip, Legend, CartesianGrid, ResponsiveContainer,
 } from "recharts";
 import { api } from "../api.js";
 import { ws } from "../ws.js";
@@ -150,8 +150,6 @@ export default function TrainPage() {
   const [guard, setGuard]     = useState("");
   const [stopReason, setStop] = useState("");
   const [error, setError]     = useState("");
-  const [brushStart, setBrushStart] = useState(0);
-  const [brushEnd, setBrushEnd]     = useState(0);
   const logRef = useRef(null);
 
   useEffect(() => {
@@ -183,27 +181,8 @@ export default function TrainPage() {
     }
   }, [epochs.length]);
 
-  // Extend brush end as new epochs arrive during live training (if already at end)
-  useEffect(() => {
-    if (epochs.length === 0) {
-      setBrushStart(0);
-      setBrushEnd(0);
-    } else {
-      setBrushEnd(prev => (prev >= epochs.length - 2 ? epochs.length - 1 : prev));
-    }
-  }, [epochs.length]);
-
-  const isZoomed = epochs.length > 1 && (brushStart > 0 || brushEnd < epochs.length - 1);
-
-  function resetBrush() {
-    setBrushStart(0);
-    setBrushEnd(epochs.length - 1);
-  }
-
   async function handleStart() {
     setEpochs([]);
-    setBrushStart(0);
-    setBrushEnd(0);
     setStop("");
     setError("");
     setStatus("running");
@@ -303,40 +282,18 @@ export default function TrainPage() {
 
       {/* ── Loss curves ── */}
       <div className="bg-gray-900 rounded-xl p-4 mb-6">
-        <div className="flex items-center justify-between mb-3">
-          <p className="text-sm text-gray-400">Loss Curves</p>
-          {isZoomed && (
-            <button
-              onClick={resetBrush}
-              className="text-xs text-gray-500 hover:text-gray-300 transition-colors"
-            >
-              Reset zoom
-            </button>
-          )}
-        </div>
-        <ResponsiveContainer width="100%" height={300}>
+        <p className="text-sm text-gray-400 mb-3">Loss Curves</p>
+        <ResponsiveContainer width="100%" height={260}>
           <LineChart data={epochs}>
             <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
             <XAxis dataKey="epoch" stroke="#6B7280" tick={{ fontSize: 11 }} />
             <YAxis stroke="#6B7280" tick={{ fontSize: 11 }} />
             <Tooltip contentStyle={{ backgroundColor: "#111827", border: "none" }} />
             <Legend />
-            <Line type="monotone" dataKey="train_loss" stroke="#6366f1" dot={false} name="Train" isAnimationActive={false} />
-            <Line type="monotone" dataKey="val_loss"   stroke="#f59e0b" dot={false} name="Val"   isAnimationActive={false} />
-            <Brush
-              dataKey="epoch"
-              startIndex={brushStart}
-              endIndex={Math.max(brushStart, Math.min(brushEnd, Math.max(0, epochs.length - 1)))}
-              onChange={({ startIndex, endIndex }) => { setBrushStart(startIndex); setBrushEnd(endIndex); }}
-              height={28}
-              stroke="#4B5563"
-              fill="#111827"
-              travellerWidth={10}
-              tickFormatter={() => ""}
-            />
+            <Line type="monotone" dataKey="train_loss" stroke="#6366f1" dot={false} name="Train" />
+            <Line type="monotone" dataKey="val_loss"   stroke="#f59e0b" dot={false} name="Val" />
           </LineChart>
         </ResponsiveContainer>
-        <p className="text-xs text-gray-700 mt-1 text-center">drag the handles on the slider to zoom · drag the selection to pan</p>
       </div>
 
       {/* ── Epoch log ── */}
