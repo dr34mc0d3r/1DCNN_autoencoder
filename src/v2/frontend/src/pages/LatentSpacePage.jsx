@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   ScatterChart, Scatter, XAxis, YAxis, ZAxis, Tooltip, Cell, ResponsiveContainer,
   LineChart, Line, CartesianGrid, Legend,
@@ -6,6 +6,20 @@ import {
 import { api } from "../api.js";
 
 const COLORS = ["#6366f1","#f59e0b","#10b981","#ef4444","#3b82f6","#8b5cf6","#ec4899","#14b8a6"];
+
+function CentroidMarker({ cx, cy, payload }) {
+  if (cx == null || cy == null) return null;
+  const fill = COLORS[payload.label % COLORS.length];
+  const r = 7;
+  return (
+    <g>
+      <line x1={cx - r - 5} y1={cy} x2={cx + r + 5} y2={cy} stroke="white" strokeWidth={1.5} />
+      <line x1={cx} y1={cy - r - 5} x2={cx} y2={cy + r + 5} stroke="white" strokeWidth={1.5} />
+      <circle cx={cx} cy={cy} r={r + 2} fill="white" />
+      <circle cx={cx} cy={cy} r={r} fill={fill} />
+    </g>
+  );
+}
 
 function Spinner() {
   return (
@@ -172,6 +186,22 @@ export default function LatentSpacePage() {
 
   const stats = result ? clusterStats(result.labels, result.n_clusters) : [];
 
+  const scatterCentroids = useMemo(() => {
+    if (!scatter.length) return [];
+    const acc = {};
+    for (const p of scatter) {
+      if (!acc[p.label]) acc[p.label] = { x: 0, y: 0, n: 0 };
+      acc[p.label].x += p.x;
+      acc[p.label].y += p.y;
+      acc[p.label].n += 1;
+    }
+    return Object.entries(acc).map(([label, v]) => ({
+      x: v.x / v.n,
+      y: v.y / v.n,
+      label: Number(label),
+    }));
+  }, [scatter]);
+
   return (
     <div>
       <h1 className="text-2xl font-bold mb-4">Latent Space</h1>
@@ -314,6 +344,7 @@ export default function LatentSpacePage() {
                   <Cell key={i} fill={COLORS[p.label % COLORS.length]} />
                 ))}
               </Scatter>
+              <Scatter data={scatterCentroids} shape={<CentroidMarker />} />
             </ScatterChart>
           </ResponsiveContainer>
         </div>
