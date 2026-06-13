@@ -1,5 +1,28 @@
 import { useEffect, useRef, useState } from "react";
 import { api } from "../api.js";
+import FieldInfo from "../components/FieldInfo.jsx";
+
+// ── Field info ─────────────────────────────────────────────────────────────────
+
+const COUNT_INFO = {
+  label: "Window Count",
+  what: "The number of training windows to sample and display. Windows are drawn randomly from the full training set each time you click Load Windows.",
+  values: "1–5000. Use 50–200 for a quick visual check; use 500–2000 for a more representative sample. Larger counts take longer to render, especially in Contact Sheet view.",
+  affects: "Only affects what you see on this page — does not change the model or training data. If the page feels slow, reduce this number.",
+};
+
+// ── Spinner ────────────────────────────────────────────────────────────────────
+
+function Spinner({ className = "h-4 w-4" }) {
+  return (
+    <svg className={`animate-spin ${className}`} viewBox="0 0 24 24" fill="none">
+      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+    </svg>
+  );
+}
+
+// ── Guide (collapsible) ────────────────────────────────────────────────────────
 
 function WindowsGuide() {
   const [open, setOpen] = useState(false);
@@ -56,6 +79,8 @@ function WindowsGuide() {
   );
 }
 
+// ── Canvas renderer ────────────────────────────────────────────────────────────
+
 function WindowCanvas({ window: win, size = 4 }) {
   const ref = useRef(null);
 
@@ -88,12 +113,17 @@ function WindowCanvas({ window: win, size = 4 }) {
   return <canvas ref={drawOnMount} style={{ imageRendering: "pixelated" }} />;
 }
 
+// ── Page ───────────────────────────────────────────────────────────────────────
+
+const VIEW_LABELS = { contact: "Contact Sheet", heatmap: "Heatmap Strip", thumbnail: "Thumbnail Grid" };
+
 export default function WindowsPage() {
-  const [activeModel, setActiveModel] = useState(null);
-  const [data, setData]       = useState(null);
-  const [loading, setLoading] = useState(false);
-  const [count, setCount]     = useState(200);
-  const [view, setView]       = useState("contact");
+  const [activeModel, setActiveModel]     = useState(null);
+  const [data, setData]                   = useState(null);
+  const [loading, setLoading]             = useState(false);
+  const [count, setCount]                 = useState(200);
+  const [view, setView]                   = useState("contact");
+  const [viewSwitching, setViewSwitching] = useState(null);
 
   useEffect(() => {
     api.getActiveModel().then(m => setActiveModel(Object.keys(m).length ? m : null)).catch(() => {});
@@ -111,11 +141,25 @@ export default function WindowsPage() {
     }
   }
 
+  function handleViewChange(v) {
+    if (v === view) return;
+    setViewSwitching(v);
+    setView(v);
+    setTimeout(() => setViewSwitching(null), 400);
+  }
+
   return (
     <div>
-      <h1 className="text-2xl font-bold mb-4">Windows</h1>
+      <h1 className="text-2xl font-bold mb-1">Windows</h1>
+      <p className="text-sm text-gray-400 mb-6">
+        Visualise the raw training data as the model sees it. Each window is a short clip of bar data
+        encoded as a greyscale image — rows are bars, columns are technical indicator features.
+        Use this page to inspect data quality, spot unusual market conditions, and build intuition
+        for what patterns the model is learning from before moving to the Latent Space page.
+      </p>
 
-      <div className="flex items-center gap-2 mb-5 bg-gray-900 border border-gray-800 rounded-lg px-3 py-2 text-xs w-fit">
+      {/* Active model badge */}
+      <div className="flex items-center gap-2 mb-6 bg-gray-900 border border-gray-800 rounded-lg px-3 py-2 text-xs w-fit">
         <span className="text-gray-600 uppercase tracking-wider font-semibold">Model</span>
         {activeModel ? (
           <span className="text-indigo-300 font-mono">src/v2/backend/models/{activeModel.name}/</span>
@@ -124,33 +168,53 @@ export default function WindowsPage() {
         )}
       </div>
 
-      <div className="flex gap-3 items-center mb-6">
-        <input
-          type="number"
-          value={count}
-          min={1}
-          max={5000}
-          onChange={(e) => setCount(Number(e.target.value))}
-          className="bg-gray-800 border border-gray-700 rounded px-3 py-2 text-sm w-28"
-        />
+      {/* Controls */}
+      <div className="flex flex-wrap gap-4 items-end mb-6">
+        {/* Count input with label + FieldInfo */}
+        <div className="flex flex-col gap-1">
+          <label className="text-xs text-gray-400 flex items-center gap-0.5">
+            Window Count
+            <FieldInfo info={COUNT_INFO} />
+          </label>
+          <input
+            type="number"
+            value={count}
+            min={1}
+            max={5000}
+            onChange={(e) => setCount(Number(e.target.value))}
+            className="bg-gray-800 border border-gray-700 rounded px-3 py-2 text-sm w-28 focus:outline-none focus:border-indigo-500"
+          />
+        </div>
+
+        {/* Load button */}
         <button
           onClick={handleLoad}
           disabled={loading}
-          className="bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 px-5 py-2 rounded text-sm font-semibold"
+          className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 px-5 py-2 rounded text-sm font-semibold"
         >
+          {loading && <Spinner />}
           {loading ? "Loading…" : "Load Windows"}
         </button>
+
+        {/* View toggle buttons */}
         {data && (
           <div className="flex gap-2">
-            {["contact", "heatmap", "thumbnail"].map((v) => (
-              <button
-                key={v}
-                onClick={() => setView(v)}
-                className={`px-3 py-1 rounded text-xs ${view === v ? "bg-indigo-700" : "bg-gray-700"}`}
-              >
-                {v}
-              </button>
-            ))}
+            {["contact", "heatmap", "thumbnail"].map((v) => {
+              const isActive = view === v;
+              const isBusy   = viewSwitching === v;
+              return (
+                <button
+                  key={v}
+                  onClick={() => handleViewChange(v)}
+                  disabled={isBusy}
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded text-xs font-medium transition-colors
+                    ${isActive ? "bg-indigo-700 text-white" : "bg-gray-700 hover:bg-gray-600 text-gray-300"}`}
+                >
+                  {isBusy && <Spinner className="h-3 w-3" />}
+                  {VIEW_LABELS[v]}
+                </button>
+              );
+            })}
           </div>
         )}
       </div>
@@ -163,7 +227,6 @@ export default function WindowsPage() {
             {data.n_windows} windows × {data.window_size} bars × {data.n_features} features
           </p>
 
-          {/* Panel A — Contact Sheet */}
           {view === "contact" && (
             <div className="flex flex-wrap gap-1">
               {data.windows.map((win, i) => (
@@ -172,7 +235,6 @@ export default function WindowsPage() {
             </div>
           )}
 
-          {/* Panel B — Heatmap Strip: all windows concatenated horizontally */}
           {view === "heatmap" && (
             <div className="overflow-x-auto">
               <div className="flex gap-0">
@@ -183,7 +245,6 @@ export default function WindowsPage() {
             </div>
           )}
 
-          {/* Panel C — Thumbnail Grid: 10×10 px each */}
           {view === "thumbnail" && (
             <div className="flex flex-wrap gap-0">
               {data.windows.map((win, i) => (
