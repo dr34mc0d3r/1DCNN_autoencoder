@@ -17,11 +17,15 @@ _state: dict = {"state": "idle", "results": [], "error": None}
 _cancel_event: asyncio.Event | None = None
 
 
+_SPEED_DELAYS: dict[str, float] = {"full": 0.0, "1s": 1.0, "5s": 5.0}
+
+
 class InferRequest(BaseModel):
     symbol: Optional[str] = None
     timeframe: Optional[str] = None
     infer_start: Optional[str] = None
     infer_end: Optional[str] = None
+    speed: str = "full"
 
 
 async def _run_inference(req: InferRequest) -> None:
@@ -29,12 +33,14 @@ async def _run_inference(req: InferRequest) -> None:
     _cancel_event = asyncio.Event()
     _state.update({"state": "running", "results": [], "error": None})
 
+    step_delay = _SPEED_DELAYS.get(req.speed, 0.0)
     try:
         async for result in walk_forward(
             symbol=req.symbol,
             timeframe=req.timeframe,
             infer_start=req.infer_start,
             infer_end=req.infer_end,
+            step_delay=step_delay,
         ):
             if _cancel_event and _cancel_event.is_set():
                 break

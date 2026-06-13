@@ -23,6 +23,7 @@ async def walk_forward(
     timeframe: str | None = None,
     infer_start: str | None = None,
     infer_end: str | None = None,
+    step_delay: float = 0.0,
 ) -> AsyncGenerator[dict, None]:
     """
     Yield one result dict per bar in [infer_start, infer_end].
@@ -94,7 +95,7 @@ async def walk_forward(
             .tolist()
         )
 
-        await asyncio.sleep(0)  # yield control so stop requests are processed between bars
+        await asyncio.sleep(step_delay)  # yield control; non-zero delays allow bar-by-bar viewing
         yield {
             "timestamp":     ts,
             "mse":           mse,
