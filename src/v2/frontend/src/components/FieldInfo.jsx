@@ -19,7 +19,7 @@ export default function FieldInfo({ info }) {
         aria-label={`Info for ${info.label}`}
         onClick={() => setOpen(true)}
         className="ml-1.5 inline-flex items-center justify-center w-4 h-4 rounded-full
-                   text-gray-500 hover:text-indigo-400 hover:bg-gray-700
+                   border border-gray-600 text-gray-400 hover:border-indigo-400 hover:text-indigo-400
                    text-[10px] font-bold transition-colors leading-none"
         style={{ verticalAlign: "middle" }}
       >
