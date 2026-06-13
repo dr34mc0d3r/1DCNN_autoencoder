@@ -500,6 +500,144 @@ const SECTIONS = [
   },
 ];
 
+// ── Scheduler descriptions ─────────────────────────────────────────────────────
+
+const SCHEDULER_DESC = {
+  none: {
+    title: "Fixed LR",
+    desc: "The learning rate stays constant for every epoch. Simple and predictable — a good baseline until you understand your loss curves.",
+    svg: (
+      <svg viewBox="0 0 220 60" className="w-full">
+        <line x1="18" y1="8" x2="18" y2="52" stroke="#4b5563" strokeWidth="1"/>
+        <line x1="18" y1="52" x2="208" y2="52" stroke="#4b5563" strokeWidth="1"/>
+        <line x1="18" y1="28" x2="200" y2="28" stroke="#4ade80" strokeWidth="2" strokeLinecap="round"/>
+        <text x="20" y="8" fontSize="8" fill="#4b5563">LR</text>
+        <text x="100" y="48" textAnchor="middle" fontSize="8" fill="#4b5563">epochs →</text>
+      </svg>
+    ),
+  },
+  plateau: {
+    title: "ReduceLROnPlateau",
+    desc: "Monitors val loss and multiplies the LR by a factor whenever no improvement is seen for N epochs. Reactive — fires only when training stalls.",
+    svg: (
+      <svg viewBox="0 0 220 60" className="w-full">
+        <line x1="18" y1="8" x2="18" y2="52" stroke="#4b5563" strokeWidth="1"/>
+        <line x1="18" y1="52" x2="208" y2="52" stroke="#4b5563" strokeWidth="1"/>
+        <polyline fill="none" strokeLinecap="round" strokeLinejoin="round"
+          points="18,18 75,18 75,28 120,28 120,36 160,36 160,42 200,42"
+          stroke="#4ade80" strokeWidth="2"/>
+        <text x="20" y="8" fontSize="8" fill="#4b5563">LR</text>
+        <text x="100" y="48" textAnchor="middle" fontSize="8" fill="#4b5563">epochs →</text>
+      </svg>
+    ),
+  },
+  step: {
+    title: "Step Decay",
+    desc: "Multiplies the LR by gamma every step_size epochs on a fixed schedule, regardless of val loss. Predictable staircase drops.",
+    svg: (
+      <svg viewBox="0 0 220 60" className="w-full">
+        <line x1="18" y1="8" x2="18" y2="52" stroke="#4b5563" strokeWidth="1"/>
+        <line x1="18" y1="52" x2="208" y2="52" stroke="#4b5563" strokeWidth="1"/>
+        <polyline fill="none" strokeLinecap="round" strokeLinejoin="round"
+          points="18,18 68,18 68,27 118,27 118,36 168,36 168,43 200,43"
+          stroke="#4ade80" strokeWidth="2"/>
+        <line x1="68"  y1="50" x2="68"  y2="52" stroke="#4b5563" strokeWidth="1"/>
+        <line x1="118" y1="50" x2="118" y2="52" stroke="#4b5563" strokeWidth="1"/>
+        <line x1="168" y1="50" x2="168" y2="52" stroke="#4b5563" strokeWidth="1"/>
+        <text x="20" y="8" fontSize="8" fill="#4b5563">LR</text>
+        <text x="100" y="48" textAnchor="middle" fontSize="8" fill="#4b5563">epochs →</text>
+      </svg>
+    ),
+  },
+  multistep: {
+    title: "Multi-Step",
+    desc: "Same as Step Decay but drops fire at specific epoch milestones you choose (e.g. 20, 40, 60), giving fine control over when each reduction happens.",
+    svg: (
+      <svg viewBox="0 0 220 60" className="w-full">
+        <line x1="18" y1="8" x2="18" y2="52" stroke="#4b5563" strokeWidth="1"/>
+        <line x1="18" y1="52" x2="208" y2="52" stroke="#4b5563" strokeWidth="1"/>
+        <polyline fill="none" strokeLinecap="round" strokeLinejoin="round"
+          points="18,18 58,18 58,27 98,27 98,36 158,36 158,43 200,43"
+          stroke="#4ade80" strokeWidth="2"/>
+        <line x1="58"  y1="50" x2="58"  y2="52" stroke="#6366f1" strokeWidth="1.5"/>
+        <line x1="98"  y1="50" x2="98"  y2="52" stroke="#6366f1" strokeWidth="1.5"/>
+        <line x1="158" y1="50" x2="158" y2="52" stroke="#6366f1" strokeWidth="1.5"/>
+        <text x="52"  y="58" fontSize="7" fill="#6366f1" textAnchor="middle">20</text>
+        <text x="98"  y="58" fontSize="7" fill="#6366f1" textAnchor="middle">40</text>
+        <text x="158" y="58" fontSize="7" fill="#6366f1" textAnchor="middle">60</text>
+        <text x="20" y="8" fontSize="8" fill="#4b5563">LR</text>
+      </svg>
+    ),
+  },
+  cosine: {
+    title: "Cosine Annealing",
+    desc: "Smoothly decays the LR along a cosine curve from the initial LR down to eta_min over T_max epochs. No sudden drops — the LR glides gradually toward zero.",
+    svg: (
+      <svg viewBox="0 0 220 60" className="w-full">
+        <line x1="18" y1="8" x2="18" y2="52" stroke="#4b5563" strokeWidth="1"/>
+        <line x1="18" y1="52" x2="208" y2="52" stroke="#4b5563" strokeWidth="1"/>
+        {/* cosine curve: y = 18 + 24*(1 - cos(pi*t)) / 2  where t goes 0→1 across x=18→200 */}
+        <path fill="none" strokeLinecap="round"
+          d="M18,18 C60,18 80,22 109,36 C138,48 160,48 200,48"
+          stroke="#4ade80" strokeWidth="2"/>
+        <text x="20" y="8" fontSize="8" fill="#4b5563">LR</text>
+        <text x="100" y="48" textAnchor="middle" fontSize="8" fill="#4b5563">epochs →</text>
+      </svg>
+    ),
+  },
+  exponential: {
+    title: "Exponential Decay",
+    desc: "Multiplies the LR by gamma every epoch, producing a smooth continuous exponential decay. Simple and aggressive — good when you want steady, uninterrupted reduction.",
+    svg: (
+      <svg viewBox="0 0 220 60" className="w-full">
+        <line x1="18" y1="8" x2="18" y2="52" stroke="#4b5563" strokeWidth="1"/>
+        <line x1="18" y1="52" x2="208" y2="52" stroke="#4b5563" strokeWidth="1"/>
+        <path fill="none" strokeLinecap="round"
+          d="M18,18 C40,18 60,22 90,32 C120,40 160,46 200,48"
+          stroke="#4ade80" strokeWidth="2"/>
+        <text x="20" y="8" fontSize="8" fill="#4b5563">LR</text>
+        <text x="100" y="48" textAnchor="middle" fontSize="8" fill="#4b5563">epochs →</text>
+      </svg>
+    ),
+  },
+  warmup: {
+    title: "Linear Warmup",
+    desc: "Ramps the LR linearly from a small fraction up to the full value over warmup_epochs, then holds steady. Prevents instability in early epochs before the model stabilises.",
+    svg: (
+      <svg viewBox="0 0 220 60" className="w-full">
+        <line x1="18" y1="8" x2="18" y2="52" stroke="#4b5563" strokeWidth="1"/>
+        <line x1="18" y1="52" x2="208" y2="52" stroke="#4b5563" strokeWidth="1"/>
+        <polyline fill="none" strokeLinecap="round" strokeLinejoin="round"
+          points="18,46 80,18 200,18"
+          stroke="#4ade80" strokeWidth="2"/>
+        <line x1="80" y1="16" x2="80" y2="52" stroke="#6366f1" strokeWidth="1" strokeDasharray="3,2"/>
+        <text x="82" y="30" fontSize="8" fill="#6366f1">warmup done</text>
+        <text x="20" y="8" fontSize="8" fill="#4b5563">LR</text>
+        <text x="100" y="48" textAnchor="middle" fontSize="8" fill="#4b5563">epochs →</text>
+      </svg>
+    ),
+  },
+  cyclic: {
+    title: "Cyclic LR",
+    desc: "Oscillates the LR between base_lr and max_lr on repeated cycles. The oscillation can help escape shallow local minima and explore the loss landscape more broadly.",
+    svg: (
+      <svg viewBox="0 0 220 60" className="w-full">
+        <line x1="18" y1="8" x2="18" y2="52" stroke="#4b5563" strokeWidth="1"/>
+        <line x1="18" y1="52" x2="208" y2="52" stroke="#4b5563" strokeWidth="1"/>
+        <line x1="18" y1="18" x2="208" y2="18" stroke="#4b5563" strokeWidth="1" strokeDasharray="3,3" opacity="0.5"/>
+        <line x1="18" y1="44" x2="208" y2="44" stroke="#4b5563" strokeWidth="1" strokeDasharray="3,3" opacity="0.5"/>
+        <polyline fill="none" strokeLinecap="round" strokeLinejoin="round"
+          points="18,44 58,18 98,44 138,18 178,44 208,30"
+          stroke="#4ade80" strokeWidth="2"/>
+        <text x="208" y="16" fontSize="7" fill="#4b5563" textAnchor="end">max_lr</text>
+        <text x="208" y="42" fontSize="7" fill="#4b5563" textAnchor="end">base_lr</text>
+        <text x="20" y="8" fontSize="8" fill="#4b5563">LR</text>
+        <text x="100" y="48" textAnchor="middle" fontSize="8" fill="#4b5563">epochs →</text>
+      </svg>
+    ),
+  },
+};
+
 // ── Scheduler field definitions ───────────────────────────────────────────────
 
 const SCHEDULER_FIELDS = {
@@ -667,6 +805,20 @@ export default function ConfigPage() {
             </select>
           </div>
         </div>
+
+        {/* Scheduler description card */}
+        {SCHEDULER_DESC[cfg.scheduler ?? "none"] && (() => {
+          const d = SCHEDULER_DESC[cfg.scheduler ?? "none"];
+          return (
+            <div className="mb-4 rounded-lg border border-gray-800 bg-gray-900 px-4 py-3 flex gap-4 items-start">
+              <div className="flex-1 min-w-0">
+                <p className="text-xs font-semibold text-green-400 mb-1">{d.title}</p>
+                <p className="text-xs text-gray-400 leading-relaxed">{d.desc}</p>
+              </div>
+              <div className="w-40 shrink-0">{d.svg}</div>
+            </div>
+          );
+        })()}
 
         {/* Per-scheduler param fields */}
         {SCHEDULER_FIELDS[cfg.scheduler] && (
