@@ -150,11 +150,7 @@ export default function TrainPage() {
   const [guard, setGuard]     = useState("");
   const [stopReason, setStop] = useState("");
   const [error, setError]     = useState("");
-  const [zoomRange, setZoomRange] = useState(null); // null = all; {start,end} = indices
-  const logRef           = useRef(null);
-  const chartRef         = useRef(null);
-  const zoomRangeRef     = useRef(null);
-  const dragState        = useRef(null); // {startX, range}
+  const logRef = useRef(null);
 
   useEffect(() => {
     api.getConfig()
@@ -184,64 +180,6 @@ export default function TrainPage() {
       logRef.current.scrollTop = logRef.current.scrollHeight;
     }
   }, [epochs.length]);
-
-  // Keep zoom ref in sync so wheel handler can read latest without re-binding
-  useEffect(() => { zoomRangeRef.current = zoomRange; }, [zoomRange]);
-
-  // Reset zoom when a new training run starts (epochs cleared)
-  useEffect(() => {
-    if (epochs.length === 0) setZoomRange(null);
-  }, [epochs.length]);
-
-  // Wheel zoom — non-passive so we can preventDefault
-  useEffect(() => {
-    const el = chartRef.current;
-    if (!el) return;
-    const handler = (e) => {
-      e.preventDefault();
-      const total = epochs.length;
-      if (total < 2) return;
-      const cur = zoomRangeRef.current ?? { start: 0, end: total - 1 };
-      const span = cur.end - cur.start;
-      const factor = e.deltaY < 0 ? 0.7 : 1.4; // scroll up = zoom in
-      const newSpan = Math.max(1, Math.min(total - 1, Math.round(span * factor)));
-      const mid = (cur.start + cur.end) / 2;
-      let s = Math.max(0, Math.round(mid - newSpan / 2));
-      let en = Math.min(total - 1, s + newSpan);
-      if (en - s < newSpan) s = Math.max(0, en - newSpan);
-      setZoomRange(newSpan >= total - 1 ? null : { start: s, end: en });
-    };
-    el.addEventListener("wheel", handler, { passive: false });
-    return () => el.removeEventListener("wheel", handler);
-  }, [epochs.length]); // re-bind only when data length changes
-
-  function chartMouseDown(e) {
-    if (e.button !== 0) return;
-    dragState.current = {
-      startX: e.clientX,
-      range: zoomRangeRef.current ?? { start: 0, end: epochs.length - 1 },
-    };
-  }
-
-  function chartMouseMove(e) {
-    if (!dragState.current) return;
-    const { startX, range } = dragState.current;
-    const dx = e.clientX - startX;
-    const containerW = chartRef.current?.offsetWidth ?? 600;
-    const span = range.end - range.start;
-    const pxPerEpoch = containerW / Math.max(span, 1);
-    const shift = Math.round(-dx / pxPerEpoch);
-    const total = epochs.length;
-    let s = Math.max(0, Math.min(total - 1 - span, range.start + shift));
-    setZoomRange({ start: s, end: s + span });
-  }
-
-  function chartMouseUp() { dragState.current = null; }
-
-  // Derived visible slice
-  const visibleEpochs = zoomRange
-    ? epochs.slice(zoomRange.start, zoomRange.end + 1)
-    : epochs;
 
   async function handleStart() {
     setEpochs([]);
@@ -344,39 +282,18 @@ export default function TrainPage() {
 
       {/* ── Loss curves ── */}
       <div className="bg-gray-900 rounded-xl p-4 mb-6">
-        <div className="flex items-center justify-between mb-3">
-          <p className="text-sm text-gray-400">Loss Curves</p>
-          {zoomRange && (
-            <button
-              onClick={() => setZoomRange(null)}
-              className="text-xs text-gray-500 hover:text-gray-300 transition-colors"
-            >
-              Reset zoom
-            </button>
-          )}
-        </div>
-        <div
-          ref={chartRef}
-          onMouseDown={chartMouseDown}
-          onMouseMove={chartMouseMove}
-          onMouseUp={chartMouseUp}
-          onMouseLeave={chartMouseUp}
-          onDoubleClick={() => setZoomRange(null)}
-          style={{ cursor: "grab", userSelect: "none" }}
-        >
-          <ResponsiveContainer width="100%" height={260}>
-            <LineChart data={visibleEpochs}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
-              <XAxis dataKey="epoch" stroke="#6B7280" tick={{ fontSize: 11 }} />
-              <YAxis stroke="#6B7280" tick={{ fontSize: 11 }} />
-              <Tooltip contentStyle={{ backgroundColor: "#111827", border: "none" }} />
-              <Legend />
-              <Line type="monotone" dataKey="train_loss" stroke="#6366f1" dot={false} name="Train" isAnimationActive={false} />
-              <Line type="monotone" dataKey="val_loss"   stroke="#f59e0b" dot={false} name="Val"   isAnimationActive={false} />
-            </LineChart>
-          </ResponsiveContainer>
-        </div>
-        <p className="text-xs text-gray-700 mt-1 text-center">scroll to zoom · drag to pan · dbl-click to reset</p>
+        <p className="text-sm text-gray-400 mb-3">Loss Curves</p>
+        <ResponsiveContainer width="100%" height={260}>
+          <LineChart data={epochs}>
+            <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
+            <XAxis dataKey="epoch" stroke="#6B7280" tick={{ fontSize: 11 }} />
+            <YAxis stroke="#6B7280" tick={{ fontSize: 11 }} />
+            <Tooltip contentStyle={{ backgroundColor: "#111827", border: "none" }} />
+            <Legend />
+            <Line type="monotone" dataKey="train_loss" stroke="#6366f1" dot={false} name="Train" />
+            <Line type="monotone" dataKey="val_loss"   stroke="#f59e0b" dot={false} name="Val" />
+          </LineChart>
+        </ResponsiveContainer>
       </div>
 
       {/* ── Epoch log ── */}
