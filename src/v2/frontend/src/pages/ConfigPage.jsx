@@ -2,6 +2,161 @@ import { useEffect, useState } from "react";
 import { api } from "../api.js";
 import FieldInfo from "../components/FieldInfo.jsx";
 
+// ── Guard SVG illustrations ────────────────────────────────────────────────────
+
+const GUARD_SVG = {
+  patience: (
+    <svg viewBox="0 0 240 106" className="w-full">
+      <line x1="22" y1="8"  x2="22"  y2="78" stroke="#4b5563" strokeWidth="1"/>
+      <line x1="22" y1="78" x2="215" y2="78" stroke="#4b5563" strokeWidth="1"/>
+      {/* val loss: steep descent → plateau */}
+      <polyline fill="none" strokeLinecap="round" strokeLinejoin="round"
+        points="22,10 45,20 68,35 88,55 100,65 115,66 130,64 145,66 160,64 175,66 190,64"
+        stroke="#fb923c" strokeWidth="2"/>
+      {/* stop marker */}
+      <line x1="190" y1="8" x2="190" y2="78" stroke="#f87171" strokeWidth="1.5" strokeDasharray="4,3"/>
+      {/* patience bracket */}
+      <line x1="100" y1="85" x2="190" y2="85" stroke="#9ca3af" strokeWidth="1"/>
+      <line x1="100" y1="82" x2="100" y2="88" stroke="#9ca3af" strokeWidth="1"/>
+      <line x1="190" y1="82" x2="190" y2="88" stroke="#9ca3af" strokeWidth="1"/>
+      <text x="145" y="100" textAnchor="middle" fontSize="9" fill="#9ca3af">patience epochs (no improvement)</text>
+      <text x="193" y="20" fontSize="9" fill="#f87171">STOP</text>
+      <text x="25"  y="17" fontSize="9" fill="#fb923c">val loss</text>
+    </svg>
+  ),
+
+  min_delta: (
+    <svg viewBox="0 0 240 106" className="w-full">
+      <line x1="22" y1="8"  x2="22"  y2="78" stroke="#4b5563" strokeWidth="1"/>
+      <line x1="22" y1="78" x2="215" y2="78" stroke="#4b5563" strokeWidth="1"/>
+      {/* min_delta band */}
+      <rect x="22" y="40" width="193" height="18" fill="#4b5563" opacity="0.45" rx="1"/>
+      {/* val loss: tiny fluctuations within the band */}
+      <polyline fill="none" strokeLinecap="round" strokeLinejoin="round"
+        points="22,50 42,48 62,52 82,47 102,51 122,48 142,52 162,47 182,51 202,48"
+        stroke="#fb923c" strokeWidth="2"/>
+      {/* band bracket */}
+      <line x1="218" y1="40" x2="218" y2="58" stroke="#6366f1" strokeWidth="1.5"/>
+      <line x1="215" y1="40" x2="221" y2="40" stroke="#6366f1" strokeWidth="1.5"/>
+      <line x1="215" y1="58" x2="221" y2="58" stroke="#6366f1" strokeWidth="1.5"/>
+      <text x="110" y="36" textAnchor="middle" fontSize="9" fill="#6366f1">min_delta zone</text>
+      <text x="25"  y="18" fontSize="9" fill="#fb923c">val loss</text>
+      <text x="22"  y="97" fontSize="8" fill="#9ca3af">changes within the band count as "no improvement"</text>
+    </svg>
+  ),
+
+  overfit_ratio: (
+    <svg viewBox="0 0 240 106" className="w-full">
+      <line x1="22" y1="8"  x2="22"  y2="78" stroke="#4b5563" strokeWidth="1"/>
+      <line x1="22" y1="78" x2="215" y2="78" stroke="#4b5563" strokeWidth="1"/>
+      {/* train loss: steady descent */}
+      <polyline fill="none" strokeLinecap="round" strokeLinejoin="round"
+        points="22,12 60,28 100,42 140,52 175,58 200,60"
+        stroke="#60a5fa" strokeWidth="2"/>
+      {/* val loss: descent then diverges up */}
+      <polyline fill="none" strokeLinecap="round" strokeLinejoin="round"
+        points="22,15 60,30 100,44 130,50 155,48 175,44 195,40 200,38"
+        stroke="#fb923c" strokeWidth="2"/>
+      {/* ratio bracket */}
+      <line x1="200" y1="38" x2="200" y2="60" stroke="#f87171" strokeWidth="1.5"/>
+      <line x1="197" y1="38" x2="203" y2="38" stroke="#f87171" strokeWidth="1.5"/>
+      <line x1="197" y1="60" x2="203" y2="60" stroke="#f87171" strokeWidth="1.5"/>
+      {/* stop line */}
+      <line x1="200" y1="8" x2="200" y2="78" stroke="#f87171" strokeWidth="1" strokeDasharray="4,3" opacity="0.7"/>
+      <text x="204" y="52" fontSize="9" fill="#f87171">ratio</text>
+      <text x="25"  y="18" fontSize="9" fill="#60a5fa">train</text>
+      <text x="25"  y="30" fontSize="9" fill="#fb923c">val</text>
+      <text x="168" y="20" fontSize="9" fill="#f87171">STOP</text>
+      <text x="110" y="97" textAnchor="middle" fontSize="8" fill="#9ca3af">val/train ratio grows as curves diverge</text>
+    </svg>
+  ),
+
+  explosion_factor: (
+    <svg viewBox="0 0 240 106" className="w-full">
+      <line x1="22" y1="8"  x2="22"  y2="78" stroke="#4b5563" strokeWidth="1"/>
+      <line x1="22" y1="78" x2="215" y2="78" stroke="#4b5563" strokeWidth="1"/>
+      {/* val loss: normal descent */}
+      <polyline fill="none" strokeLinecap="round" strokeLinejoin="round"
+        points="22,12 50,28 80,44 110,55 135,61 148,63"
+        stroke="#fb923c" strokeWidth="2"/>
+      {/* spike up then recovers */}
+      <polyline fill="none" strokeLinecap="round" strokeLinejoin="round"
+        points="148,63 153,10 158,63 175,64 200,65"
+        stroke="#fb923c" strokeWidth="2"/>
+      {/* spike annotation */}
+      <line x1="153" y1="10" x2="168" y2="18" stroke="#f87171" strokeWidth="1"/>
+      <text x="170" y="22" fontSize="9" fill="#f87171">×factor spike</text>
+      {/* stop line */}
+      <line x1="153" y1="8" x2="153" y2="78" stroke="#f87171" strokeWidth="1.5" strokeDasharray="4,3"/>
+      <text x="25"  y="18" fontSize="9" fill="#fb923c">val loss</text>
+      <text x="94"  y="73" textAnchor="middle" fontSize="9" fill="#f87171">STOP</text>
+      <text x="22"  y="97" fontSize="8" fill="#9ca3af">val loss jumped more than explosion_factor × previous epoch</text>
+    </svg>
+  ),
+
+  oscillation_window: (
+    <svg viewBox="0 0 240 106" className="w-full">
+      <line x1="22" y1="8"  x2="22"  y2="78" stroke="#4b5563" strokeWidth="1"/>
+      <line x1="22" y1="78" x2="215" y2="78" stroke="#4b5563" strokeWidth="1"/>
+      {/* highlighted window region */}
+      <rect x="90" y="8" width="105" height="70" fill="#6366f1" opacity="0.08" rx="2"/>
+      {/* val loss: descent then zigzag */}
+      <polyline fill="none" strokeLinecap="round" strokeLinejoin="round"
+        points="22,10 48,25 72,45 90,42 108,58 126,40 144,58 162,40 180,58 195,40"
+        stroke="#fb923c" strokeWidth="2"/>
+      {/* window bracket */}
+      <line x1="90"  y1="83" x2="195" y2="83" stroke="#6366f1" strokeWidth="1.5"/>
+      <line x1="90"  y1="80" x2="90"  y2="86" stroke="#6366f1" strokeWidth="1.5"/>
+      <line x1="195" y1="80" x2="195" y2="86" stroke="#6366f1" strokeWidth="1.5"/>
+      {/* stop line */}
+      <line x1="195" y1="8" x2="195" y2="78" stroke="#f87171" strokeWidth="1.5" strokeDasharray="4,3"/>
+      <text x="142" y="98" textAnchor="middle" fontSize="9" fill="#6366f1">oscillation window (last N epochs)</text>
+      <text x="25"  y="17" fontSize="9" fill="#fb923c">val loss</text>
+      <text x="197" y="22" fontSize="9" fill="#f87171">STOP</text>
+    </svg>
+  ),
+
+  oscillation_cv: (
+    <svg viewBox="0 0 240 106" className="w-full">
+      <line x1="22" y1="8"  x2="22"  y2="78" stroke="#4b5563" strokeWidth="1"/>
+      <line x1="22" y1="78" x2="215" y2="78" stroke="#4b5563" strokeWidth="1"/>
+      {/* ±std band */}
+      <rect x="22" y="28" width="193" height="38" fill="#6366f1" opacity="0.1" rx="1"/>
+      <line x1="22" y1="28" x2="215" y2="28" stroke="#6366f1" strokeWidth="1" strokeDasharray="3,2" opacity="0.7"/>
+      <line x1="22" y1="66" x2="215" y2="66" stroke="#6366f1" strokeWidth="1" strokeDasharray="3,2" opacity="0.7"/>
+      {/* mean line */}
+      <line x1="22" y1="47" x2="215" y2="47" stroke="#9ca3af" strokeWidth="1" strokeDasharray="5,3"/>
+      {/* val loss: zigzag */}
+      <polyline fill="none" strokeLinecap="round" strokeLinejoin="round"
+        points="22,47 38,28 54,66 70,28 86,66 102,28 118,66 134,28 150,66 166,28 182,66 198,28"
+        stroke="#fb923c" strokeWidth="2"/>
+      <text x="148" y="44" fontSize="8" fill="#9ca3af">mean</text>
+      <text x="148" y="25" fontSize="8" fill="#6366f1">+std</text>
+      <text x="148" y="73" fontSize="8" fill="#6366f1">-std</text>
+      <text x="110" y="98" textAnchor="middle" fontSize="9" fill="#9ca3af">CV = std ÷ mean — high CV triggers stop</text>
+    </svg>
+  ),
+
+  collapse_threshold: (
+    <svg viewBox="0 0 240 106" className="w-full">
+      <line x1="22" y1="8"  x2="22"  y2="78" stroke="#4b5563" strokeWidth="1"/>
+      <line x1="22" y1="78" x2="215" y2="78" stroke="#4b5563" strokeWidth="1"/>
+      {/* val loss: plunges toward threshold */}
+      <polyline fill="none" strokeLinecap="round" strokeLinejoin="round"
+        points="22,12 48,22 74,35 100,49 126,60 148,68 165,72 175,74"
+        stroke="#fb923c" strokeWidth="2"/>
+      {/* threshold line */}
+      <line x1="22" y1="75" x2="215" y2="75" stroke="#f87171" strokeWidth="1.5" strokeDasharray="5,3"/>
+      {/* stop line */}
+      <line x1="175" y1="8" x2="175" y2="78" stroke="#f87171" strokeWidth="1.5" strokeDasharray="4,3"/>
+      <text x="178" y="70" fontSize="9" fill="#f87171">threshold</text>
+      <text x="178" y="22" fontSize="9" fill="#f87171">STOP</text>
+      <text x="25"  y="17" fontSize="9" fill="#fb923c">val loss</text>
+      <text x="22"  y="97" fontSize="8" fill="#9ca3af">loss ≈ 0 → model outputs near-zero for every input</text>
+    </svg>
+  ),
+};
+
 // ── Field info content ─────────────────────────────────────────────────────────
 
 const INFO = {
@@ -76,42 +231,49 @@ const INFO = {
     what: "Number of consecutive epochs with no val loss improvement before the guard declares a plateau and stops training.",
     values: "3–50. Typical: 5 (quick test), 10–20 (standard). Lower stops sooner; higher lets training run longer through flat regions.",
     affects: "Train page — when the val loss line goes flat for this many epochs, training stops with reason 'Plateau'.",
+    svg: GUARD_SVG.patience,
   },
   guard_min_delta: {
     label: "Guard Min Delta",
     what: "Minimum reduction in val loss that counts as meaningful improvement. Changes smaller than this are treated as flat for plateau detection.",
     values: "0.000001–0.001. Typical: 0.00001. A larger value makes the guard less sensitive to small improvements.",
     affects: "Train page plateau detection. Rarely needs tuning.",
+    svg: GUARD_SVG.min_delta,
   },
   guard_overfit_ratio: {
     label: "Guard Overfit Ratio",
     what: "Maximum allowed ratio of val_loss ÷ train_loss. When the gap between the two loss curves grows beyond this multiple, the guard stops training.",
     values: "1.5–20. Typical: 10 (standard). Lower values stop sooner when curves diverge; 2.5 is too strict for early epochs when the ratio naturally spikes.",
     affects: "Train page — visible as the gap between the blue train and orange val loss lines. Stop reason will show 'Overfitting at epoch N (val/train=X.XX)'.",
+    svg: GUARD_SVG.overfit_ratio,
   },
   guard_explosion_factor: {
     label: "Guard Explosion Factor",
     what: "If val loss increases by more than this multiple compared to the previous epoch, training stops immediately. Catches runaway loss spikes.",
     values: "2–100. Typical: 10. Rarely triggers with normal LR values. Reduce if you see sudden enormous loss jumps.",
     affects: "Train page — protects against a sharp vertical spike on the val loss line caused by a bad batch or too-high LR.",
+    svg: GUARD_SVG.explosion_factor,
   },
   guard_oscillation_window: {
     label: "Guard Oscillation Window",
     what: "Number of recent epochs used to measure val loss variability. The guard computes CV (std ÷ mean) over this window.",
     values: "3–30. Typical: 5 (quick test), 10–20 (standard). Wider windows require more sustained oscillation before stopping.",
     affects: "Train page — the oscillation check looks at the last N points on the val loss line. Too narrow and it fires during steep descent.",
+    svg: GUARD_SVG.oscillation_window,
   },
   guard_oscillation_cv: {
     label: "Guard Oscillation CV",
     what: "Maximum coefficient of variation (std ÷ mean) of recent val losses before triggering an oscillation stop. CV measures how much the values bounce relative to their average.",
     values: "0.1–1.0. Typical: 0.6–0.7 (standard). 0.4 is too strict — it fires during steep descent when values legitimately change a lot. Lower = stricter.",
     affects: "Train page — a high CV is visible as a jagged, back-and-forth val loss line. Stop reason shows 'Oscillating at epoch N (CV=X.XX)'.",
+    svg: GUARD_SVG.oscillation_cv,
   },
   guard_collapse_threshold: {
     label: "Guard Collapse Threshold",
     what: "If val loss drops below this value the model has likely collapsed — outputting near-zero reconstructions regardless of input.",
     values: "0.0000001–0.001. Typical: 0.000001 (1e-6). Rarely triggered in normal training.",
     affects: "Train page — would appear as the val loss line hitting zero on the chart. Effectively a sanity check.",
+    svg: GUARD_SVG.collapse_threshold,
   },
 };
 
