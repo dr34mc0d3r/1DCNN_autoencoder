@@ -1,8 +1,8 @@
 {
   "symbol": "TSLA",
-  "timeframe": "5Min",
-  "start_date": "2020-06-12",
-  "end_date": "2026-06-12",
+  "timeframe": "1Min",
+  "start_date": "2017-06-13",
+  "end_date": "2026-06-13",
   "window_size": 64,
   "latent_dim": 32,
   "batch_size": 64,
