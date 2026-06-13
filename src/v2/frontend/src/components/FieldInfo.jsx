@@ -32,7 +32,7 @@ export default function FieldInfo({ info }) {
           onClick={() => setOpen(false)}
         >
           <div
-            className="bg-gray-900 border border-gray-700 rounded-xl shadow-2xl w-full max-w-sm"
+            className="bg-gray-900 border border-gray-700 rounded-xl shadow-2xl w-full max-w-md"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Header */}
@@ -67,6 +67,14 @@ export default function FieldInfo({ info }) {
                 </p>
                 <p className="text-sm text-gray-300 leading-relaxed">{info.affects}</p>
               </div>
+              {info.svg && (
+                <div className="border-t border-gray-800 pt-3">
+                  <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">
+                    Visual
+                  </p>
+                  {info.svg}
+                </div>
+              )}
             </div>
           </div>
         </div>
