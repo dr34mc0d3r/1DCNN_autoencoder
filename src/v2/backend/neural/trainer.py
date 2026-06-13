@@ -182,7 +182,8 @@ async def train(
         logger.info(status)
 
         if progress_cb:
-            await progress_cb(epoch, train_loss, val_loss, guard.stop_reason or "ok")
+            ok_str = "ok" if guard._no_improve == 0 else f"ok - {guard._no_improve}"
+            await progress_cb(epoch, train_loss, val_loss, guard.stop_reason or ok_str)
 
         if guard.check(epoch, train_loss, val_loss):
             logger.info("Early stop: %s", guard.stop_reason)
