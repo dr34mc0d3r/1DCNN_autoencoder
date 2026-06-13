@@ -1,11 +1,10 @@
 import { NavLink } from "react-router-dom";
 
 const LINKS = [
-  { to: "/",          label: "Config" },
-  { to: "/download",  label: "Download" },
+  { to: "/setup",     label: "Setup" },
   { to: "/train",     label: "Train" },
-  { to: "/latent",    label: "Latent Space" },
   { to: "/windows",   label: "Windows" },
+  { to: "/latent",    label: "Latent Space" },
   { to: "/analysis",  label: "Analysis" },
   { to: "/inference", label: "Live Inference" },
 ];
@@ -18,7 +17,6 @@ export default function NavBar() {
         <NavLink
           key={to}
           to={to}
-          end={to === "/"}
           className={({ isActive }) =>
             isActive
               ? "text-indigo-400 text-sm font-semibold"
