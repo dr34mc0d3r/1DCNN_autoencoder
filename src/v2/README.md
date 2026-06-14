@@ -59,7 +59,7 @@ pytest
 5. **Cluster Profile** — characterise each cluster: feature z-score fingerprints, decision tree rules, representative OHLCV windows, forward return distributions
 6. **Windows** — browse raw training windows (contact sheet / heatmap / thumbnail views)
 7. **Analysis** — reconstruction comparison; Hour-of-Day Heatmap; Cluster Frequency by Hour; Day-of-Week Distribution
-8. **Inference** — two modes: **Walk-forward** replays the training CSV bar-by-bar at configurable speed; **Live (Alpaca)** polls the Alpaca REST API every 60 s for new completed bars and scores them through the trained model in real time (market hours only). Both modes share the same MSE timeline, cluster history, latent vector, and window canvas display.
+8. **Inference** — two modes: **Walk-forward** replays the training CSV bar-by-bar at configurable speed; **Live (Alpaca)** polls the Alpaca REST API every 60 s for new completed bars and scores them through the trained model in real time (market hours only). Both modes share the same MSE timeline, OHLCV candlestick chart (with EMA 9/21/50 overlays and volume sub-pane), cluster history, latent vector, and window canvas display.
 
 ## API Endpoints
 
