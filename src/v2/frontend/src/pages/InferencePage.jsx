@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { createChart, CandlestickSeries, HistogramSeries, LineSeries } from "lightweight-charts";
 import {
   LineChart, Line, XAxis, YAxis, Tooltip, CartesianGrid, ReferenceLine, ResponsiveContainer,
   BarChart, Bar, Cell,
@@ -68,6 +69,71 @@ const PANEL_INFO = {
     ],
   },
 };
+
+function CandleChart({ data }) {
+  const containerRef = useRef(null);
+  const chartRef     = useRef(null);
+  const candleRef    = useRef(null);
+  const volRef       = useRef(null);
+  const ema9Ref      = useRef(null);
+  const ema21Ref     = useRef(null);
+  const ema50Ref     = useRef(null);
+
+  useEffect(() => {
+    if (!containerRef.current) return;
+    const chart = createChart(containerRef.current, {
+      layout:    { background: { color: "#111827" }, textColor: "#9CA3AF" },
+      grid:      { vertLines: { color: "#1f2937" }, horzLines: { color: "#1f2937" } },
+      crosshair: { mode: 1 },
+      rightPriceScale: { borderColor: "#374151" },
+      timeScale:  { borderColor: "#374151", timeVisible: true, secondsVisible: false },
+      width:  containerRef.current.clientWidth,
+      height: 320,
+    });
+
+    const candles = chart.addSeries(CandlestickSeries, {
+      upColor: "#10b981", downColor: "#ef4444",
+      borderUpColor: "#10b981", borderDownColor: "#ef4444",
+      wickUpColor: "#10b981", wickDownColor: "#ef4444",
+    });
+
+    const vol = chart.addSeries(HistogramSeries, {
+      color: "#374151",
+      priceFormat: { type: "volume" },
+      priceScaleId: "vol",
+    });
+    chart.priceScale("vol").applyOptions({ scaleMargins: { top: 0.8, bottom: 0 } });
+
+    const ema9  = chart.addSeries(LineSeries, { color: "#6366f1", lineWidth: 1, title: "EMA 9",  lastValueVisible: false, priceLineVisible: false });
+    const ema21 = chart.addSeries(LineSeries, { color: "#f59e0b", lineWidth: 1, title: "EMA 21", lastValueVisible: false, priceLineVisible: false });
+    const ema50 = chart.addSeries(LineSeries, { color: "#10b981", lineWidth: 1, title: "EMA 50", lastValueVisible: false, priceLineVisible: false });
+
+    chartRef.current  = chart;
+    candleRef.current = candles;
+    volRef.current    = vol;
+    ema9Ref.current   = ema9;
+    ema21Ref.current  = ema21;
+    ema50Ref.current  = ema50;
+
+    const ro = new ResizeObserver(() => {
+      chart.applyOptions({ width: containerRef.current?.clientWidth ?? 800 });
+    });
+    ro.observe(containerRef.current);
+    return () => { ro.disconnect(); chart.remove(); };
+  }, []);
+
+  useEffect(() => {
+    if (!data?.length || !candleRef.current) return;
+    candleRef.current.setData(data.map(d => ({ time: d.t, open: d.o, high: d.h, low: d.l, close: d.c })));
+    volRef.current.setData(data.map(d => ({ time: d.t, value: d.v, color: d.c >= d.o ? "#10b98133" : "#ef444433" })));
+    ema9Ref.current.setData(data.map(d => ({ time: d.t, value: d.e9  })));
+    ema21Ref.current.setData(data.map(d => ({ time: d.t, value: d.e21 })));
+    ema50Ref.current.setData(data.map(d => ({ time: d.t, value: d.e50 })));
+    chartRef.current.timeScale().fitContent();
+  }, [data]);
+
+  return <div ref={containerRef} className="w-full" />;
+}
 
 function CrossSymbolGuide({ activeModel, csvInfo }) {
   const [open, setOpen] = useState(false);
@@ -155,6 +221,7 @@ export default function InferencePage() {
   const [speed, setSpeed]     = useState("full");
   const [paused, setPaused]   = useState(false);
   const [mode, setMode]       = useState("walkforward"); // "walkforward" | "live"
+  const [candleData, setCandleData] = useState([]);
   const canvasRef             = useRef(null);
   const activeRef             = useRef(false);
   const pausedRef             = useRef(false);  // mirrors paused for use inside intervals
@@ -215,6 +282,7 @@ export default function InferencePage() {
     setMseData((prev) => [...prev.slice(-999), { timestamp: data.timestamp, mse: data.mse }]);
     setCurrent(data);
     setClusterHistory((prev) => [...prev.slice(-(HISTORY_LEN - 1)), data.cluster_label]);
+    if (data.candle_data?.length) setCandleData(data.candle_data);
     drawWindow(data);
   }
 
@@ -250,6 +318,7 @@ export default function InferencePage() {
     setMseData([]);
     setCurrent(null);
     setClusterHistory([]);
+    setCandleData([]);
     setError("");
     pendingRef.current   = null;
     lastFlushRef.current = 0;
@@ -415,6 +484,23 @@ export default function InferencePage() {
           </LineChart>
         </ResponsiveContainer>
       </div>
+
+      {/* Panel — Candlestick Chart */}
+      {candleData.length > 0 && (
+        <div className="bg-gray-900 rounded-xl p-4 mb-6">
+          <p className="text-sm text-gray-400 mb-1 flex items-center gap-3">
+            OHLCV
+            <span className="text-xs text-gray-600">
+              <span style={{ color: "#6366f1" }}>— EMA 9</span>
+              {" · "}
+              <span style={{ color: "#f59e0b" }}>— EMA 21</span>
+              {" · "}
+              <span style={{ color: "#10b981" }}>— EMA 50</span>
+            </span>
+          </p>
+          <CandleChart data={candleData} />
+        </div>
+      )}
 
       <div className="grid grid-cols-3 gap-6 mb-6">
         {/* Panel B — Current Bar Info */}

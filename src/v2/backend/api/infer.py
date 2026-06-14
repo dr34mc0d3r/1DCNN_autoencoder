@@ -96,6 +96,8 @@ async def _run_live_inference(req: InferRequest) -> None:
                 df = storage.clean_data(df)
                 df = storage.add_features(df)
                 df = storage.drop_feature_nans(df)
+                df_ema  = df[["ema_9", "ema_21", "ema_50"]].copy()
+                df_ohlc = df[["timestamp", "open", "high", "low", "close", "volume"]].copy()
                 df, _ = storage.scale_features(df, feat_cols, scaler)
 
                 if len(df) >= window_size:
@@ -116,12 +118,30 @@ async def _run_live_inference(req: InferRequest) -> None:
                             ((window_np.T - w_min) / (w_max - w_min + 1e-8) * 255)
                             .astype(np.uint8).tolist()
                         )
+                        ohlc_s = df_ohlc.iloc[-window_size:]
+                        ema_s  = df_ema.iloc[-window_size:]
+                        candle_data = []
+                        for j in range(len(ohlc_s)):
+                            row = ohlc_s.iloc[j]
+                            ov  = ema_s.iloc[j]
+                            candle_data.append({
+                                "t":   int(row["timestamp"].value // 1_000_000_000),
+                                "o":   round(float(row["open"]),   4),
+                                "h":   round(float(row["high"]),   4),
+                                "l":   round(float(row["low"]),    4),
+                                "c":   round(float(row["close"]),  4),
+                                "v":   round(float(row["volume"]), 2),
+                                "e9":  round(float(ov["ema_9"]),   4),
+                                "e21": round(float(ov["ema_21"]),  4),
+                                "e50": round(float(ov["ema_50"]),  4),
+                            })
                         result = {
                             "timestamp":     current_ts,
                             "mse":           mse,
                             "cluster_label": label,
                             "latent_vector": z.tolist(),
                             "window_pixels": window_pixels,
+                            "candle_data":   candle_data,
                         }
                         _state["results"].append(result)
                         await manager.send("infer_step", result)
