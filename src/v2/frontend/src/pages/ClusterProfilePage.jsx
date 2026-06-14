@@ -31,13 +31,14 @@ function InfoIcon({ content }) {
       </button>
       {open && (
         <div className="absolute z-20 left-0 top-6 w-72 bg-gray-800 border border-gray-700 rounded-lg p-3 text-xs text-gray-300 shadow-2xl">
-          {content}
           <button
             onClick={() => setOpen(false)}
-            className="mt-2 block text-gray-500 hover:text-gray-300 text-[10px]"
+            className="absolute top-2 right-2 w-5 h-5 flex items-center justify-center rounded text-gray-500 hover:text-gray-200 hover:bg-gray-700 transition-colors text-sm leading-none"
+            title="Close"
           >
-            ✕ close
+            ×
           </button>
+          <div className="pr-5">{content}</div>
         </div>
       )}
     </div>
