@@ -89,6 +89,12 @@ def add_features(df: pd.DataFrame) -> pd.DataFrame:
     df["log_return"]   = np.log(df["close"] / df["close"].shift(1))
     df["volume_ratio"] = df["volume"] / df["volume"].rolling(20).mean()
     df["trade_count_ratio"] = df["trade_count"] / df["trade_count"].rolling(20).mean()
+    # Alpaca IEX free-tier reports partial volume, producing extreme spikes in
+    # vol_return (observed max: 1836×) and trade_count_ratio. Clip at the 99th
+    # percentile to prevent these artifacts from dominating post-scale gradients.
+    # Quantile is computed on the full passed-in dataset (mild leakage). See src/v2/WARNINGS.md.
+    df["vol_return"]        = df["vol_return"].clip(upper=df["vol_return"].quantile(0.99))
+    df["trade_count_ratio"] = df["trade_count_ratio"].clip(upper=df["trade_count_ratio"].quantile(0.99))
 
     # ── Volatility ───────────────────────────────────────────────────────────
     tr = pd.concat([
