@@ -363,12 +363,12 @@ export default function LatentSpacePage() {
                 contentStyle={{ backgroundColor: "#111827", border: "none" }}
                 formatter={(v) => v.toFixed(2)}
               />
-              <Scatter data={scatter} fillOpacity={0.65}>
+              <Scatter data={scatter} fillOpacity={0.65} isAnimationActive={false}>
                 {scatter.map((p, i) => (
                   <Cell key={i} fill={COLORS[p.label % COLORS.length]} />
                 ))}
               </Scatter>
-              <Scatter data={scatterCentroids} shape={<CentroidMarker />} />
+              <Scatter data={scatterCentroids} shape={<CentroidMarker />} isAnimationActive={false} />
             </ScatterChart>
           </ResponsiveContainer>
         </div>
@@ -388,7 +388,7 @@ export default function LatentSpacePage() {
                 contentStyle={{ backgroundColor: "#111827", border: "none" }}
                 formatter={(v) => v.toFixed(2)}
               />
-              <Scatter data={scatter} fill="#6366f1">
+              <Scatter data={scatter} fill="#6366f1" isAnimationActive={false}>
                 {scatter.map((p, i) => (
                   <Cell key={i} fill={COLORS[p.label % COLORS.length]} />
                 ))}
@@ -414,9 +414,9 @@ export default function LatentSpacePage() {
               <YAxis yAxisId={1} orientation="right" stroke="#10b981" tick={{ fontSize: 11 }} />
               <Tooltip contentStyle={{ backgroundColor: "#111827", border: "none" }} />
               <Legend />
-              <Line yAxisId={0} type="monotone" dataKey="silhouette"        stroke="#6366f1" dot name="Silhouette" />
-              <Line yAxisId={0} type="monotone" dataKey="davies_bouldin"    stroke="#f59e0b" dot name="Davies-Bouldin" />
-              <Line yAxisId={1} type="monotone" dataKey="calinski_harabasz" stroke="#10b981" dot name="Calinski-Harabasz" />
+              <Line yAxisId={0} type="monotone" dataKey="silhouette"        stroke="#6366f1" dot name="Silhouette"          isAnimationActive={false} />
+              <Line yAxisId={0} type="monotone" dataKey="davies_bouldin"    stroke="#f59e0b" dot name="Davies-Bouldin"      isAnimationActive={false} />
+              <Line yAxisId={1} type="monotone" dataKey="calinski_harabasz" stroke="#10b981" dot name="Calinski-Harabasz"  isAnimationActive={false} />
             </LineChart>
           </ResponsiveContainer>
         </div>
