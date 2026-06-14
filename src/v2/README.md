@@ -86,9 +86,41 @@ pytest
 | GET | /api/cluster/representatives | Top-N OHLCV windows closest to a cluster centroid |
 | GET | /api/cluster/forward-returns | Non-overlapping forward return stats per cluster |
 | GET | /api/windows | Sampled training windows as pixel arrays |
-| POST | /api/reconstruct | Original vs reconstructed comparison |
+| POST | /api/reconstruct | Original vs reconstructed comparison; saves `reconstruction_stats.json` |
 | GET | /api/temporal | Cluster timeline + by-hour/weekday distributions |
+| POST | /api/export/artifact | Save a PNG (base64 data URL) or text file (CSV/MD) to the active bundle dir |
 | WS | /ws | WebSocket: all live events (epoch, infer_step, download_progress…) |
+
+## Auto-Saved Artifacts
+
+Each major operation writes named files to the active model's bundle directory (`models/<name>/`). Files are overwritten on each new run.
+
+| File | Written when | Used by |
+|---|---|---|
+| `epoch_log.csv` | Training ends | eval skill — training stability |
+| `data_profile.json` | Training ends | eval skill — replaces ~30s pipeline re-run |
+| `loss_curves.png` | Training ends (frontend) | visual reference |
+| `clustering_report.csv` | Clustering ends | eval skill — cluster balance |
+| `latent_stats.json` | Clustering ends | eval skill — latent collapse detection |
+| `tsne_coords.json` | Clustering ends | eval skill — scatter topology |
+| `tsne_cluster.png` | Clustering ends (frontend) | visual reference |
+| `tsne_density.png` | Clustering ends (frontend) | visual reference |
+| `cluster_quality.json` | Quality endpoint | eval skill — K selection |
+| `cluster_quality.png` | Quality endpoint (frontend) | visual reference |
+| `decision_tree_rules.md` | `/cluster/profile` called | eval skill — feature narrative |
+| `feature_importances.json` | `/cluster/profile` called | eval skill — feature analysis |
+| `cluster_fingerprints.json` | `/cluster/profile` called | eval skill — regime characterisation |
+| `forward_returns.csv` | `/cluster/forward-returns` called | eval skill — predictiveness |
+| `fingerprint_c0.png` | Cluster Profile page loads (frontend) | visual reference |
+| `forward_returns.png` | Cluster Profile page loads (frontend) | visual reference |
+| `reconstruction_stats.json` | `/reconstruct` called | eval skill — reconstruction quality |
+| `reconstruction_comparison.png` | Analysis page — Reconstruct panel (frontend) | visual reference |
+| `heatmap_hour.png` | Analysis page — Heatmap panel (frontend) | visual reference |
+| `cluster_freq_hour.png` | Analysis page — Hour Freq panel (frontend) | visual reference |
+| `cluster_freq_weekday.png` | Analysis page — Weekday panel (frontend) | visual reference |
+| `windows_contact.png` | Windows page — Load Windows (frontend) | visual reference |
+| `windows_heatmap.png` | Windows page — Load Windows (frontend) | visual reference |
+| `windows_thumbnails.png` | Windows page — Load Windows (frontend) | visual reference |
 
 ## Key Design Decisions
 

@@ -1,8 +1,9 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Legend,
 } from "recharts";
 import { api } from "../api.js";
+import { captureRechartsSvg, captureElement } from "../utils/exportUtils.js";
 
 const COLORS = ["#6366f1","#f59e0b","#10b981","#ef4444","#3b82f6","#8b5cf6","#ec4899","#14b8a6"];
 const DAY_NAMES = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
@@ -171,11 +172,29 @@ export default function AnalysisPage() {
 
   const [error, setError] = useState("");
 
-  async function fetchTemporal(setter, setLoading) {
+  const reconMseRef  = useRef(null);
+  const heatmapRef   = useRef(null);
+  const hourChartRef = useRef(null);
+  const wkChartRef   = useRef(null);
+
+  async function fetchTemporal(setter, setLoading, chartRef, filename) {
     setLoading(true);
     setError("");
     try {
       setter(await api.getTemporal());
+      setTimeout(async () => {
+        try {
+          if (filename === "heatmap_hour.png") {
+            const dataUrl = await captureElement(heatmapRef);
+            if (dataUrl) await api.saveArtifact(filename, dataUrl);
+          } else if (chartRef) {
+            const dataUrl = await captureRechartsSvg(chartRef);
+            if (dataUrl) await api.saveArtifact(filename, dataUrl);
+          }
+        } catch (err) {
+          console.warn(`Auto-save ${filename} failed:`, err);
+        }
+      }, 800);
     } catch (e) {
       setError(e.message);
     } finally {
@@ -188,6 +207,15 @@ export default function AnalysisPage() {
     setError("");
     try {
       setRecon(await api.reconstruct(20));
+      // Auto-save per-feature MSE BarChart
+      setTimeout(async () => {
+        try {
+          const dataUrl = await captureRechartsSvg(reconMseRef);
+          if (dataUrl) await api.saveArtifact("reconstruction_comparison.png", dataUrl);
+        } catch (err) {
+          console.warn("Auto-save reconstruction_comparison.png failed:", err);
+        }
+      }, 800);
     } catch (e) {
       setError(e.message);
     } finally {
@@ -259,14 +287,16 @@ export default function AnalysisPage() {
         {mseData.length > 0 && (
           <>
             <p className="text-xs text-gray-500 mb-2">Per-Feature MSE — overall: {recon.overall_mse.toFixed(6)}</p>
-            <ResponsiveContainer width="100%" height={200}>
-              <BarChart data={mseData}>
-                <XAxis dataKey="name" stroke="#6B7280" tick={{ fontSize: 10 }} />
-                <YAxis stroke="#6B7280" tick={{ fontSize: 11 }} />
-                <Tooltip contentStyle={tooltipStyle} />
-                <Bar dataKey="val" fill="#6366f1" name="MSE" />
-              </BarChart>
-            </ResponsiveContainer>
+            <div ref={reconMseRef}>
+              <ResponsiveContainer width="100%" height={200}>
+                <BarChart data={mseData}>
+                  <XAxis dataKey="name" stroke="#6B7280" tick={{ fontSize: 10 }} />
+                  <YAxis stroke="#6B7280" tick={{ fontSize: 11 }} />
+                  <Tooltip contentStyle={tooltipStyle} />
+                  <Bar dataKey="val" fill="#6366f1" name="MSE" />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
           </>
         )}
       </ChartPanel>
@@ -287,11 +317,13 @@ export default function AnalysisPage() {
             </ul>
           </div>
         }
-        onExecute={() => fetchTemporal(setHeatmap, setHeatmapLoad)}
+        onExecute={() => fetchTemporal(setHeatmap, setHeatmapLoad, null, "heatmap_hour.png")}
         loading={heatmapLoading}
         hasData={!!heatmapData}
       >
-        <HourHeatmap byHour={heatmapData?.by_hour ?? []} nClusters={hmClusters} />
+        <div ref={heatmapRef}>
+          <HourHeatmap byHour={heatmapData?.by_hour ?? []} nClusters={hmClusters} />
+        </div>
       </ChartPanel>
 
       {/* Panel D — Cluster Frequency by Hour */}
@@ -310,10 +342,11 @@ export default function AnalysisPage() {
             <p><strong className="text-gray-300">Cross-reference with the Heatmap:</strong> These two charts show the same data at different angles. The heatmap is better for spotting single-cluster temporal spikes; the bar chart is better for seeing the full composition of each hour side-by-side.</p>
           </div>
         }
-        onExecute={() => fetchTemporal(setHourData, setHourLoad)}
+        onExecute={() => fetchTemporal(setHourData, setHourLoad, hourChartRef, "cluster_freq_hour.png")}
         loading={hourLoading}
         hasData={!!hourData}
       >
+        <div ref={hourChartRef}>
         <ResponsiveContainer width="100%" height={240}>
           <BarChart data={hourPivot}>
             <XAxis dataKey="hour" stroke="#6B7280" tick={{ fontSize: 11 }} />
@@ -325,6 +358,7 @@ export default function AnalysisPage() {
             ))}
           </BarChart>
         </ResponsiveContainer>
+        </div>
       </ChartPanel>
 
       {/* Panel E — Day-of-Week Distribution */}
@@ -344,21 +378,23 @@ export default function AnalysisPage() {
             <p><strong className="text-gray-300">Caveat:</strong> For short date ranges (&lt; 3 months), individual events (earnings, macro announcements) can distort individual days more than actual weekly structure. Use a wide date range for statistically meaningful day-of-week distributions.</p>
           </div>
         }
-        onExecute={() => fetchTemporal(setWeekday, setWeekdayLoad)}
+        onExecute={() => fetchTemporal(setWeekday, setWeekdayLoad, wkChartRef, "cluster_freq_weekday.png")}
         loading={weekdayLoading}
         hasData={!!weekdayData}
       >
-        <ResponsiveContainer width="100%" height={240}>
-          <BarChart data={weekdayPivot}>
-            <XAxis dataKey="weekday" stroke="#6B7280" tick={{ fontSize: 11 }} />
-            <YAxis stroke="#6B7280" tick={{ fontSize: 11 }} />
-            <Tooltip contentStyle={tooltipStyle} />
-            <Legend />
-            {Array.from({ length: wkClusters }, (_, c) => (
-              <Bar key={c} dataKey={`c${c}`} stackId="a" fill={COLORS[c % COLORS.length]} name={`Cluster ${c}`} />
-            ))}
-          </BarChart>
-        </ResponsiveContainer>
+        <div ref={wkChartRef}>
+          <ResponsiveContainer width="100%" height={240}>
+            <BarChart data={weekdayPivot}>
+              <XAxis dataKey="weekday" stroke="#6B7280" tick={{ fontSize: 11 }} />
+              <YAxis stroke="#6B7280" tick={{ fontSize: 11 }} />
+              <Tooltip contentStyle={tooltipStyle} />
+              <Legend />
+              {Array.from({ length: wkClusters }, (_, c) => (
+                <Bar key={c} dataKey={`c${c}`} stackId="a" fill={COLORS[c % COLORS.length]} name={`Cluster ${c}`} />
+              ))}
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
       </ChartPanel>
 
       {error && <p className="text-red-400 text-sm mt-2">{error}</p>}

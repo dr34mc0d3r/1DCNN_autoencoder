@@ -1,7 +1,10 @@
 """api/train.py — POST /api/train, POST /api/train/stop, GET /api/train/status."""
 
 import asyncio
+import csv
+import io
 import logging
+import os
 
 import torch
 from fastapi import APIRouter, BackgroundTasks, HTTPException
@@ -25,6 +28,7 @@ _state: dict = {
     "lr": None,
     "stop_reason": None,
     "error": None,
+    "history": [],
 }
 _cancel_event: asyncio.Event | None = None
 
@@ -40,7 +44,8 @@ async def _run_training(model_name: str) -> None:
     latent_dim  = cfg["latent_dim"]
 
     _state.update({"state": "running", "epoch": 0, "train_loss": None,
-                   "val_loss": None, "lr": None, "stop_reason": None, "error": None})
+                   "val_loss": None, "lr": None, "stop_reason": None, "error": None,
+                   "history": []})
     status_api.set_state("training", "running")
 
     try:
@@ -63,6 +68,13 @@ async def _run_training(model_name: str) -> None:
 
         async def on_epoch(epoch: int, train_loss: float, val_loss: float, guard_status: str, lr: float) -> None:
             _state.update({"epoch": epoch, "train_loss": train_loss, "val_loss": val_loss, "lr": lr})
+            _state["history"].append({
+                "epoch":        epoch,
+                "train_loss":   round(train_loss, 8),
+                "val_loss":     round(val_loss,   8),
+                "lr":           lr,
+                "guard_status": guard_status or "ok",
+            })
             await manager.send("training_epoch", {
                 "epoch": epoch, "train_loss": train_loss,
                 "val_loss": val_loss, "guard_status": guard_status, "lr": lr,
@@ -78,12 +90,28 @@ async def _run_training(model_name: str) -> None:
 
         storage.save_named_model(model_name, model, scaler, cfg, training_result=result)
 
+        # Write epoch_log.csv to bundle dir
+        bundle = storage._active_bundle_dir()
+        if bundle and _state["history"]:
+            buf = io.StringIO()
+            w = csv.DictWriter(buf, fieldnames=["epoch", "train_loss", "val_loss", "lr", "guard_status"])
+            w.writeheader()
+            w.writerows(_state["history"])
+            with open(os.path.join(bundle, "epoch_log.csv"), "w") as fh:
+                fh.write(buf.getvalue())
+
         _state.update({"state": "done", "stop_reason": result["stop_reason"]})
         await manager.send("training_complete", {
             "stop_reason": result["stop_reason"],
             "final_epoch": result["epochs_trained"],
             "model_name":  model_name,
         })
+
+        # data_profile.json — ~3s pipeline re-run, fires after WS event
+        try:
+            storage.save_data_profile()
+        except Exception:
+            logger.exception("save_data_profile failed (non-fatal)")
 
     except asyncio.CancelledError:
         _state.update({"state": "idle", "stop_reason": "cancelled"})

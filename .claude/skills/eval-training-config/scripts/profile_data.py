@@ -28,6 +28,15 @@ def main() -> int:
         print(json.dumps({"error": f"meta.json not found in {args.model_dir}"}))
         return 1
 
+    # Fast path: use pre-computed profile written at training completion
+    cached_profile = os.path.join(args.model_dir, "data_profile.json")
+    if os.path.exists(cached_profile):
+        import sys as _sys
+        print(f"[profile_data] Using cached data_profile.json (skipping pipeline re-run)", file=_sys.stderr)
+        with open(cached_profile) as f:
+            print(f.read())
+        return 0
+
     with open(meta_path) as f:
         meta = json.load(f)
 

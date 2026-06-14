@@ -1,9 +1,10 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell,
 } from "recharts";
 import { api } from "../api.js";
 import MiniCandlestick from "../components/MiniCandlestick.jsx";
+import { captureRechartsSvg } from "../utils/exportUtils.js";
 
 const COLORS = ["#6366f1","#f59e0b","#10b981","#ef4444","#3b82f6","#8b5cf6","#ec4899","#14b8a6"];
 
@@ -209,14 +210,14 @@ function clusterPillInfo(k, profile) {
 
 // ── Panel content components ───────────────────────────────────────────────────
 
-function FingerPrint({ profile, selectedCluster }) {
+function FingerPrint({ profile, selectedCluster, containerRef }) {
   if (!profile) return null;
   const raw    = profile.fingerprints[String(selectedCluster)] || [];
   const sorted = [...raw].sort((a, b) => Math.abs(b.z_score) - Math.abs(a.z_score)).slice(0, 12);
   const data   = sorted.map(d => ({ name: d.feature, z: d.z_score }));
 
   return (
-    <div>
+    <div ref={containerRef}>
       <p className="text-xs text-gray-500 mb-3">
         Top 12 features by |z-score| deviation from global mean. Cluster size:{" "}
         {profile.cluster_sizes[String(selectedCluster)] ?? "—"} windows.
@@ -280,7 +281,7 @@ function Representatives({ reps, loading }) {
   );
 }
 
-function ForwardReturns({ fwdData, selectedCluster }) {
+function ForwardReturns({ fwdData, selectedCluster, containerRef }) {
   if (!fwdData) return null;
   const { horizon, n_non_overlapping, clusters } = fwdData;
   const n_clusters = Object.keys(clusters).length;
@@ -290,7 +291,7 @@ function ForwardReturns({ fwdData, selectedCluster }) {
   }));
 
   return (
-    <div className="space-y-4">
+    <div ref={containerRef} className="space-y-4">
       <p className="text-xs text-gray-500">
         Next {horizon} × 5-min bars ({horizon * 5} min) — {n_non_overlapping} non-overlapping samples total.
       </p>
@@ -399,6 +400,9 @@ export default function ClusterProfilePage() {
 
   const [selectedCluster, setSelectedCluster] = useState(0);
   const [error, setError] = useState("");
+  const fingerprintRef = useRef(null);
+  const fwdReturnsRef  = useRef(null);
+  const autoSavedRef   = useRef(false);  // fire once on initial load
 
   useEffect(() => {
     api.clusterResult()
@@ -411,6 +415,22 @@ export default function ClusterProfilePage() {
     fetchProfile();
     fetchFwd();
   }, [ready]);
+
+  // Auto-save fingerprint_c0.png + forward_returns.png once both loads complete
+  useEffect(() => {
+    if (!profile || !fwdData || autoSavedRef.current) return;
+    autoSavedRef.current = true;
+    setTimeout(async () => {
+      try {
+        const fpUrl = await captureRechartsSvg(fingerprintRef);
+        if (fpUrl) await api.saveArtifact(`fingerprint_c${selectedCluster}.png`, fpUrl);
+        const fwdUrl = await captureRechartsSvg(fwdReturnsRef);
+        if (fwdUrl) await api.saveArtifact("forward_returns.png", fwdUrl);
+      } catch (err) {
+        console.warn("Auto-save ClusterProfile PNGs failed:", err);
+      }
+    }, 800);
+  }, [profile, fwdData]);
 
   useEffect(() => {
     if (!ready || !profile) return;
@@ -511,7 +531,7 @@ export default function ClusterProfilePage() {
         info={PANEL_INFO.fingerprint}
       >
         {profile
-          ? <FingerPrint profile={profile} selectedCluster={selectedCluster} />
+          ? <FingerPrint profile={profile} selectedCluster={selectedCluster} containerRef={fingerprintRef} />
           : <p className="text-gray-500 text-sm">Loading…</p>}
       </Panel>
 
@@ -534,7 +554,7 @@ export default function ClusterProfilePage() {
       {/* Panel 4 — Forward Return Distribution */}
       <Panel title="Forward Return Distribution" loading={fwdLoading} info={PANEL_INFO.forwardReturns}>
         {fwdData
-          ? <ForwardReturns fwdData={fwdData} selectedCluster={selectedCluster} />
+          ? <ForwardReturns fwdData={fwdData} selectedCluster={selectedCluster} containerRef={fwdReturnsRef} />
           : <p className="text-gray-500 text-sm">Loading…</p>}
       </Panel>
     </div>
