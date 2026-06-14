@@ -79,3 +79,12 @@ async def fetch_bars(
             params["page_token"] = next_token
 
     return all_bars
+
+
+async def fetch_latest_bars(symbol: str, timeframe: str, n_bars: int = 300) -> list[dict]:
+    """Return the most recent n_bars completed bars for a single symbol."""
+    from datetime import datetime, timedelta
+    end   = datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%SZ")
+    start = (datetime.utcnow() - timedelta(days=14)).strftime("%Y-%m-%dT%H:%M:%SZ")
+    result = await fetch_bars([symbol], timeframe, start, end)
+    return result.get(symbol, [])[-n_bars:]
