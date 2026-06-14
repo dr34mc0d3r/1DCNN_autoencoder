@@ -1,0 +1,215 @@
+{
+  "model_dir": "/Volumes/My SSD/Chris Stuff/DEV/1DCNN_A/src/v2/backend/models/TSLA",
+  "symbol": "TSLA",
+  "timeframe": "5Min",
+  "n_rows_raw": 117849,
+  "n_rows_after_engineering": 117830,
+  "rows_lost_to_nan_warmup": 19,
+  "n_features": 26,
+  "feature_columns": [
+    "ema_9",
+    "ema_21",
+    "ema_50",
+    "macd",
+    "macd_9",
+    "macd_hist",
+    "body",
+    "upper_wick",
+    "lower_wick",
+    "candle_efficiency",
+    "return",
+    "vol_return",
+    "log_return",
+    "volume_ratio",
+    "trade_count_ratio",
+    "atr_14",
+    "rolling_vol",
+    "bb_width",
+    "bb_pct",
+    "vwap_dev",
+    "rsi_14",
+    "stoch_k",
+    "stoch_d",
+    "hour_sin",
+    "hour_cos",
+    "close"
+  ],
+  "feature_stats": {
+    "ema_9": {
+      "min": 91.680693,
+      "max": 495.128584,
+      "mean": 268.605128,
+      "std": 87.829567
+    },
+    "ema_21": {
+      "min": 92.174317,
+      "max": 494.535466,
+      "mean": 268.589549,
+      "std": 87.812519
+    },
+    "ema_50": {
+      "min": 92.82755,
+      "max": 492.871386,
+      "mean": 268.5521,
+      "std": 87.771673
+    },
+    "macd": {
+      "min": -10.253258,
+      "max": 9.128599,
+      "mean": 0.01816,
+      "std": 1.242716
+    },
+    "macd_9": {
+      "min": -9.125686,
+      "max": 8.165626,
+      "mean": 0.018146,
+      "std": 1.173295
+    },
+    "macd_hist": {
+      "min": -4.390234,
+      "max": 3.763875,
+      "mean": 1.4e-05,
+      "std": 0.366277
+    },
+    "body": {
+      "min": -18.55,
+      "max": 21.69,
+      "mean": -0.002317,
+      "std": 0.881209
+    },
+    "upper_wick": {
+      "min": 0.0,
+      "max": 7.635,
+      "mean": 0.210094,
+      "std": 0.310285
+    },
+    "lower_wick": {
+      "min": 0.0,
+      "max": 7.86,
+      "mean": 0.219712,
+      "std": 0.318253
+    },
+    "candle_efficiency": {
+      "min": 0.0,
+      "max": 1.0,
+      "mean": 0.52809,
+      "std": 0.296414
+    },
+    "return": {
+      "min": -0.134235,
+      "max": 0.129357,
+      "mean": 2.1e-05,
+      "std": 0.004173
+    },
+    "vol_return": {
+      "min": -0.999536,
+      "max": 7.313632,
+      "mean": 0.243516,
+      "std": 1.063884
+    },
+    "log_return": {
+      "min": -0.144141,
+      "max": 0.121649,
+      "mean": 1.2e-05,
+      "std": 0.004174
+    },
+    "volume_ratio": {
+      "min": 0.00179,
+      "max": 17.686631,
+      "mean": 1.041742,
+      "std": 0.831994
+    },
+    "trade_count_ratio": {
+      "min": 0.001566,
+      "max": 4.01621,
+      "mean": 1.025494,
+      "std": 0.660794
+    },
+    "atr_14": {
+      "min": 0.114831,
+      "max": 8.662886,
+      "mean": 1.080711,
+      "std": 0.665257
+    },
+    "rolling_vol": {
+      "min": 0.000332,
+      "max": 0.045859,
+      "mean": 0.003187,
+      "std": 0.002712
+    },
+    "bb_width": {
+      "min": 0.001966,
+      "max": 0.334581,
+      "mean": 0.022978,
+      "std": 0.020198
+    },
+    "bb_pct": {
+      "min": -0.551947,
+      "max": 1.561143,
+      "mean": 0.505568,
+      "std": 0.326259
+    },
+    "vwap_dev": {
+      "min": -0.025894,
+      "max": 0.022993,
+      "mean": -5e-06,
+      "std": 0.001731
+    },
+    "rsi_14": {
+      "min": 1.555494,
+      "max": 99.456273,
+      "mean": 50.492637,
+      "std": 16.458578
+    },
+    "stoch_k": {
+      "min": 0.0,
+      "max": 100.0,
+      "mean": 51.235634,
+      "std": 31.062001
+    },
+    "stoch_d": {
+      "min": 0.0,
+      "max": 100.0,
+      "mean": 51.23528,
+      "std": 28.960144
+    },
+    "hour_sin": {
+      "min": -1.0,
+      "max": 0.0,
+      "mean": -0.838828,
+      "std": 0.175578
+    },
+    "hour_cos": {
+      "min": -1.0,
+      "max": 0.854912,
+      "mean": -0.221625,
+      "std": 0.465215
+    },
+    "close": {
+      "min": 91.28,
+      "max": 497.71,
+      "mean": 268.615562,
+      "std": 87.842514
+    }
+  },
+  "scale_ratio_max_to_min": 8927.1,
+  "widest_feature": "close",
+  "narrowest_feature": "rolling_vol",
+  "null_counts": {},
+  "duplicate_rows": 0,
+  "time_range": [
+    "2020-07-27 15:10:00",
+    "2026-06-12 20:40:00"
+  ],
+  "time_monotonic": true,
+  "time_step_median": "0 days 00:05:00",
+  "large_time_gaps": 1987,
+  "window_size": 64,
+  "test_split": 0.2,
+  "n_windows_total": 20619,
+  "n_windows_train": 16495,
+  "n_windows_test": 4124,
+  "approx_batch_mb": 1.62,
+  "batch_size": 256,
+  "latent_dim": 32
+}

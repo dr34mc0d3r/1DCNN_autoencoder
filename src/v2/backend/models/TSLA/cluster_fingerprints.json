@@ -1,0 +1,850 @@
+{
+  "0": [
+    {
+      "feature": "ema_9",
+      "z_score": 1.1867
+    },
+    {
+      "feature": "ema_21",
+      "z_score": 1.1745
+    },
+    {
+      "feature": "ema_50",
+      "z_score": 1.1441
+    },
+    {
+      "feature": "macd",
+      "z_score": 1.5221
+    },
+    {
+      "feature": "macd_9",
+      "z_score": 1.5606
+    },
+    {
+      "feature": "macd_hist",
+      "z_score": -0.876
+    },
+    {
+      "feature": "body",
+      "z_score": 0.5951
+    },
+    {
+      "feature": "upper_wick",
+      "z_score": 1.1831
+    },
+    {
+      "feature": "lower_wick",
+      "z_score": 1.2655
+    },
+    {
+      "feature": "candle_efficiency",
+      "z_score": -0.2127
+    },
+    {
+      "feature": "return",
+      "z_score": 0.4799
+    },
+    {
+      "feature": "vol_return",
+      "z_score": -0.3382
+    },
+    {
+      "feature": "log_return",
+      "z_score": 0.4765
+    },
+    {
+      "feature": "volume_ratio",
+      "z_score": 0.2383
+    },
+    {
+      "feature": "trade_count_ratio",
+      "z_score": 0.2466
+    },
+    {
+      "feature": "atr_14",
+      "z_score": 1.3232
+    },
+    {
+      "feature": "rolling_vol",
+      "z_score": 0.4467
+    },
+    {
+      "feature": "bb_width",
+      "z_score": 0.6728
+    },
+    {
+      "feature": "bb_pct",
+      "z_score": 0.6253
+    },
+    {
+      "feature": "vwap_dev",
+      "z_score": 0.3988
+    },
+    {
+      "feature": "rsi_14",
+      "z_score": 0.7701
+    },
+    {
+      "feature": "stoch_k",
+      "z_score": 0.6197
+    },
+    {
+      "feature": "stoch_d",
+      "z_score": 0.6506
+    },
+    {
+      "feature": "hour_sin",
+      "z_score": 0.0427
+    },
+    {
+      "feature": "hour_cos",
+      "z_score": 0.0225
+    },
+    {
+      "feature": "close",
+      "z_score": 1.1919
+    }
+  ],
+  "1": [
+    {
+      "feature": "ema_9",
+      "z_score": -0.3907
+    },
+    {
+      "feature": "ema_21",
+      "z_score": -0.383
+    },
+    {
+      "feature": "ema_50",
+      "z_score": -0.3638
+    },
+    {
+      "feature": "macd",
+      "z_score": -0.9544
+    },
+    {
+      "feature": "macd_9",
+      "z_score": -0.9748
+    },
+    {
+      "feature": "macd_hist",
+      "z_score": 0.5164
+    },
+    {
+      "feature": "body",
+      "z_score": -0.3736
+    },
+    {
+      "feature": "upper_wick",
+      "z_score": 0.3842
+    },
+    {
+      "feature": "lower_wick",
+      "z_score": 0.2495
+    },
+    {
+      "feature": "candle_efficiency",
+      "z_score": -0.1039
+    },
+    {
+      "feature": "return",
+      "z_score": -0.4951
+    },
+    {
+      "feature": "vol_return",
+      "z_score": -0.2238
+    },
+    {
+      "feature": "log_return",
+      "z_score": -0.5022
+    },
+    {
+      "feature": "volume_ratio",
+      "z_score": 0.0282
+    },
+    {
+      "feature": "trade_count_ratio",
+      "z_score": -0.0108
+    },
+    {
+      "feature": "atr_14",
+      "z_score": 0.3314
+    },
+    {
+      "feature": "rolling_vol",
+      "z_score": 0.8162
+    },
+    {
+      "feature": "bb_width",
+      "z_score": 0.7866
+    },
+    {
+      "feature": "bb_pct",
+      "z_score": -0.5834
+    },
+    {
+      "feature": "vwap_dev",
+      "z_score": -0.484
+    },
+    {
+      "feature": "rsi_14",
+      "z_score": -0.6825
+    },
+    {
+      "feature": "stoch_k",
+      "z_score": -0.6002
+    },
+    {
+      "feature": "stoch_d",
+      "z_score": -0.6226
+    },
+    {
+      "feature": "hour_sin",
+      "z_score": 0.4525
+    },
+    {
+      "feature": "hour_cos",
+      "z_score": -0.4191
+    },
+    {
+      "feature": "close",
+      "z_score": -0.3941
+    }
+  ],
+  "2": [
+    {
+      "feature": "ema_9",
+      "z_score": 1.2971
+    },
+    {
+      "feature": "ema_21",
+      "z_score": 1.2978
+    },
+    {
+      "feature": "ema_50",
+      "z_score": 1.2992
+    },
+    {
+      "feature": "macd",
+      "z_score": -0.0496
+    },
+    {
+      "feature": "macd_9",
+      "z_score": -0.0439
+    },
+    {
+      "feature": "macd_hist",
+      "z_score": -0.032
+    },
+    {
+      "feature": "body",
+      "z_score": -0.0178
+    },
+    {
+      "feature": "upper_wick",
+      "z_score": 0.1921
+    },
+    {
+      "feature": "lower_wick",
+      "z_score": 0.1843
+    },
+    {
+      "feature": "candle_efficiency",
+      "z_score": -0.1798
+    },
+    {
+      "feature": "return",
+      "z_score": -0.0493
+    },
+    {
+      "feature": "vol_return",
+      "z_score": -0.1768
+    },
+    {
+      "feature": "log_return",
+      "z_score": -0.0439
+    },
+    {
+      "feature": "volume_ratio",
+      "z_score": 0.1879
+    },
+    {
+      "feature": "trade_count_ratio",
+      "z_score": 0.193
+    },
+    {
+      "feature": "atr_14",
+      "z_score": 0.1996
+    },
+    {
+      "feature": "rolling_vol",
+      "z_score": -0.5773
+    },
+    {
+      "feature": "bb_width",
+      "z_score": -0.6442
+    },
+    {
+      "feature": "bb_pct",
+      "z_score": -0.0836
+    },
+    {
+      "feature": "vwap_dev",
+      "z_score": 0.0146
+    },
+    {
+      "feature": "rsi_14",
+      "z_score": -0.0917
+    },
+    {
+      "feature": "stoch_k",
+      "z_score": -0.0839
+    },
+    {
+      "feature": "stoch_d",
+      "z_score": -0.0851
+    },
+    {
+      "feature": "hour_sin",
+      "z_score": -0.3269
+    },
+    {
+      "feature": "hour_cos",
+      "z_score": 0.364
+    },
+    {
+      "feature": "close",
+      "z_score": 1.2968
+    }
+  ],
+  "3": [
+    {
+      "feature": "ema_9",
+      "z_score": 1.3586
+    },
+    {
+      "feature": "ema_21",
+      "z_score": 1.3685
+    },
+    {
+      "feature": "ema_50",
+      "z_score": 1.3925
+    },
+    {
+      "feature": "macd",
+      "z_score": -1.1835
+    },
+    {
+      "feature": "macd_9",
+      "z_score": -1.1957
+    },
+    {
+      "feature": "macd_hist",
+      "z_score": 0.5265
+    },
+    {
+      "feature": "body",
+      "z_score": -0.5024
+    },
+    {
+      "feature": "upper_wick",
+      "z_score": 1.3163
+    },
+    {
+      "feature": "lower_wick",
+      "z_score": 1.3167
+    },
+    {
+      "feature": "candle_efficiency",
+      "z_score": -0.1171
+    },
+    {
+      "feature": "return",
+      "z_score": -0.3927
+    },
+    {
+      "feature": "vol_return",
+      "z_score": -0.3933
+    },
+    {
+      "feature": "log_return",
+      "z_score": -0.3956
+    },
+    {
+      "feature": "volume_ratio",
+      "z_score": 0.302
+    },
+    {
+      "feature": "trade_count_ratio",
+      "z_score": 0.3527
+    },
+    {
+      "feature": "atr_14",
+      "z_score": 1.4316
+    },
+    {
+      "feature": "rolling_vol",
+      "z_score": 0.3787
+    },
+    {
+      "feature": "bb_width",
+      "z_score": 0.3816
+    },
+    {
+      "feature": "bb_pct",
+      "z_score": -0.5412
+    },
+    {
+      "feature": "vwap_dev",
+      "z_score": -0.1842
+    },
+    {
+      "feature": "rsi_14",
+      "z_score": -0.5707
+    },
+    {
+      "feature": "stoch_k",
+      "z_score": -0.4868
+    },
+    {
+      "feature": "stoch_d",
+      "z_score": -0.5143
+    },
+    {
+      "feature": "hour_sin",
+      "z_score": -0.1434
+    },
+    {
+      "feature": "hour_cos",
+      "z_score": 0.2336
+    },
+    {
+      "feature": "close",
+      "z_score": 1.3542
+    }
+  ],
+  "4": [
+    {
+      "feature": "ema_9",
+      "z_score": -0.3552
+    },
+    {
+      "feature": "ema_21",
+      "z_score": -0.3618
+    },
+    {
+      "feature": "ema_50",
+      "z_score": -0.3782
+    },
+    {
+      "feature": "macd",
+      "z_score": 0.8089
+    },
+    {
+      "feature": "macd_9",
+      "z_score": 0.8248
+    },
+    {
+      "feature": "macd_hist",
+      "z_score": -0.4257
+    },
+    {
+      "feature": "body",
+      "z_score": 0.3305
+    },
+    {
+      "feature": "upper_wick",
+      "z_score": 0.0542
+    },
+    {
+      "feature": "lower_wick",
+      "z_score": 0.1028
+    },
+    {
+      "feature": "candle_efficiency",
+      "z_score": -0.0868
+    },
+    {
+      "feature": "return",
+      "z_score": 0.4219
+    },
+    {
+      "feature": "vol_return",
+      "z_score": -0.1121
+    },
+    {
+      "feature": "log_return",
+      "z_score": 0.4188
+    },
+    {
+      "feature": "volume_ratio",
+      "z_score": -0.1803
+    },
+    {
+      "feature": "trade_count_ratio",
+      "z_score": -0.1734
+    },
+    {
+      "feature": "atr_14",
+      "z_score": 0.08
+    },
+    {
+      "feature": "rolling_vol",
+      "z_score": 0.4618
+    },
+    {
+      "feature": "bb_width",
+      "z_score": 0.499
+    },
+    {
+      "feature": "bb_pct",
+      "z_score": 0.5345
+    },
+    {
+      "feature": "vwap_dev",
+      "z_score": 0.3556
+    },
+    {
+      "feature": "rsi_14",
+      "z_score": 0.63
+    },
+    {
+      "feature": "stoch_k",
+      "z_score": 0.553
+    },
+    {
+      "feature": "stoch_d",
+      "z_score": 0.5793
+    },
+    {
+      "feature": "hour_sin",
+      "z_score": 0.4894
+    },
+    {
+      "feature": "hour_cos",
+      "z_score": -0.4679
+    },
+    {
+      "feature": "close",
+      "z_score": -0.3523
+    }
+  ],
+  "5": [
+    {
+      "feature": "ema_9",
+      "z_score": 0.0711
+    },
+    {
+      "feature": "ema_21",
+      "z_score": 0.0771
+    },
+    {
+      "feature": "ema_50",
+      "z_score": 0.0983
+    },
+    {
+      "feature": "macd",
+      "z_score": -0.8138
+    },
+    {
+      "feature": "macd_9",
+      "z_score": -0.8966
+    },
+    {
+      "feature": "macd_hist",
+      "z_score": 1.0096
+    },
+    {
+      "feature": "body",
+      "z_score": -0.0723
+    },
+    {
+      "feature": "upper_wick",
+      "z_score": 2.9373
+    },
+    {
+      "feature": "lower_wick",
+      "z_score": 2.8154
+    },
+    {
+      "feature": "candle_efficiency",
+      "z_score": 0.0178
+    },
+    {
+      "feature": "return",
+      "z_score": 0.0468
+    },
+    {
+      "feature": "vol_return",
+      "z_score": -0.3996
+    },
+    {
+      "feature": "log_return",
+      "z_score": -0.0099
+    },
+    {
+      "feature": "volume_ratio",
+      "z_score": 0.8617
+    },
+    {
+      "feature": "trade_count_ratio",
+      "z_score": 0.9034
+    },
+    {
+      "feature": "atr_14",
+      "z_score": 2.9915
+    },
+    {
+      "feature": "rolling_vol",
+      "z_score": 3.3204
+    },
+    {
+      "feature": "bb_width",
+      "z_score": 2.988
+    },
+    {
+      "feature": "bb_pct",
+      "z_score": -0.1638
+    },
+    {
+      "feature": "vwap_dev",
+      "z_score": -0.1425
+    },
+    {
+      "feature": "rsi_14",
+      "z_score": -0.206
+    },
+    {
+      "feature": "stoch_k",
+      "z_score": -0.1592
+    },
+    {
+      "feature": "stoch_d",
+      "z_score": -0.1692
+    },
+    {
+      "feature": "hour_sin",
+      "z_score": 0.1159
+    },
+    {
+      "feature": "hour_cos",
+      "z_score": 0.0267
+    },
+    {
+      "feature": "close",
+      "z_score": 0.0692
+    }
+  ],
+  "6": [
+    {
+      "feature": "ema_9",
+      "z_score": -1.0403
+    },
+    {
+      "feature": "ema_21",
+      "z_score": -1.0397
+    },
+    {
+      "feature": "ema_50",
+      "z_score": -1.0382
+    },
+    {
+      "feature": "macd",
+      "z_score": -0.0927
+    },
+    {
+      "feature": "macd_9",
+      "z_score": -0.1028
+    },
+    {
+      "feature": "macd_hist",
+      "z_score": 0.1207
+    },
+    {
+      "feature": "body",
+      "z_score": -0.0201
+    },
+    {
+      "feature": "upper_wick",
+      "z_score": -0.7612
+    },
+    {
+      "feature": "lower_wick",
+      "z_score": -0.7744
+    },
+    {
+      "feature": "candle_efficiency",
+      "z_score": 0.0122
+    },
+    {
+      "feature": "return",
+      "z_score": 0.0017
+    },
+    {
+      "feature": "vol_return",
+      "z_score": 0.2085
+    },
+    {
+      "feature": "log_return",
+      "z_score": 0.0051
+    },
+    {
+      "feature": "volume_ratio",
+      "z_score": -0.1279
+    },
+    {
+      "feature": "trade_count_ratio",
+      "z_score": -0.1343
+    },
+    {
+      "feature": "atr_14",
+      "z_score": -0.8561
+    },
+    {
+      "feature": "rolling_vol",
+      "z_score": -0.2844
+    },
+    {
+      "feature": "bb_width",
+      "z_score": -0.2534
+    },
+    {
+      "feature": "bb_pct",
+      "z_score": 0.0002
+    },
+    {
+      "feature": "vwap_dev",
+      "z_score": -0.0322
+    },
+    {
+      "feature": "rsi_14",
+      "z_score": -0.0346
+    },
+    {
+      "feature": "stoch_k",
+      "z_score": -0.0153
+    },
+    {
+      "feature": "stoch_d",
+      "z_score": -0.0229
+    },
+    {
+      "feature": "hour_sin",
+      "z_score": -0.2639
+    },
+    {
+      "feature": "hour_cos",
+      "z_score": 0.249
+    },
+    {
+      "feature": "close",
+      "z_score": -1.0404
+    }
+  ],
+  "7": [
+    {
+      "feature": "ema_9",
+      "z_score": -0.1727
+    },
+    {
+      "feature": "ema_21",
+      "z_score": -0.1725
+    },
+    {
+      "feature": "ema_50",
+      "z_score": -0.1725
+    },
+    {
+      "feature": "macd",
+      "z_score": -0.0203
+    },
+    {
+      "feature": "macd_9",
+      "z_score": -0.0148
+    },
+    {
+      "feature": "macd_hist",
+      "z_score": -0.0407
+    },
+    {
+      "feature": "body",
+      "z_score": -0.0492
+    },
+    {
+      "feature": "upper_wick",
+      "z_score": -0.6273
+    },
+    {
+      "feature": "lower_wick",
+      "z_score": -0.5899
+    },
+    {
+      "feature": "candle_efficiency",
+      "z_score": 0.3183
+    },
+    {
+      "feature": "return",
+      "z_score": -0.0536
+    },
+    {
+      "feature": "vol_return",
+      "z_score": 0.3446
+    },
+    {
+      "feature": "log_return",
+      "z_score": -0.0477
+    },
+    {
+      "feature": "volume_ratio",
+      "z_score": -0.1526
+    },
+    {
+      "feature": "trade_count_ratio",
+      "z_score": -0.1568
+    },
+    {
+      "feature": "atr_14",
+      "z_score": -0.6089
+    },
+    {
+      "feature": "rolling_vol",
+      "z_score": -0.5861
+    },
+    {
+      "feature": "bb_width",
+      "z_score": -0.628
+    },
+    {
+      "feature": "bb_pct",
+      "z_score": -0.0424
+    },
+    {
+      "feature": "vwap_dev",
+      "z_score": -0.0367
+    },
+    {
+      "feature": "rsi_14",
+      "z_score": -0.0492
+    },
+    {
+      "feature": "stoch_k",
+      "z_score": -0.0431
+    },
+    {
+      "feature": "stoch_d",
+      "z_score": -0.0416
+    },
+    {
+      "feature": "hour_sin",
+      "z_score": 0.0032
+    },
+    {
+      "feature": "hour_cos",
+      "z_score": -0.105
+    },
+    {
+      "feature": "close",
+      "z_score": -0.1729
+    }
+  ]
+}

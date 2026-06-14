@@ -1,0 +1,33 @@
+{
+  "overall_mse": 0.55423748,
+  "per_feature_mse": {
+    "ema_9": 0.00941878,
+    "ema_21": 0.00891886,
+    "ema_50": 0.00999726,
+    "macd": 0.01548816,
+    "macd_9": 0.01641011,
+    "macd_hist": 0.05255206,
+    "body": 0.2715598,
+    "upper_wick": 0.22704002,
+    "lower_wick": 0.22126158,
+    "candle_efficiency": 0.53815919,
+    "return": 1.25075388,
+    "vol_return": 5.53221321,
+    "log_return": 1.25128543,
+    "volume_ratio": 1.53931618,
+    "trade_count_ratio": 1.09373546,
+    "atr_14": 0.0322709,
+    "rolling_vol": 0.37902123,
+    "bb_width": 0.39413947,
+    "bb_pct": 0.0674094,
+    "vwap_dev": 1.28872073,
+    "rsi_14": 0.08351065,
+    "stoch_k": 0.05784471,
+    "stoch_d": 0.03790604,
+    "hour_sin": 0.01257579,
+    "hour_cos": 0.01004303,
+    "close": 0.00862198
+  },
+  "n_samples": 20,
+  "computed_at": "2026-06-14T16:27:36"
+}

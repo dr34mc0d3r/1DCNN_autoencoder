@@ -1,0 +1,106 @@
+[
+  {
+    "feature": "close",
+    "importance": 0.2764
+  },
+  {
+    "feature": "ema_9",
+    "importance": 0.211
+  },
+  {
+    "feature": "macd_9",
+    "importance": 0.1604
+  },
+  {
+    "feature": "atr_14",
+    "importance": 0.1524
+  },
+  {
+    "feature": "bb_width",
+    "importance": 0.1309
+  },
+  {
+    "feature": "macd",
+    "importance": 0.0273
+  },
+  {
+    "feature": "lower_wick",
+    "importance": 0.0228
+  },
+  {
+    "feature": "hour_cos",
+    "importance": 0.0164
+  },
+  {
+    "feature": "rolling_vol",
+    "importance": 0.0025
+  },
+  {
+    "feature": "ema_21",
+    "importance": 0.0
+  },
+  {
+    "feature": "ema_50",
+    "importance": 0.0
+  },
+  {
+    "feature": "macd_hist",
+    "importance": 0.0
+  },
+  {
+    "feature": "body",
+    "importance": 0.0
+  },
+  {
+    "feature": "upper_wick",
+    "importance": 0.0
+  },
+  {
+    "feature": "candle_efficiency",
+    "importance": 0.0
+  },
+  {
+    "feature": "return",
+    "importance": 0.0
+  },
+  {
+    "feature": "vol_return",
+    "importance": 0.0
+  },
+  {
+    "feature": "log_return",
+    "importance": 0.0
+  },
+  {
+    "feature": "volume_ratio",
+    "importance": 0.0
+  },
+  {
+    "feature": "trade_count_ratio",
+    "importance": 0.0
+  },
+  {
+    "feature": "bb_pct",
+    "importance": 0.0
+  },
+  {
+    "feature": "vwap_dev",
+    "importance": 0.0
+  },
+  {
+    "feature": "rsi_14",
+    "importance": 0.0
+  },
+  {
+    "feature": "stoch_k",
+    "importance": 0.0
+  },
+  {
+    "feature": "stoch_d",
+    "importance": 0.0
+  },
+  {
+    "feature": "hour_sin",
+    "importance": 0.0
+  }
+]

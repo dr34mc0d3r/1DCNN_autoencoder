@@ -1,0 +1,77 @@
+{
+  "2": {
+    "silhouette": 0.3184160590171814,
+    "davies_bouldin": 1.4087960670768027,
+    "calinski_harabasz": 9138.623526108015
+  },
+  "3": {
+    "silhouette": 0.26551690697669983,
+    "davies_bouldin": 1.740982344498093,
+    "calinski_harabasz": 6564.6871425316485
+  },
+  "4": {
+    "silhouette": 0.20584620535373688,
+    "davies_bouldin": 1.723818793891515,
+    "calinski_harabasz": 5470.398976689558
+  },
+  "5": {
+    "silhouette": 0.19683024287223816,
+    "davies_bouldin": 1.732845582554465,
+    "calinski_harabasz": 4804.927111278606
+  },
+  "6": {
+    "silhouette": 0.19070805609226227,
+    "davies_bouldin": 1.757819458861319,
+    "calinski_harabasz": 4256.460191716418
+  },
+  "7": {
+    "silhouette": 0.12227404117584229,
+    "davies_bouldin": 1.8294282290102188,
+    "calinski_harabasz": 3841.9892849117837
+  },
+  "8": {
+    "silhouette": 0.11395728588104248,
+    "davies_bouldin": 1.9132641051295263,
+    "calinski_harabasz": 3527.8150692594213
+  },
+  "9": {
+    "silhouette": 0.11499954015016556,
+    "davies_bouldin": 1.8318435653849545,
+    "calinski_harabasz": 3265.6263755399227
+  },
+  "10": {
+    "silhouette": 0.10620065033435822,
+    "davies_bouldin": 1.8513238222916777,
+    "calinski_harabasz": 3064.6364162864993
+  },
+  "11": {
+    "silhouette": 0.10545094311237335,
+    "davies_bouldin": 1.817259471852242,
+    "calinski_harabasz": 2878.9287178722675
+  },
+  "12": {
+    "silhouette": 0.09931988269090652,
+    "davies_bouldin": 1.886310211195126,
+    "calinski_harabasz": 2714.424767100607
+  },
+  "13": {
+    "silhouette": 0.09571034461259842,
+    "davies_bouldin": 1.9231556685095879,
+    "calinski_harabasz": 2569.0998420143383
+  },
+  "14": {
+    "silhouette": 0.09752862900495529,
+    "davies_bouldin": 1.902636431752562,
+    "calinski_harabasz": 2443.782284889111
+  },
+  "15": {
+    "silhouette": 0.09638020396232605,
+    "davies_bouldin": 1.8373546444514721,
+    "calinski_harabasz": 2334.5071606839742
+  },
+  "16": {
+    "silhouette": 0.09253345429897308,
+    "davies_bouldin": 1.9085016988802308,
+    "calinski_harabasz": 2230.193369214166
+  }
+}
