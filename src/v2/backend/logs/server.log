@@ -1904,3 +1904,14 @@
 2026-06-14 15:13:38,513 INFO     websocket.live: WebSocket connected  (total: 1)
 2026-06-14 15:14:27,684 INFO     websocket.live: WebSocket disconnected  (total: 0)
 2026-06-14 15:14:27,941 INFO     websocket.live: WebSocket connected  (total: 1)
+2026-06-14 15:42:18,633 INFO     websocket.live: WebSocket disconnected  (total: 0)
+2026-06-14 15:42:28,154 INFO     app: v2 backend starting — config loaded from /Volumes/My SSD/Chris Stuff/DEV/1DCNN_A/src/v2/backend/services/../config/config.json
+2026-06-14 15:42:28,159 INFO     websocket.live: WebSocket connected  (total: 1)
+2026-06-14 15:44:52,835 INFO     websocket.live: WebSocket disconnected  (total: 0)
+2026-06-14 15:44:53,150 INFO     websocket.live: WebSocket connected  (total: 1)
+2026-06-14 15:48:18,390 INFO     neural.trainer: Epoch    1 | train=0.79188  val=1.30475 | overfit=1.65× | patience [----------]
+2026-06-14 15:48:24,539 INFO     neural.trainer: Epoch    2 | train=0.72275  val=1.00751 | overfit=1.39× | patience [----------]
+2026-06-14 15:48:30,904 INFO     neural.trainer: Epoch    3 | train=0.64770  val=0.75597 | overfit=1.17× | patience [----------]
+2026-06-14 15:48:38,197 INFO     neural.trainer: Epoch    4 | train=0.59566  val=0.67222 | overfit=1.13× | patience [----------]
+2026-06-14 15:48:44,481 INFO     neural.trainer: Epoch    5 | train=0.54917  val=0.57691 | overfit=1.05× | patience [----------]
+2026-06-14 15:48:54,044 INFO     neural.trainer: Epoch    6 | train=0.48963  val=0.49957 | overfit=1.02× | patience [----------]
