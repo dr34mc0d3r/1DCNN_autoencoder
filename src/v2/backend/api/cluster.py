@@ -6,6 +6,7 @@ runs t-SNE, and returns scatter + centroid data for the Latent Space page.
 """
 
 import logging
+import os
 
 import numpy as np
 import torch
@@ -31,7 +32,7 @@ async def _run_cluster() -> None:
         device     = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
         saved_scaler = storage.load_scaler()
-        X_clean, _, _ = storage.run_pipeline(scaler=saved_scaler)
+        X_clean, _, _, valid_mask = storage.run_pipeline(scaler=saved_scaler, return_mask=True)
         model = storage.load_model(len(feat_cols), latent_dim, device)
 
         # Extract latent vectors for all clean windows
@@ -45,6 +46,15 @@ async def _run_cluster() -> None:
         km = KMeans(n_clusters=n_clusters, n_init=10, random_state=42)
         labels = km.fit_predict(Z).tolist()
         storage.save_kmeans(km)
+
+        # Persist artifacts for the Cluster Profile page
+        bundle = storage._active_bundle_dir()
+        X_means = X_clean.mean(axis=1).astype(np.float32)          # (N, n_features)
+        valid_indices = np.where(valid_mask)[0].astype(np.int32)
+        np.save(os.path.join(bundle, "latents.npy"),       Z.astype(np.float32))
+        np.save(os.path.join(bundle, "labels.npy"),        np.array(labels, dtype=np.int32))
+        np.save(os.path.join(bundle, "window_means.npy"),  X_means)
+        np.save(os.path.join(bundle, "valid_indices.npy"), valid_indices)
 
         # t-SNE — subsample to keep runtime reasonable
         n_tsne = min(5000, len(Z))
