@@ -33,6 +33,7 @@ _DEFAULTS: dict[str, Any] = {
     "lr": 0.001,
     "test_split": 0.2,
     "n_clusters": 8,
+    "forward_return_horizon": 4,
     "guard_patience": 7,
     "guard_min_delta": 1e-5,
     "guard_overfit_ratio": 2.5,

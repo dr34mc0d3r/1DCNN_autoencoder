@@ -187,15 +187,18 @@ def run_pipeline(
     max_bars: int | None = None,
     train_split: float | None = None,
     scaler: RobustScaler | None = None,
-) -> tuple[np.ndarray, pd.DataFrame, RobustScaler]:
+    return_mask: bool = False,
+) -> tuple:
     """
     Full pipeline: load CSV → clean → features → scale → windows → gap filter.
-    Returns (X_clean, df_clean, scaler).
+    Returns (X_clean, df_clean, scaler) or (X_clean, df_clean, scaler, valid_mask)
+    when return_mask=True.
 
     train_split : when provided, the RobustScaler is fitted only on the first
                   `train_split` fraction of rows, preventing test-set leakage.
     scaler      : when provided, skip fitting and apply this scaler directly
                   (used by post-training endpoints that hold the saved scaler).
+    return_mask : when True, append the boolean gap-filter mask to the return tuple.
     """
     cfg = config_manager.load()
     symbol    = symbol    or cfg["symbol"]
@@ -219,7 +222,9 @@ def run_pipeline(
         df, scaler = scale_features(df, feat_cols)
 
     X = make_windows(df, feat_cols, window_size)
-    X_clean, _ = filter_gap_windows(X, df, window_size)
+    X_clean, valid_mask = filter_gap_windows(X, df, window_size)
+    if return_mask:
+        return X_clean, df, scaler, valid_mask
     return X_clean, df, scaler
 
 
@@ -400,6 +405,57 @@ def load_kmeans() -> Any:
             "No K-Means in this bundle — run Latent Space → Extract + Cluster first."
         )
     return joblib.load(path)
+
+
+_CLUSTER_ARTIFACT_FILES = ("latents.npy", "labels.npy", "window_means.npy", "valid_indices.npy")
+_CLUSTER_MISSING_MSG = "Cluster artifacts not found — run Latent Space → Extract + Cluster first."
+
+
+def load_latents() -> np.ndarray:
+    d = _active_bundle_dir()
+    if d is None:
+        raise FileNotFoundError("No active model — train a named model first.")
+    path = os.path.join(d, "latents.npy")
+    if not os.path.exists(path):
+        raise FileNotFoundError(_CLUSTER_MISSING_MSG)
+    return np.load(path)
+
+
+def load_labels() -> np.ndarray:
+    d = _active_bundle_dir()
+    if d is None:
+        raise FileNotFoundError("No active model — train a named model first.")
+    path = os.path.join(d, "labels.npy")
+    if not os.path.exists(path):
+        raise FileNotFoundError(_CLUSTER_MISSING_MSG)
+    return np.load(path)
+
+
+def load_window_means() -> np.ndarray:
+    d = _active_bundle_dir()
+    if d is None:
+        raise FileNotFoundError("No active model — train a named model first.")
+    path = os.path.join(d, "window_means.npy")
+    if not os.path.exists(path):
+        raise FileNotFoundError(_CLUSTER_MISSING_MSG)
+    return np.load(path)
+
+
+def load_valid_indices() -> np.ndarray:
+    d = _active_bundle_dir()
+    if d is None:
+        raise FileNotFoundError("No active model — train a named model first.")
+    path = os.path.join(d, "valid_indices.npy")
+    if not os.path.exists(path):
+        raise FileNotFoundError(_CLUSTER_MISSING_MSG)
+    return np.load(path)
+
+
+def cluster_artifacts_exist() -> bool:
+    d = _active_bundle_dir()
+    if not d:
+        return False
+    return all(os.path.exists(os.path.join(d, f)) for f in _CLUSTER_ARTIFACT_FILES)
 
 
 def model_exists() -> bool:

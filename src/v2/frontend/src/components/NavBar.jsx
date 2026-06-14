@@ -4,8 +4,9 @@ const LINKS = [
   { to: "/setup",     label: "Setup" },
   { to: "/train",     label: "Train" },
   { to: "/windows",   label: "Windows" },
-  { to: "/latent",    label: "Latent Space" },
-  { to: "/analysis",  label: "Analysis" },
+  { to: "/latent",          label: "Latent Space" },
+  { to: "/cluster-profile", label: "Cluster Profile" },
+  { to: "/analysis",        label: "Analysis" },
   { to: "/inference", label: "Live Inference" },
 ];
 
