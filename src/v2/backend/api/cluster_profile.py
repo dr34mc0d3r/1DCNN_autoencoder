@@ -63,7 +63,7 @@ def get_cluster_profile() -> dict:
 
     dt = DecisionTreeClassifier(max_depth=4, random_state=42)
     dt.fit(window_means, labels)
-    tree_rules = export_text(dt, feature_names=list(feat_cols))
+    tree_rules = export_text(dt, feature_names=list(feat_cols), show_weights=True)
     importances = sorted(
         [
             {"feature": f, "importance": round(float(dt.feature_importances_[i]), 4)}
