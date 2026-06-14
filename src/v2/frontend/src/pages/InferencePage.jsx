@@ -168,6 +168,14 @@ export default function InferencePage() {
   useEffect(() => {
     api.getActiveModel().then(m => setActiveModel(Object.keys(m).length ? m : null)).catch(() => {});
     api.getConfig().then(cfg => setCsvInfo({ symbol: cfg.symbol, timeframe: cfg.timeframe })).catch(() => {});
+    // Sync inference state from backend — if a run is in progress (e.g. after page
+    // navigation or refresh) show the Stop button instead of Start.
+    api.inferResults().then(res => {
+      if (res.state === "running") {
+        setState("running");
+        activeRef.current = true;
+      }
+    }).catch(() => {});
   }, []);
 
   // Collect incoming steps into pendingRef without touching state
