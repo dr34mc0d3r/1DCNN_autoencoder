@@ -7,6 +7,8 @@ import MiniCandlestick from "../components/MiniCandlestick.jsx";
 
 const COLORS = ["#6366f1","#f59e0b","#10b981","#ef4444","#3b82f6","#8b5cf6","#ec4899","#14b8a6"];
 
+// ── Utilities ──────────────────────────────────────────────────────────────────
+
 function Spinner() {
   return (
     <svg className="animate-spin h-5 w-5 text-indigo-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
@@ -16,11 +18,144 @@ function Spinner() {
   );
 }
 
-function Panel({ title, loading, children }) {
+function InfoIcon({ content }) {
+  const [open, setOpen] = useState(false);
+  return (
+    <div className="relative inline-block">
+      <button
+        onClick={() => setOpen(v => !v)}
+        className="w-4 h-4 rounded-full bg-gray-700 hover:bg-gray-600 text-gray-400 hover:text-gray-200 text-[10px] font-bold flex items-center justify-center leading-none transition-colors"
+        title="What does this mean?"
+      >
+        i
+      </button>
+      {open && (
+        <div className="absolute z-20 left-0 top-6 w-72 bg-gray-800 border border-gray-700 rounded-lg p-3 text-xs text-gray-300 shadow-2xl">
+          {content}
+          <button
+            onClick={() => setOpen(false)}
+            className="mt-2 block text-gray-500 hover:text-gray-300 text-[10px]"
+          >
+            ✕ close
+          </button>
+        </div>
+      )}
+    </div>
+  );
+}
+
+const tooltipStyle = { backgroundColor: "#111827", border: "none" };
+
+// ── Guide ──────────────────────────────────────────────────────────────────────
+
+function ClusterProfileGuide() {
+  const [open, setOpen] = useState(false);
+  return (
+    <div className="bg-gray-900 border border-gray-800 rounded-xl mb-6 overflow-hidden">
+      <button
+        onClick={() => setOpen(v => !v)}
+        className="w-full flex items-center justify-between px-4 py-3 text-sm font-semibold text-gray-300 hover:text-gray-100 hover:bg-gray-800/40 transition-colors"
+      >
+        <span>What to look for &amp; Finding Patterns</span>
+        <span className="text-gray-500 text-xs">{open ? "▲ Hide" : "▼ Show"}</span>
+      </button>
+
+      {open && (
+        <div className="border-t border-gray-800 px-5 py-4 space-y-5 text-sm text-gray-400">
+
+          {/* ── What to look for ── */}
+          <div>
+            <p className="text-gray-200 font-semibold mb-2">What to look for</p>
+            <div className="space-y-3">
+
+              <div>
+                <p className="text-gray-300 font-medium mb-0.5">Feature Fingerprint</p>
+                <ul className="list-disc list-inside space-y-1">
+                  <li><strong className="text-gray-300">|z| &gt; 1.5 (indigo/red bars)</strong> — this cluster has a meaningfully elevated or depressed level of that feature compared to the full dataset. Strong defining characteristic.</li>
+                  <li><strong className="text-gray-300">|z| &lt; 0.5 (gray bars)</strong> — this feature is near the global average for this cluster. It's not what makes this cluster distinctive.</li>
+                  <li><strong className="text-gray-300">Multiple features with high |z| in the same direction</strong> — the cluster represents a coherent market regime. E.g., high rsi_14 + high return + positive body = momentum cluster.</li>
+                  <li><strong className="text-gray-300">Conflicting z directions</strong> — mixed regime. The autoencoder found something unusual, but it doesn't fit a single clean narrative.</li>
+                </ul>
+              </div>
+
+              <div>
+                <p className="text-gray-300 font-medium mb-0.5">Decision Tree Rules</p>
+                <ul className="list-disc list-inside space-y-1">
+                  <li><strong className="text-gray-300">High feature importance</strong> — that feature most cleanly separates clusters from each other globally. If the same feature also has a high |z| in the fingerprint for your selected cluster, it's a defining characteristic.</li>
+                  <li><strong className="text-gray-300">Feature appears early in the tree (near root)</strong> — it's a primary split. The first split separates the majority of windows.</li>
+                  <li><strong className="text-gray-300">Tree rules feel interpretable</strong> — "rsi_14 &lt;= 42" followed by cluster 4 → low-RSI oversold regime. Good sign the model learned real structure.</li>
+                  <li><strong className="text-gray-300">Tree rules feel arbitrary</strong> — small threshold differences between branches — suggests the clusters are close together in feature space. The model may have over-split.</li>
+                </ul>
+              </div>
+
+              <div>
+                <p className="text-gray-300 font-medium mb-0.5">Representative Windows</p>
+                <ul className="list-disc list-inside space-y-1">
+                  <li><strong className="text-gray-300">All 5 look similar</strong> — tight, well-defined cluster. The model consistently puts these kinds of windows together.</li>
+                  <li><strong className="text-gray-300">Varied shapes across the 5</strong> — looser cluster. The model identified a broader regime (e.g. "low volatility") without a specific candle pattern.</li>
+                  <li><strong className="text-gray-300">dist close to 0</strong> — very typical example of this cluster; a reliable representative.</li>
+                  <li><strong className="text-gray-300">dist much higher than Rank 0</strong> — the cluster is spread out in latent space; the "centre" is somewhat abstract.</li>
+                </ul>
+              </div>
+
+              <div>
+                <p className="text-gray-300 font-medium mb-0.5">Forward Returns</p>
+                <ul className="list-disc list-inside space-y-1">
+                  <li><strong className="text-gray-300">Hit rate &gt; 55% with n &gt; 30</strong> — clusters that appear before more up-moves than down. Statistically notable; worth tracking.</li>
+                  <li><strong className="text-gray-300">Hit rate &lt; 45% with n &gt; 30</strong> — clusters that tend to precede down-moves. Potential short-bias signal.</li>
+                  <li><strong className="text-gray-300">n &lt; 20</strong> — too few non-overlapping samples for this cluster. Don't draw conclusions; it may be a rare regime.</li>
+                  <li><strong className="text-gray-300">Large P25–P75 spread</strong> — wide distribution of outcomes. Mean return may be misleading; the cluster appears in both trending and choppy conditions.</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          {/* ── Finding patterns ── */}
+          <div>
+            <p className="text-gray-200 font-semibold mb-2">Finding Hidden Patterns</p>
+            <div className="space-y-3">
+
+              <div>
+                <p className="text-gray-300 font-medium mb-0.5">Step 1 — Identify the dominant feature story for each cluster</p>
+                <p>Read the fingerprint top-to-bottom. The first 2–3 bars tell you the main story. "High rsi_14, high return, high vol_return" = momentum. "Low rsi_14, negative body, low rolling_vol" = slow bleed. "High bb_width, high atr_14" = expansion. "Low bb_width, low rolling_vol" = compression/consolidation.</p>
+              </div>
+
+              <div>
+                <p className="text-gray-300 font-medium mb-0.5">Step 2 — Cross-reference fingerprint and forward returns</p>
+                <p>Momentum clusters (high return z) often have high hit rates — the market was already moving and tended to continue. Oversold clusters (low rsi, negative body) may have high hit rates if they represent mean-reversion setups. A high |z| cluster with a near-50% hit rate suggests a volatility regime, not a directional one.</p>
+              </div>
+
+              <div>
+                <p className="text-gray-300 font-medium mb-0.5">Step 3 — Use representative windows to build intuition</p>
+                <p>Screenshot the Rank 0 candles for each cluster and label them manually ("opening gap fill", "midday grind up", "pre-close fade"). Over time, these labels become your regime names. Confirm against the Analysis page's Hour-of-Day Heatmap — if a cluster you labelled "opening range" shows up mostly at 9:30–10:00, that's validation.</p>
+              </div>
+
+              <div>
+                <p className="text-gray-300 font-medium mb-0.5">Step 4 — Watch for high-z clusters with low window counts</p>
+                <p>A cluster with &lt; 5% of windows but z-scores above 2.0 is a rare, extreme regime. These often correspond to earnings, macro events, or flash moves. The model separated them from everything else because they're genuinely different — even if there aren't enough samples for forward-return statistics.</p>
+              </div>
+
+              <div>
+                <p className="text-gray-300 font-medium mb-0.5">Step 5 — Compare clusters after retraining</p>
+                <p>After retraining with a different gamma, K, or vol_return clip, re-run this page. If the same 3–4 clusters appear with similar fingerprints, the model has learned stable market regimes. If the clusters look completely different each time, the model is fitting noise — consider increasing training data or regularising the latent dim.</p>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ── Panel wrapper ──────────────────────────────────────────────────────────────
+
+function Panel({ title, loading, info, children }) {
   return (
     <div className="bg-gray-900 rounded-xl p-4 mb-6">
-      <div className="flex items-center gap-3 mb-4">
+      <div className="flex items-center gap-2 mb-4">
         <p className="text-sm font-semibold text-gray-300">{title}</p>
+        {info && <InfoIcon content={info} />}
         {loading && <Spinner />}
       </div>
       {children}
@@ -28,15 +163,56 @@ function Panel({ title, loading, children }) {
   );
 }
 
-const tooltipStyle = { backgroundColor: "#111827", border: "none" };
+// ── Cluster pill info popup content ───────────────────────────────────────────
 
-// ── Panel 1: Feature Fingerprint ──────────────────────────────────────────────
+function clusterPillInfo(k, profile) {
+  if (!profile) return <p className="text-gray-400">Profile not loaded yet.</p>;
+
+  const total = Object.values(profile.cluster_sizes).reduce((a, b) => a + b, 0);
+  const size  = profile.cluster_sizes[String(k)] ?? 0;
+  const pct   = total > 0 ? ((size / total) * 100).toFixed(1) : "0.0";
+
+  const fingerprint = profile.fingerprints[String(k)] ?? [];
+  const top3 = [...fingerprint]
+    .sort((a, b) => Math.abs(b.z_score) - Math.abs(a.z_score))
+    .slice(0, 3);
+
+  const zLabel = z => {
+    const sign = z > 0 ? "+" : "";
+    const desc = Math.abs(z) > 1.5 ? "strong" : Math.abs(z) > 0.8 ? "moderate" : "weak";
+    return `${sign}${z.toFixed(2)} (${desc})`;
+  };
+
+  return (
+    <div className="space-y-2">
+      <p className="font-semibold text-gray-200">Cluster {k}</p>
+      <p className="text-gray-400">{size.toLocaleString()} windows — {pct}% of total</p>
+      {top3.length > 0 && (
+        <div>
+          <p className="text-gray-500 mb-1">Top defining features:</p>
+          <ul className="space-y-0.5">
+            {top3.map(f => (
+              <li key={f.feature} className="flex justify-between gap-3">
+                <span className="text-gray-300">{f.feature}</span>
+                <span style={{ color: f.z_score > 0 ? "#6366f1" : "#ef4444" }}>
+                  {zLabel(f.z_score)}
+                </span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ── Panel content components ───────────────────────────────────────────────────
 
 function FingerPrint({ profile, selectedCluster }) {
   if (!profile) return null;
-  const raw = profile.fingerprints[String(selectedCluster)] || [];
+  const raw    = profile.fingerprints[String(selectedCluster)] || [];
   const sorted = [...raw].sort((a, b) => Math.abs(b.z_score) - Math.abs(a.z_score)).slice(0, 12);
-  const data = sorted.map(d => ({ name: d.feature, z: d.z_score }));
+  const data   = sorted.map(d => ({ name: d.feature, z: d.z_score }));
 
   return (
     <div>
@@ -48,16 +224,10 @@ function FingerPrint({ profile, selectedCluster }) {
         <BarChart data={data} layout="vertical" margin={{ left: 90, right: 20 }}>
           <XAxis type="number" tick={{ fill: "#9ca3af", fontSize: 11 }} />
           <YAxis dataKey="name" type="category" tick={{ fill: "#d1d5db", fontSize: 11 }} width={90} />
-          <Tooltip
-            contentStyle={tooltipStyle}
-            formatter={v => [v.toFixed(3), "z-score"]}
-          />
+          <Tooltip contentStyle={tooltipStyle} formatter={v => [v.toFixed(3), "z-score"]} />
           <Bar dataKey="z">
             {data.map((d, i) => (
-              <Cell
-                key={i}
-                fill={d.z > 0.5 ? "#6366f1" : d.z < -0.5 ? "#ef4444" : "#4b5563"}
-              />
+              <Cell key={i} fill={d.z > 0.5 ? "#6366f1" : d.z < -0.5 ? "#ef4444" : "#4b5563"} />
             ))}
           </Bar>
         </BarChart>
@@ -65,8 +235,6 @@ function FingerPrint({ profile, selectedCluster }) {
     </div>
   );
 }
-
-// ── Panel 2: Decision Tree ────────────────────────────────────────────────────
 
 function DecisionTree({ profile }) {
   if (!profile) return null;
@@ -94,13 +262,10 @@ function DecisionTree({ profile }) {
   );
 }
 
-// ── Panel 3: Representative Windows ──────────────────────────────────────────
-
 function Representatives({ reps, loading }) {
   if (loading) return <div className="flex justify-center py-8"><Spinner /></div>;
-  if (!reps || reps.windows.length === 0) return (
-    <p className="text-gray-500 text-sm">No windows found for this cluster.</p>
-  );
+  if (!reps || reps.windows.length === 0)
+    return <p className="text-gray-500 text-sm">No windows found for this cluster.</p>;
   return (
     <div className="flex flex-wrap gap-4">
       {reps.windows.map(w => (
@@ -114,8 +279,6 @@ function Representatives({ reps, loading }) {
   );
 }
 
-// ── Panel 4: Forward Returns ──────────────────────────────────────────────────
-
 function ForwardReturns({ fwdData, selectedCluster }) {
   if (!fwdData) return null;
   const { horizon, n_non_overlapping, clusters } = fwdData;
@@ -123,8 +286,6 @@ function ForwardReturns({ fwdData, selectedCluster }) {
   const barData = Array.from({ length: n_clusters }, (_, k) => ({
     cluster: `C${k}`,
     mean: clusters[String(k)]?.mean ?? 0,
-    hit_rate: clusters[String(k)]?.hit_rate ?? 0,
-    n: clusters[String(k)]?.n ?? 0,
   }));
 
   return (
@@ -136,10 +297,7 @@ function ForwardReturns({ fwdData, selectedCluster }) {
         <BarChart data={barData} margin={{ left: 0, right: 10 }}>
           <XAxis dataKey="cluster" tick={{ fill: "#d1d5db", fontSize: 12 }} />
           <YAxis tickFormatter={v => `${(v * 100).toFixed(2)}%`} tick={{ fill: "#9ca3af", fontSize: 11 }} />
-          <Tooltip
-            contentStyle={tooltipStyle}
-            formatter={v => [`${(v * 100).toFixed(3)}%`, "mean return"]}
-          />
+          <Tooltip contentStyle={tooltipStyle} formatter={v => [`${(v * 100).toFixed(3)}%`, "mean return"]} />
           <Bar dataKey="mean">
             {barData.map((d, i) => (
               <Cell
@@ -168,13 +326,10 @@ function ForwardReturns({ fwdData, selectedCluster }) {
           </thead>
           <tbody>
             {Array.from({ length: n_clusters }, (_, k) => {
-              const c = clusters[String(k)];
+              const c   = clusters[String(k)];
               const pct = v => `${(v * 100).toFixed(2)}%`;
               return (
-                <tr
-                  key={k}
-                  className={`border-b border-gray-800/50 ${k === selectedCluster ? "text-gray-100" : ""}`}
-                >
+                <tr key={k} className={`border-b border-gray-800/50 ${k === selectedCluster ? "text-gray-100" : ""}`}>
                   <td className="py-1 pr-4">
                     <span style={{ color: COLORS[k % COLORS.length] }}>●</span>{" "}C{k}
                   </td>
@@ -196,8 +351,43 @@ function ForwardReturns({ fwdData, selectedCluster }) {
 
 // ── Page ──────────────────────────────────────────────────────────────────────
 
+const PANEL_INFO = {
+  fingerprint: (
+    <div className="space-y-1.5">
+      <p className="font-semibold text-gray-200 mb-1">Feature Fingerprint</p>
+      <p>Z-score = how many standard deviations this cluster's average feature value sits above or below the global mean.</p>
+      <p><span className="text-indigo-400 font-semibold">Indigo bar (positive z)</span> — cluster has more of this feature than average. <span className="text-red-400 font-semibold">Red bar (negative z)</span> — less than average. <span className="text-gray-500 font-semibold">Gray</span> — near average, not distinctive.</p>
+      <p>|z| &gt; 1.5 is a strong signal. Features with |z| &lt; 0.5 don't define this cluster.</p>
+    </div>
+  ),
+  decisionTree: (
+    <div className="space-y-1.5">
+      <p className="font-semibold text-gray-200 mb-1">Decision Tree Rules</p>
+      <p>A single depth-4 tree fitted across all clusters. It finds the feature thresholds that best separate clusters globally.</p>
+      <p><strong className="text-gray-300">Feature importance</strong> — how much each feature contributed to all splits. High importance + high |z| in fingerprint = strongly defining characteristic.</p>
+      <p>Features near the root (early splits) separate the majority of windows. Features at leaves handle edge cases.</p>
+    </div>
+  ),
+  representatives: (
+    <div className="space-y-1.5">
+      <p className="font-semibold text-gray-200 mb-1">Representative Windows</p>
+      <p>The 5 windows closest to this cluster's centroid in 32-dimensional latent space. These are the most "typical" examples the model assigned here.</p>
+      <p><strong className="text-gray-300">dist</strong> = Euclidean distance from the centroid. Rank 0 (lowest dist) is the purest example.</p>
+      <p>If all 5 look similar → tight cluster. If varied → the cluster captures a broad regime rather than a specific pattern.</p>
+    </div>
+  ),
+  forwardReturns: (
+    <div className="space-y-1.5">
+      <p className="font-semibold text-gray-200 mb-1">Forward Return Distribution</p>
+      <p>Mean return of the close price N bars after each window ends. Computed on non-overlapping samples (one per window_size bars) to avoid autocorrelation.</p>
+      <p><strong className="text-gray-300">Hit rate</strong> — fraction of samples where the next move was positive. Above 55% with n &gt; 30 is worth noting; below 30 samples, don't draw conclusions.</p>
+      <p>P25–P75 spread shows how consistent the direction is. A narrow spread + high hit rate is more reliable than a wide spread with the same mean.</p>
+    </div>
+  ),
+};
+
 export default function ClusterProfilePage() {
-  const [ready,   setReady]   = useState(null);   // null=checking, true, false
+  const [ready,   setReady]   = useState(null);
   const [profile, setProfile] = useState(null);
   const [fwdData, setFwdData] = useState(null);
   const [reps,    setReps]    = useState(null);
@@ -209,21 +399,18 @@ export default function ClusterProfilePage() {
   const [selectedCluster, setSelectedCluster] = useState(0);
   const [error, setError] = useState("");
 
-  // Check that clustering has been run
   useEffect(() => {
     api.clusterResult()
       .then(r => setReady(r.state === "done" && r.result?.n_clusters > 0))
       .catch(() => setReady(false));
   }, []);
 
-  // Auto-load profile + forward returns on mount (once ready)
   useEffect(() => {
     if (!ready) return;
     fetchProfile();
     fetchFwd();
   }, [ready]);
 
-  // Reload reps whenever selected cluster changes (and profile is loaded)
   useEffect(() => {
     if (!ready || !profile) return;
     fetchReps(selectedCluster);
@@ -233,8 +420,7 @@ export default function ClusterProfilePage() {
     setProfileLoading(true);
     setError("");
     try {
-      const data = await api.clusterProfile();
-      setProfile(data);
+      setProfile(await api.clusterProfile());
     } catch (e) {
       setError(e.message);
     } finally {
@@ -297,45 +483,55 @@ export default function ClusterProfilePage() {
         </div>
       )}
 
+      <ClusterProfileGuide />
+
       {/* Cluster selector */}
       <div className="flex flex-wrap gap-2 mb-6">
         {Array.from({ length: nClusters }, (_, k) => (
-          <button
-            key={k}
-            onClick={() => setSelectedCluster(k)}
-            className={`px-3 py-1 rounded-full text-sm font-semibold transition-colors ${
-              k === selectedCluster
-                ? "text-gray-950"
-                : "text-gray-400 bg-gray-800 hover:bg-gray-700"
-            }`}
-            style={k === selectedCluster ? { backgroundColor: COLORS[k % COLORS.length] } : {}}
-          >
-            C{k}
-          </button>
+          <div key={k} className="flex items-center gap-1">
+            <button
+              onClick={() => setSelectedCluster(k)}
+              className={`px-3 py-1 rounded-full text-sm font-semibold transition-colors ${
+                k === selectedCluster ? "text-gray-950" : "text-gray-400 bg-gray-800 hover:bg-gray-700"
+              }`}
+              style={k === selectedCluster ? { backgroundColor: COLORS[k % COLORS.length] } : {}}
+            >
+              C{k}
+            </button>
+            <InfoIcon content={clusterPillInfo(k, profile)} />
+          </div>
         ))}
       </div>
 
       {/* Panel 1 — Feature Fingerprint */}
-      <Panel title={`Feature Fingerprint — Cluster ${selectedCluster}`} loading={profileLoading}>
+      <Panel
+        title={`Feature Fingerprint — Cluster ${selectedCluster}`}
+        loading={profileLoading}
+        info={PANEL_INFO.fingerprint}
+      >
         {profile
           ? <FingerPrint profile={profile} selectedCluster={selectedCluster} />
           : <p className="text-gray-500 text-sm">Loading…</p>}
       </Panel>
 
       {/* Panel 2 — Decision Tree */}
-      <Panel title="Decision Tree Rules" loading={profileLoading}>
+      <Panel title="Decision Tree Rules" loading={profileLoading} info={PANEL_INFO.decisionTree}>
         {profile
           ? <DecisionTree profile={profile} />
           : <p className="text-gray-500 text-sm">Loading…</p>}
       </Panel>
 
       {/* Panel 3 — Representative Windows */}
-      <Panel title={`Representative Windows — Cluster ${selectedCluster}`} loading={repsLoading}>
+      <Panel
+        title={`Representative Windows — Cluster ${selectedCluster}`}
+        loading={repsLoading}
+        info={PANEL_INFO.representatives}
+      >
         <Representatives reps={reps} loading={repsLoading} />
       </Panel>
 
       {/* Panel 4 — Forward Return Distribution */}
-      <Panel title="Forward Return Distribution" loading={fwdLoading}>
+      <Panel title="Forward Return Distribution" loading={fwdLoading} info={PANEL_INFO.forwardReturns}>
         {fwdData
           ? <ForwardReturns fwdData={fwdData} selectedCluster={selectedCluster} />
           : <p className="text-gray-500 text-sm">Loading…</p>}
