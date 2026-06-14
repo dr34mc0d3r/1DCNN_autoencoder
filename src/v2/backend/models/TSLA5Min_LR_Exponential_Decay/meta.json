@@ -1,0 +1,12 @@
+{
+  "name": "TSLA5Min_LR_Exponential_Decay",
+  "symbol": "TSLA",
+  "timeframe": "5Min",
+  "window_size": 64,
+  "latent_dim": 32,
+  "n_clusters": 8,
+  "scheduler": "step",
+  "final_lr": 3.0517578125e-09,
+  "saved_at": "2026-06-13T13:55:12",
+  "has_kmeans": true
+}

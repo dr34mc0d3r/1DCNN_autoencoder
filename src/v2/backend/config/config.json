@@ -1,7 +1,7 @@
 {
   "symbol": "TSLA",
   "timeframe": "5Min",
-  "start_date": "2017-06-13",
+  "start_date": "2024-06-14",
   "end_date": "2026-06-13",
   "window_size": 64,
   "latent_dim": 32,
@@ -18,7 +18,7 @@
   "guard_oscillation_cv": 0.6,
   "guard_collapse_threshold": 1e-06,
   "alpaca_base_url": "https://data.alpaca.markets",
-  "scheduler": "step",
+  "scheduler": "exponential",
   "scheduler_plateau_factor": 0.5,
   "scheduler_plateau_patience": 5,
   "scheduler_plateau_min_lr": 1e-07,

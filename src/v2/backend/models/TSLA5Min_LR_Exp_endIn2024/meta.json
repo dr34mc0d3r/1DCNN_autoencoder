@@ -1,0 +1,12 @@
+{
+  "name": "TSLA5Min_LR_Exp_endIn2024",
+  "symbol": "TSLA",
+  "timeframe": "5Min",
+  "window_size": 64,
+  "latent_dim": 32,
+  "n_clusters": 8,
+  "scheduler": "exponential",
+  "final_lr": 2.8550615738835017e-09,
+  "saved_at": "2026-06-13T14:39:35",
+  "has_kmeans": false
+}

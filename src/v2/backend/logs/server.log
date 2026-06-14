@@ -145,3 +145,502 @@
 2026-06-13 10:55:25,275 INFO     neural.trainer: Epoch   61 | train=0.47371  val=0.95041 | overfit=2.01× | patience [----------]
 2026-06-13 10:55:34,559 INFO     neural.trainer: Epoch   62 | train=0.47360  val=0.95002 | overfit=2.01× | patience [----------]
 2026-06-13 10:55:46,910 INFO     neural.trainer: Epoch   63 | train=0.47351  val=0.94963 | overfit=2.01× | patience [----------]
+2026-06-13 10:57:10,120 INFO     websocket.live: WebSocket disconnected  (total: 1)
+2026-06-13 10:57:10,127 INFO     websocket.live: WebSocket disconnected  (total: 0)
+2026-06-13 13:30:28,807 INFO     app: v2 backend starting — config loaded from /Volumes/My SSD/Chris Stuff/DEV/1DCNN_A/src/v2/backend/services/../config/config.json
+2026-06-13 13:30:29,587 INFO     websocket.live: WebSocket connected  (total: 1)
+2026-06-13 13:30:30,016 INFO     websocket.live: WebSocket connected  (total: 2)
+2026-06-13 13:30:32,338 INFO     websocket.live: WebSocket disconnected  (total: 1)
+2026-06-13 13:30:33,530 INFO     websocket.live: WebSocket connected  (total: 2)
+2026-06-13 13:33:19,384 INFO     neural.trainer: Epoch    1 | train=1.82300  val=3.24712 | overfit=1.78× | patience [----------]
+2026-06-13 13:33:25,082 INFO     neural.trainer: Epoch    2 | train=1.74653  val=2.85916 | overfit=1.64× | patience [----------]
+2026-06-13 13:33:31,226 INFO     neural.trainer: Epoch    3 | train=1.61258  val=2.49596 | overfit=1.55× | patience [----------]
+2026-06-13 13:33:37,416 INFO     neural.trainer: Epoch    4 | train=1.20557  val=1.74385 | overfit=1.45× | patience [----------]
+2026-06-13 13:33:43,924 INFO     neural.trainer: Epoch    5 | train=0.78604  val=1.33182 | overfit=1.69× | patience [----------]
+2026-06-13 13:33:50,025 INFO     neural.trainer: Epoch    6 | train=0.65071  val=1.23288 | overfit=1.89× | patience [----------]
+2026-06-13 13:33:56,115 INFO     neural.trainer: Epoch    7 | train=0.61261  val=1.18513 | overfit=1.93× | patience [----------]
+2026-06-13 13:34:02,373 INFO     neural.trainer: Epoch    8 | train=0.59023  val=1.15389 | overfit=1.95× | patience [----------]
+2026-06-13 13:34:08,556 INFO     neural.trainer: Epoch    9 | train=0.57502  val=1.13073 | overfit=1.97× | patience [----------]
+2026-06-13 13:34:15,276 INFO     neural.trainer: Epoch   10 | train=0.55986  val=1.10387 | overfit=1.97× | patience [----------]
+2026-06-13 13:34:23,312 INFO     neural.trainer: Epoch   11 | train=0.54839  val=1.09352 | overfit=1.99× | patience [----------]
+2026-06-13 13:34:31,241 INFO     neural.trainer: Epoch   12 | train=0.54160  val=1.08419 | overfit=2.00× | patience [----------]
+2026-06-13 13:34:37,813 INFO     neural.trainer: Epoch   13 | train=0.53584  val=1.07539 | overfit=2.01× | patience [----------]
+2026-06-13 13:34:44,172 INFO     neural.trainer: Epoch   14 | train=0.53039  val=1.06739 | overfit=2.01× | patience [----------]
+2026-06-13 13:34:51,312 INFO     neural.trainer: Epoch   15 | train=0.52542  val=1.05941 | overfit=2.02× | patience [----------]
+2026-06-13 13:34:58,045 INFO     neural.trainer: Epoch   16 | train=0.52136  val=1.05211 | overfit=2.02× | patience [----------]
+2026-06-13 13:35:05,502 INFO     neural.trainer: Epoch   17 | train=0.51690  val=1.04804 | overfit=2.03× | patience [----------]
+2026-06-13 13:35:20,695 INFO     neural.trainer: Epoch   18 | train=0.51309  val=1.03883 | overfit=2.02× | patience [----------]
+2026-06-13 13:35:28,114 INFO     neural.trainer: Epoch   19 | train=0.50926  val=1.03360 | overfit=2.03× | patience [----------]
+2026-06-13 13:35:34,973 INFO     neural.trainer: Epoch   20 | train=0.50593  val=1.02588 | overfit=2.03× | patience [----------]
+2026-06-13 13:35:44,498 INFO     neural.trainer: Epoch   21 | train=0.50280  val=1.02255 | overfit=2.03× | patience [----------]
+2026-06-13 13:35:52,084 INFO     neural.trainer: Epoch   22 | train=0.50109  val=1.01951 | overfit=2.03× | patience [----------]
+2026-06-13 13:36:00,217 INFO     neural.trainer: Epoch   23 | train=0.49943  val=1.01622 | overfit=2.03× | patience [----------]
+2026-06-13 13:36:08,035 INFO     neural.trainer: Epoch   24 | train=0.49792  val=1.01283 | overfit=2.03× | patience [----------]
+2026-06-13 13:36:15,806 INFO     neural.trainer: Epoch   25 | train=0.49634  val=1.00843 | overfit=2.03× | patience [----------]
+2026-06-13 13:36:23,104 INFO     neural.trainer: Epoch   26 | train=0.49489  val=1.00528 | overfit=2.03× | patience [----------]
+2026-06-13 13:36:30,198 INFO     neural.trainer: Epoch   27 | train=0.49342  val=1.00242 | overfit=2.03× | patience [----------]
+2026-06-13 13:36:37,453 INFO     neural.trainer: Epoch   28 | train=0.49203  val=0.99851 | overfit=2.03× | patience [----------]
+2026-06-13 13:36:45,552 INFO     neural.trainer: Epoch   29 | train=0.49060  val=0.99558 | overfit=2.03× | patience [----------]
+2026-06-13 13:36:53,307 INFO     neural.trainer: Epoch   30 | train=0.48925  val=0.99104 | overfit=2.03× | patience [----------]
+2026-06-13 13:37:00,574 INFO     neural.trainer: Epoch   31 | train=0.48804  val=0.98892 | overfit=2.03× | patience [----------]
+2026-06-13 13:37:08,147 INFO     neural.trainer: Epoch   32 | train=0.48733  val=0.98715 | overfit=2.03× | patience [----------]
+2026-06-13 13:37:15,609 INFO     neural.trainer: Epoch   33 | train=0.48666  val=0.98526 | overfit=2.02× | patience [----------]
+2026-06-13 13:37:23,527 INFO     neural.trainer: Epoch   34 | train=0.48600  val=0.98352 | overfit=2.02× | patience [----------]
+2026-06-13 13:37:31,186 INFO     neural.trainer: Epoch   35 | train=0.48537  val=0.98183 | overfit=2.02× | patience [----------]
+2026-06-13 13:37:37,926 INFO     neural.trainer: Epoch   36 | train=0.48466  val=0.97978 | overfit=2.02× | patience [----------]
+2026-06-13 13:37:44,970 INFO     neural.trainer: Epoch   37 | train=0.48399  val=0.97780 | overfit=2.02× | patience [----------]
+2026-06-13 13:37:52,321 INFO     neural.trainer: Epoch   38 | train=0.48333  val=0.97555 | overfit=2.02× | patience [----------]
+2026-06-13 13:37:59,191 INFO     neural.trainer: Epoch   39 | train=0.48268  val=0.97367 | overfit=2.02× | patience [----------]
+2026-06-13 13:38:05,909 INFO     neural.trainer: Epoch   40 | train=0.48206  val=0.97191 | overfit=2.02× | patience [----------]
+2026-06-13 13:38:12,930 INFO     neural.trainer: Epoch   41 | train=0.48138  val=0.97074 | overfit=2.02× | patience [----------]
+2026-06-13 13:38:19,668 INFO     neural.trainer: Epoch   42 | train=0.48103  val=0.96914 | overfit=2.01× | patience [----------]
+2026-06-13 13:38:26,603 INFO     neural.trainer: Epoch   43 | train=0.48068  val=0.96831 | overfit=2.01× | patience [----------]
+2026-06-13 13:38:33,472 INFO     neural.trainer: Epoch   44 | train=0.48035  val=0.96739 | overfit=2.01× | patience [----------]
+2026-06-13 13:38:40,202 INFO     neural.trainer: Epoch   45 | train=0.48002  val=0.96639 | overfit=2.01× | patience [----------]
+2026-06-13 13:38:47,231 INFO     neural.trainer: Epoch   46 | train=0.47967  val=0.96502 | overfit=2.01× | patience [----------]
+2026-06-13 13:38:54,126 INFO     neural.trainer: Epoch   47 | train=0.47933  val=0.96419 | overfit=2.01× | patience [----------]
+2026-06-13 13:39:00,931 INFO     neural.trainer: Epoch   48 | train=0.47899  val=0.96312 | overfit=2.01× | patience [----------]
+2026-06-13 13:39:07,728 INFO     neural.trainer: Epoch   49 | train=0.47865  val=0.96181 | overfit=2.01× | patience [----------]
+2026-06-13 13:39:14,835 INFO     neural.trainer: Epoch   50 | train=0.47831  val=0.96109 | overfit=2.01× | patience [----------]
+2026-06-13 13:39:21,530 INFO     neural.trainer: Epoch   51 | train=0.47800  val=0.96037 | overfit=2.01× | patience [----------]
+2026-06-13 13:39:28,489 INFO     neural.trainer: Epoch   52 | train=0.47782  val=0.95994 | overfit=2.01× | patience [----------]
+2026-06-13 13:39:35,007 INFO     neural.trainer: Epoch   53 | train=0.47766  val=0.95920 | overfit=2.01× | patience [----------]
+2026-06-13 13:39:41,701 INFO     neural.trainer: Epoch   54 | train=0.47748  val=0.95881 | overfit=2.01× | patience [----------]
+2026-06-13 13:39:48,586 INFO     neural.trainer: Epoch   55 | train=0.47731  val=0.95815 | overfit=2.01× | patience [----------]
+2026-06-13 13:39:55,253 INFO     neural.trainer: Epoch   56 | train=0.47715  val=0.95737 | overfit=2.01× | patience [----------]
+2026-06-13 13:40:02,035 INFO     neural.trainer: Epoch   57 | train=0.47697  val=0.95721 | overfit=2.01× | patience [----------]
+2026-06-13 13:40:08,407 INFO     neural.trainer: Epoch   58 | train=0.47681  val=0.95612 | overfit=2.01× | patience [----------]
+2026-06-13 13:40:15,304 INFO     neural.trainer: Epoch   59 | train=0.47660  val=0.95569 | overfit=2.01× | patience [----------]
+2026-06-13 13:40:22,061 INFO     neural.trainer: Epoch   60 | train=0.47643  val=0.95503 | overfit=2.00× | patience [----------]
+2026-06-13 13:40:28,977 INFO     neural.trainer: Epoch   61 | train=0.47626  val=0.95488 | overfit=2.00× | patience [----------]
+2026-06-13 13:40:35,958 INFO     neural.trainer: Epoch   62 | train=0.47617  val=0.95464 | overfit=2.00× | patience [----------]
+2026-06-13 13:40:42,830 INFO     neural.trainer: Epoch   63 | train=0.47609  val=0.95427 | overfit=2.00× | patience [----------]
+2026-06-13 13:40:49,881 INFO     neural.trainer: Epoch   64 | train=0.47600  val=0.95398 | overfit=2.00× | patience [----------]
+2026-06-13 13:40:56,658 INFO     neural.trainer: Epoch   65 | train=0.47591  val=0.95371 | overfit=2.00× | patience [----------]
+2026-06-13 13:41:03,583 INFO     neural.trainer: Epoch   66 | train=0.47581  val=0.95341 | overfit=2.00× | patience [----------]
+2026-06-13 13:41:10,400 INFO     neural.trainer: Epoch   67 | train=0.47573  val=0.95318 | overfit=2.00× | patience [----------]
+2026-06-13 13:41:17,826 INFO     neural.trainer: Epoch   68 | train=0.47563  val=0.95266 | overfit=2.00× | patience [----------]
+2026-06-13 13:41:32,320 INFO     neural.trainer: Epoch   69 | train=0.47555  val=0.95247 | overfit=2.00× | patience [----------]
+2026-06-13 13:41:40,818 INFO     neural.trainer: Epoch   70 | train=0.47545  val=0.95206 | overfit=2.00× | patience [----------]
+2026-06-13 13:41:48,129 INFO     neural.trainer: Epoch   71 | train=0.47538  val=0.95196 | overfit=2.00× | patience [----------]
+2026-06-13 13:41:55,606 INFO     neural.trainer: Epoch   72 | train=0.47533  val=0.95187 | overfit=2.00× | patience [----------]
+2026-06-13 13:42:04,988 INFO     neural.trainer: Epoch   73 | train=0.47528  val=0.95169 | overfit=2.00× | patience [----------]
+2026-06-13 13:42:17,472 INFO     neural.trainer: Epoch   74 | train=0.47524  val=0.95158 | overfit=2.00× | patience [----------]
+2026-06-13 13:42:26,630 INFO     neural.trainer: Epoch   75 | train=0.47520  val=0.95145 | overfit=2.00× | patience [----------]
+2026-06-13 13:42:36,207 INFO     neural.trainer: Epoch   76 | train=0.47515  val=0.95130 | overfit=2.00× | patience [----------]
+2026-06-13 13:42:44,508 INFO     neural.trainer: Epoch   77 | train=0.47510  val=0.95116 | overfit=2.00× | patience [----------]
+2026-06-13 13:42:52,908 INFO     neural.trainer: Epoch   78 | train=0.47506  val=0.95098 | overfit=2.00× | patience [----------]
+2026-06-13 13:43:01,317 INFO     neural.trainer: Epoch   79 | train=0.47501  val=0.95091 | overfit=2.00× | patience [----------]
+2026-06-13 13:43:10,269 INFO     neural.trainer: Epoch   80 | train=0.47497  val=0.95071 | overfit=2.00× | patience [----------]
+2026-06-13 13:43:23,750 INFO     neural.trainer: Epoch   81 | train=0.47493  val=0.95066 | overfit=2.00× | patience [----------]
+2026-06-13 13:43:37,640 INFO     neural.trainer: Epoch   82 | train=0.47490  val=0.95056 | overfit=2.00× | patience [----------]
+2026-06-13 13:43:46,422 INFO     neural.trainer: Epoch   83 | train=0.47488  val=0.95048 | overfit=2.00× | patience [----------]
+2026-06-13 13:43:54,535 INFO     neural.trainer: Epoch   84 | train=0.47486  val=0.95046 | overfit=2.00× | patience [----------]
+2026-06-13 13:44:03,059 INFO     neural.trainer: Epoch   85 | train=0.47483  val=0.95037 | overfit=2.00× | patience [----------]
+2026-06-13 13:44:13,988 INFO     neural.trainer: Epoch   86 | train=0.47481  val=0.95029 | overfit=2.00× | patience [----------]
+2026-06-13 13:44:22,064 INFO     neural.trainer: Epoch   87 | train=0.47479  val=0.95019 | overfit=2.00× | patience [----------]
+2026-06-13 13:44:29,921 INFO     neural.trainer: Epoch   88 | train=0.47477  val=0.95010 | overfit=2.00× | patience [----------]
+2026-06-13 13:44:37,678 INFO     neural.trainer: Epoch   89 | train=0.47474  val=0.95007 | overfit=2.00× | patience [----------]
+2026-06-13 13:44:45,509 INFO     neural.trainer: Epoch   90 | train=0.47472  val=0.94999 | overfit=2.00× | patience [----------]
+2026-06-13 13:44:53,209 INFO     neural.trainer: Epoch   91 | train=0.47470  val=0.94995 | overfit=2.00× | patience [----------]
+2026-06-13 13:45:01,186 INFO     neural.trainer: Epoch   92 | train=0.47468  val=0.94991 | overfit=2.00× | patience [----------]
+2026-06-13 13:45:08,976 INFO     neural.trainer: Epoch   93 | train=0.47467  val=0.94987 | overfit=2.00× | patience [----------]
+2026-06-13 13:45:18,266 INFO     neural.trainer: Epoch   94 | train=0.47466  val=0.94984 | overfit=2.00× | patience [----------]
+2026-06-13 13:45:25,764 INFO     neural.trainer: Epoch   95 | train=0.47465  val=0.94980 | overfit=2.00× | patience [----------]
+2026-06-13 13:45:33,481 INFO     neural.trainer: Epoch   96 | train=0.47464  val=0.94977 | overfit=2.00× | patience [----------]
+2026-06-13 13:45:43,350 INFO     neural.trainer: Epoch   97 | train=0.47463  val=0.94973 | overfit=2.00× | patience [----------]
+2026-06-13 13:45:52,919 INFO     neural.trainer: Epoch   98 | train=0.47462  val=0.94970 | overfit=2.00× | patience [----------]
+2026-06-13 13:46:01,991 INFO     neural.trainer: Epoch   99 | train=0.47460  val=0.94965 | overfit=2.00× | patience [----------]
+2026-06-13 13:46:09,933 INFO     neural.trainer: Epoch  100 | train=0.47459  val=0.94962 | overfit=2.00× | patience [----------]
+2026-06-13 13:46:17,933 INFO     neural.trainer: Epoch  101 | train=0.47458  val=0.94959 | overfit=2.00× | patience [----------]
+2026-06-13 13:46:25,840 INFO     neural.trainer: Epoch  102 | train=0.47457  val=0.94958 | overfit=2.00× | patience [----------]
+2026-06-13 13:46:34,674 INFO     neural.trainer: Epoch  103 | train=0.47457  val=0.94956 | overfit=2.00× | patience [#---------]
+2026-06-13 13:46:42,731 INFO     neural.trainer: Epoch  104 | train=0.47456  val=0.94953 | overfit=2.00× | patience [----------]
+2026-06-13 13:46:50,528 INFO     neural.trainer: Epoch  105 | train=0.47456  val=0.94951 | overfit=2.00× | patience [----------]
+2026-06-13 13:46:58,565 INFO     neural.trainer: Epoch  106 | train=0.47455  val=0.94950 | overfit=2.00× | patience [----------]
+2026-06-13 13:47:06,605 INFO     neural.trainer: Epoch  107 | train=0.47455  val=0.94948 | overfit=2.00× | patience [----------]
+2026-06-13 13:47:14,822 INFO     neural.trainer: Epoch  108 | train=0.47454  val=0.94946 | overfit=2.00× | patience [----------]
+2026-06-13 13:47:22,958 INFO     neural.trainer: Epoch  109 | train=0.47453  val=0.94944 | overfit=2.00× | patience [----------]
+2026-06-13 13:47:31,535 INFO     neural.trainer: Epoch  110 | train=0.47453  val=0.94942 | overfit=2.00× | patience [----------]
+2026-06-13 13:47:42,896 INFO     neural.trainer: Epoch  111 | train=0.47452  val=0.94941 | overfit=2.00× | patience [----------]
+2026-06-13 13:47:53,094 INFO     neural.trainer: Epoch  112 | train=0.47452  val=0.94940 | overfit=2.00× | patience [#---------]
+2026-06-13 13:48:03,442 INFO     neural.trainer: Epoch  113 | train=0.47452  val=0.94939 | overfit=2.00× | patience [----------]
+2026-06-13 13:48:11,757 INFO     neural.trainer: Epoch  114 | train=0.47451  val=0.94938 | overfit=2.00× | patience [----------]
+2026-06-13 13:48:21,987 INFO     neural.trainer: Epoch  115 | train=0.47451  val=0.94937 | overfit=2.00× | patience [#---------]
+2026-06-13 13:48:35,519 INFO     neural.trainer: Epoch  116 | train=0.47451  val=0.94936 | overfit=2.00× | patience [----------]
+2026-06-13 13:48:43,610 INFO     neural.trainer: Epoch  117 | train=0.47450  val=0.94935 | overfit=2.00× | patience [#---------]
+2026-06-13 13:48:51,498 INFO     neural.trainer: Epoch  118 | train=0.47450  val=0.94935 | overfit=2.00× | patience [----------]
+2026-06-13 13:49:00,523 INFO     neural.trainer: Epoch  119 | train=0.47450  val=0.94933 | overfit=2.00× | patience [#---------]
+2026-06-13 13:49:12,080 INFO     neural.trainer: Epoch  120 | train=0.47450  val=0.94932 | overfit=2.00× | patience [----------]
+2026-06-13 13:49:20,646 INFO     neural.trainer: Epoch  121 | train=0.47449  val=0.94932 | overfit=2.00× | patience [----------]
+2026-06-13 13:49:29,045 INFO     neural.trainer: Epoch  122 | train=0.47449  val=0.94931 | overfit=2.00× | patience [#---------]
+2026-06-13 13:49:36,853 INFO     neural.trainer: Epoch  123 | train=0.47449  val=0.94931 | overfit=2.00× | patience [----------]
+2026-06-13 13:49:44,905 INFO     neural.trainer: Epoch  124 | train=0.47449  val=0.94931 | overfit=2.00× | patience [#---------]
+2026-06-13 13:49:53,368 INFO     neural.trainer: Epoch  125 | train=0.47449  val=0.94930 | overfit=2.00× | patience [##--------]
+2026-06-13 13:50:02,033 INFO     neural.trainer: Epoch  126 | train=0.47449  val=0.94929 | overfit=2.00× | patience [----------]
+2026-06-13 13:50:20,235 INFO     neural.trainer: Epoch  127 | train=0.47448  val=0.94929 | overfit=2.00× | patience [#---------]
+2026-06-13 13:50:33,490 INFO     neural.trainer: Epoch  128 | train=0.47448  val=0.94928 | overfit=2.00× | patience [##--------]
+2026-06-13 13:50:45,129 INFO     neural.trainer: Epoch  129 | train=0.47448  val=0.94928 | overfit=2.00× | patience [----------]
+2026-06-13 13:50:54,677 INFO     neural.trainer: Epoch  130 | train=0.47448  val=0.94928 | overfit=2.00× | patience [#---------]
+2026-06-13 13:51:08,528 INFO     neural.trainer: Epoch  131 | train=0.47448  val=0.94927 | overfit=2.00× | patience [##--------]
+2026-06-13 13:51:21,276 INFO     neural.trainer: Epoch  132 | train=0.47448  val=0.94927 | overfit=2.00× | patience [###-------]
+2026-06-13 13:51:41,198 INFO     neural.trainer: Epoch  133 | train=0.47448  val=0.94927 | overfit=2.00× | patience [----------]
+2026-06-13 13:51:59,407 INFO     neural.trainer: Epoch  134 | train=0.47448  val=0.94927 | overfit=2.00× | patience [#---------]
+2026-06-13 13:52:15,196 INFO     neural.trainer: Epoch  135 | train=0.47448  val=0.94926 | overfit=2.00× | patience [##--------]
+2026-06-13 13:52:25,632 INFO     neural.trainer: Epoch  136 | train=0.47447  val=0.94926 | overfit=2.00× | patience [###-------]
+2026-06-13 13:52:38,447 INFO     neural.trainer: Epoch  137 | train=0.47447  val=0.94926 | overfit=2.00× | patience [####------]
+2026-06-13 13:52:55,805 INFO     neural.trainer: Epoch  138 | train=0.47447  val=0.94926 | overfit=2.00× | patience [----------]
+2026-06-13 13:53:04,322 INFO     neural.trainer: Epoch  139 | train=0.47447  val=0.94926 | overfit=2.00× | patience [#---------]
+2026-06-13 13:53:11,914 INFO     neural.trainer: Epoch  140 | train=0.47447  val=0.94925 | overfit=2.00× | patience [##--------]
+2026-06-13 13:53:20,025 INFO     neural.trainer: Epoch  141 | train=0.47447  val=0.94925 | overfit=2.00× | patience [###-------]
+2026-06-13 13:53:28,263 INFO     neural.trainer: Epoch  142 | train=0.47447  val=0.94925 | overfit=2.00× | patience [####------]
+2026-06-13 13:53:39,080 INFO     neural.trainer: Epoch  143 | train=0.47447  val=0.94925 | overfit=2.00× | patience [#####-----]
+2026-06-13 13:53:47,798 INFO     neural.trainer: Epoch  144 | train=0.47447  val=0.94925 | overfit=2.00× | patience [######----]
+2026-06-13 13:53:55,925 INFO     neural.trainer: Epoch  145 | train=0.47447  val=0.94925 | overfit=2.00× | patience [#######---]
+2026-06-13 13:54:04,053 INFO     neural.trainer: Epoch  146 | train=0.47447  val=0.94925 | overfit=2.00× | patience [----------]
+2026-06-13 13:54:13,760 INFO     neural.trainer: Epoch  147 | train=0.47447  val=0.94925 | overfit=2.00× | patience [#---------]
+2026-06-13 13:54:20,787 INFO     neural.trainer: Epoch  148 | train=0.47447  val=0.94925 | overfit=2.00× | patience [##--------]
+2026-06-13 13:54:29,536 INFO     neural.trainer: Epoch  149 | train=0.47447  val=0.94925 | overfit=2.00× | patience [###-------]
+2026-06-13 13:54:36,819 INFO     neural.trainer: Epoch  150 | train=0.47447  val=0.94925 | overfit=2.00× | patience [####------]
+2026-06-13 13:54:45,378 INFO     neural.trainer: Epoch  151 | train=0.47447  val=0.94925 | overfit=2.00× | patience [#####-----]
+2026-06-13 13:54:52,949 INFO     neural.trainer: Epoch  152 | train=0.47447  val=0.94925 | overfit=2.00× | patience [######----]
+2026-06-13 13:54:59,279 INFO     neural.trainer: Epoch  153 | train=0.47447  val=0.94924 | overfit=2.00× | patience [#######---]
+2026-06-13 13:55:05,612 INFO     neural.trainer: Epoch  154 | train=0.47447  val=0.94924 | overfit=2.00× | patience [########--]
+2026-06-13 13:55:12,170 INFO     neural.trainer: Epoch  155 | train=0.47447  val=0.94924 | overfit=2.00× | patience [#########-]
+2026-06-13 13:55:12,171 INFO     neural.trainer: Early stop: Plateau at epoch 155 (no improvement for 10 epochs)
+2026-06-13 14:10:38,103 INFO     websocket.live: WebSocket connected  (total: 3)
+2026-06-13 14:14:11,860 INFO     services.downloader: Downloading TSLA 5Min  2017-06-13 → 2026-06-13
+2026-06-13 14:14:12,410 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2017-06-13&end=2026-06-13&adjustment=split&feed=iex&limit=10000 "HTTP/1.1 200 OK"
+2026-06-13 14:14:12,663 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2017-06-13&end=2026-06-13&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE2MDAyODEwMDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-13 14:14:12,877 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2017-06-13&end=2026-06-13&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE2MDM0NjQ5MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-13 14:14:13,076 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2017-06-13&end=2026-06-13&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE2MDcwMjUzMDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-13 14:14:13,285 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2017-06-13&end=2026-06-13&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE2MTA1NTYwMDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-13 14:14:13,466 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2017-06-13&end=2026-06-13&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE2MTQxMDE3MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-13 14:14:13,679 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2017-06-13&end=2026-06-13&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE2MTcyMDk0MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-13 14:14:13,852 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2017-06-13&end=2026-06-13&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE2MjA0MTM0MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-13 14:14:14,020 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2017-06-13&end=2026-06-13&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE2MjM4NTg2MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-13 14:14:14,249 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2017-06-13&end=2026-06-13&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE2MjczOTg5MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-13 14:14:14,422 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2017-06-13&end=2026-06-13&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE2MzEwMzQwMDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-13 14:14:14,621 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2017-06-13&end=2026-06-13&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE2MzQ1ODQ4MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-13 14:14:14,812 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2017-06-13&end=2026-06-13&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE2Mzc5NDcyMDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-13 14:14:15,001 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2017-06-13&end=2026-06-13&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE2NDE4MjU2MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-13 14:14:15,200 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2017-06-13&end=2026-06-13&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE2NDUxMzEwMDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-13 14:14:15,380 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2017-06-13&end=2026-06-13&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE2NDg2NjExMDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-13 14:14:15,561 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2017-06-13&end=2026-06-13&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE2NTIyODQ1MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-13 14:14:15,729 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2017-06-13&end=2026-06-13&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE2NTU0OTAzMDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-13 14:14:15,923 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2017-06-13&end=2026-06-13&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE2NTkwMjI4MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-13 14:14:16,090 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2017-06-13&end=2026-06-13&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE2NjI0Nzg1MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-13 14:14:16,263 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2017-06-13&end=2026-06-13&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE2NjU1MTgxMDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-13 14:14:16,462 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2017-06-13&end=2026-06-13&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE2Njg2MjE2MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-13 14:14:16,671 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2017-06-13&end=2026-06-13&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE2NzE4MTkzMDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-13 14:14:16,864 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2017-06-13&end=2026-06-13&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE2NzUyODE5MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-13 14:14:17,045 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2017-06-13&end=2026-06-13&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE2Nzg0Njg1MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-13 14:14:17,230 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2017-06-13&end=2026-06-13&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE2ODE3NjE2NjAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-13 14:14:17,417 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2017-06-13&end=2026-06-13&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE2ODQ4NzE3MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-13 14:14:17,591 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2017-06-13&end=2026-06-13&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE2ODgxNDk1MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-13 14:14:17,786 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2017-06-13&end=2026-06-13&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE2OTE2MDU1MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-13 14:14:17,951 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2017-06-13&end=2026-06-13&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE2OTUwNTE5MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-13 14:14:18,131 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2017-06-13&end=2026-06-13&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE2OTgxNjgzMDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-13 14:14:18,324 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2017-06-13&end=2026-06-13&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3MDE0NDIyMDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-13 14:14:18,515 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2017-06-13&end=2026-06-13&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3MDQ5MTgwNjAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-13 14:14:18,711 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2017-06-13&end=2026-06-13&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3MDg0NDI0MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-13 14:14:18,877 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2017-06-13&end=2026-06-13&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3MTE1NTc5MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-13 14:14:19,053 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2017-06-13&end=2026-06-13&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3MTQ3NDkzMDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-13 14:14:19,219 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2017-06-13&end=2026-06-13&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3MTgyMTY3MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-13 14:14:19,382 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2017-06-13&end=2026-06-13&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3MjE3NDU2MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-13 14:14:19,561 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2017-06-13&end=2026-06-13&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3MjQ4NTc4MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-13 14:14:19,741 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2017-06-13&end=2026-06-13&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3MjgwNjI0MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-13 14:14:19,911 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2017-06-13&end=2026-06-13&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3MzEzNDQxMDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-13 14:14:20,073 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2017-06-13&end=2026-06-13&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3MzQ1NTQ3MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-13 14:14:20,236 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2017-06-13&end=2026-06-13&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3MzgzNDMxMDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-13 14:14:20,439 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2017-06-13&end=2026-06-13&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3NDE3OTA3MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-13 14:14:20,601 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2017-06-13&end=2026-06-13&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3NDQ4MTg2MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-13 14:14:20,776 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2017-06-13&end=2026-06-13&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3NDgwMDgyMDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-13 14:14:20,944 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2017-06-13&end=2026-06-13&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3NTEzODg2MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-13 14:14:21,148 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2017-06-13&end=2026-06-13&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3NTQ1OTI3MjAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-13 14:14:21,334 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2017-06-13&end=2026-06-13&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3NTgwMjUxNDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-13 14:14:21,505 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2017-06-13&end=2026-06-13&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3NjEwNjk2MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-13 14:14:21,667 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2017-06-13&end=2026-06-13&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3NjQxMDA1MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-13 14:14:21,833 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2017-06-13&end=2026-06-13&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3Njc2NDI5MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-13 14:14:21,986 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2017-06-13&end=2026-06-13&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3NzA4MjA4MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-13 14:14:22,127 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2017-06-13&end=2026-06-13&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3NzM5MzEyMDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-13 14:14:22,245 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2017-06-13&end=2026-06-13&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3NzcwNDEwMDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-13 14:14:22,351 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2017-06-13&end=2026-06-13&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3ODAzMjU3MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-13 14:14:23,559 INFO     services.downloader: Saved 117849 bars → /Volumes/My SSD/Chris Stuff/DEV/1DCNN_A/src/v2/backend/downloads/TSLA/5Min.csv
+2026-06-13 14:15:25,264 INFO     neural.trainer: Epoch    1 | train=1.82533  val=3.24840 | overfit=1.78× | patience [----------]
+2026-06-13 14:15:31,302 INFO     neural.trainer: Epoch    2 | train=1.74792  val=2.94902 | overfit=1.69× | patience [----------]
+2026-06-13 14:15:37,266 INFO     neural.trainer: Epoch    3 | train=1.61048  val=2.57527 | overfit=1.60× | patience [----------]
+2026-06-13 14:15:43,431 INFO     neural.trainer: Epoch    4 | train=1.22377  val=1.86285 | overfit=1.52× | patience [----------]
+2026-06-13 14:15:49,355 INFO     neural.trainer: Epoch    5 | train=0.82456  val=1.48764 | overfit=1.80× | patience [----------]
+2026-06-13 14:15:55,402 INFO     neural.trainer: Epoch    6 | train=0.70235  val=1.35473 | overfit=1.93× | patience [----------]
+2026-06-13 14:16:01,739 INFO     neural.trainer: Epoch    7 | train=0.65572  val=1.27941 | overfit=1.95× | patience [----------]
+2026-06-13 14:16:07,713 INFO     neural.trainer: Epoch    8 | train=0.62421  val=1.22746 | overfit=1.97× | patience [----------]
+2026-06-13 14:16:14,037 INFO     neural.trainer: Epoch    9 | train=0.60273  val=1.19156 | overfit=1.98× | patience [----------]
+2026-06-13 14:16:20,023 INFO     neural.trainer: Epoch   10 | train=0.58707  val=1.16319 | overfit=1.98× | patience [----------]
+2026-06-13 14:16:26,515 INFO     neural.trainer: Epoch   11 | train=0.57495  val=1.14410 | overfit=1.99× | patience [----------]
+2026-06-13 14:16:32,678 INFO     neural.trainer: Epoch   12 | train=0.56467  val=1.12347 | overfit=1.99× | patience [----------]
+2026-06-13 14:16:38,643 INFO     neural.trainer: Epoch   13 | train=0.55538  val=1.10862 | overfit=2.00× | patience [----------]
+2026-06-13 14:16:46,280 INFO     neural.trainer: Epoch   14 | train=0.54793  val=1.09607 | overfit=2.00× | patience [----------]
+2026-06-13 14:16:52,486 INFO     neural.trainer: Epoch   15 | train=0.54140  val=1.08528 | overfit=2.00× | patience [----------]
+2026-06-13 14:16:58,698 INFO     neural.trainer: Epoch   16 | train=0.53598  val=1.07751 | overfit=2.01× | patience [----------]
+2026-06-13 14:17:04,831 INFO     neural.trainer: Epoch   17 | train=0.53143  val=1.06878 | overfit=2.01× | patience [----------]
+2026-06-13 14:17:12,211 INFO     neural.trainer: Epoch   18 | train=0.52754  val=1.06319 | overfit=2.02× | patience [----------]
+2026-06-13 14:17:18,566 INFO     neural.trainer: Epoch   19 | train=0.52372  val=1.05691 | overfit=2.02× | patience [----------]
+2026-06-13 14:17:25,914 INFO     neural.trainer: Epoch   20 | train=0.52043  val=1.05126 | overfit=2.02× | patience [----------]
+2026-06-13 14:17:34,044 INFO     neural.trainer: Epoch   21 | train=0.51723  val=1.04597 | overfit=2.02× | patience [----------]
+2026-06-13 14:17:43,199 INFO     neural.trainer: Epoch   22 | train=0.51448  val=1.04276 | overfit=2.03× | patience [----------]
+2026-06-13 14:17:51,601 INFO     neural.trainer: Epoch   23 | train=0.51185  val=1.03860 | overfit=2.03× | patience [----------]
+2026-06-13 14:17:59,392 INFO     neural.trainer: Epoch   24 | train=0.50950  val=1.03346 | overfit=2.03× | patience [----------]
+2026-06-13 14:18:07,872 INFO     neural.trainer: Epoch   25 | train=0.50751  val=1.02996 | overfit=2.03× | patience [----------]
+2026-06-13 14:18:15,598 INFO     neural.trainer: Epoch   26 | train=0.50530  val=1.02646 | overfit=2.03× | patience [----------]
+2026-06-13 14:18:22,976 INFO     neural.trainer: Epoch   27 | train=0.50365  val=1.02275 | overfit=2.03× | patience [----------]
+2026-06-13 14:18:30,861 INFO     neural.trainer: Epoch   28 | train=0.50182  val=1.01866 | overfit=2.03× | patience [----------]
+2026-06-13 14:18:38,468 INFO     neural.trainer: Epoch   29 | train=0.50016  val=1.01609 | overfit=2.03× | patience [----------]
+2026-06-13 14:18:48,400 INFO     neural.trainer: Epoch   30 | train=0.49871  val=1.01320 | overfit=2.03× | patience [----------]
+2026-06-13 14:18:56,976 INFO     neural.trainer: Epoch   31 | train=0.49723  val=1.01145 | overfit=2.03× | patience [----------]
+2026-06-13 14:19:04,588 INFO     neural.trainer: Epoch   32 | train=0.49596  val=1.00745 | overfit=2.03× | patience [----------]
+2026-06-13 14:19:12,797 INFO     neural.trainer: Epoch   33 | train=0.49484  val=1.00555 | overfit=2.03× | patience [----------]
+2026-06-13 14:19:20,172 INFO     neural.trainer: Epoch   34 | train=0.49355  val=1.00258 | overfit=2.03× | patience [----------]
+2026-06-13 14:19:28,033 INFO     neural.trainer: Epoch   35 | train=0.49250  val=1.00043 | overfit=2.03× | patience [----------]
+2026-06-13 14:19:35,247 INFO     neural.trainer: Epoch   36 | train=0.49160  val=0.99865 | overfit=2.03× | patience [----------]
+2026-06-13 14:19:42,473 INFO     neural.trainer: Epoch   37 | train=0.49061  val=0.99655 | overfit=2.03× | patience [----------]
+2026-06-13 14:19:50,260 INFO     neural.trainer: Epoch   38 | train=0.48976  val=0.99369 | overfit=2.03× | patience [----------]
+2026-06-13 14:19:58,986 INFO     neural.trainer: Epoch   39 | train=0.48876  val=0.99120 | overfit=2.03× | patience [----------]
+2026-06-13 14:20:08,638 INFO     neural.trainer: Epoch   40 | train=0.48800  val=0.98973 | overfit=2.03× | patience [----------]
+2026-06-13 14:20:18,214 INFO     neural.trainer: Epoch   41 | train=0.48725  val=0.98757 | overfit=2.03× | patience [----------]
+2026-06-13 14:20:27,843 INFO     neural.trainer: Epoch   42 | train=0.48660  val=0.98618 | overfit=2.03× | patience [----------]
+2026-06-13 14:20:37,858 INFO     neural.trainer: Epoch   43 | train=0.48587  val=0.98395 | overfit=2.03× | patience [----------]
+2026-06-13 14:20:47,964 INFO     neural.trainer: Epoch   44 | train=0.48521  val=0.98234 | overfit=2.02× | patience [----------]
+2026-06-13 14:20:55,451 INFO     neural.trainer: Epoch   45 | train=0.48467  val=0.98071 | overfit=2.02× | patience [----------]
+2026-06-13 14:21:03,157 INFO     neural.trainer: Epoch   46 | train=0.48405  val=0.97955 | overfit=2.02× | patience [----------]
+2026-06-13 14:21:11,053 INFO     neural.trainer: Epoch   47 | train=0.48352  val=0.97746 | overfit=2.02× | patience [----------]
+2026-06-13 14:21:18,941 INFO     neural.trainer: Epoch   48 | train=0.48293  val=0.97607 | overfit=2.02× | patience [----------]
+2026-06-13 14:21:26,113 INFO     neural.trainer: Epoch   49 | train=0.48247  val=0.97441 | overfit=2.02× | patience [----------]
+2026-06-13 14:21:33,961 INFO     neural.trainer: Epoch   50 | train=0.48198  val=0.97374 | overfit=2.02× | patience [----------]
+2026-06-13 14:21:40,959 INFO     neural.trainer: Epoch   51 | train=0.48154  val=0.97209 | overfit=2.02× | patience [----------]
+2026-06-13 14:21:48,722 INFO     neural.trainer: Epoch   52 | train=0.48115  val=0.97137 | overfit=2.02× | patience [----------]
+2026-06-13 14:21:56,314 INFO     neural.trainer: Epoch   53 | train=0.48073  val=0.96991 | overfit=2.02× | patience [----------]
+2026-06-13 14:22:05,666 INFO     neural.trainer: Epoch   54 | train=0.48030  val=0.96852 | overfit=2.02× | patience [----------]
+2026-06-13 14:22:14,185 INFO     neural.trainer: Epoch   55 | train=0.47997  val=0.96769 | overfit=2.02× | patience [----------]
+2026-06-13 14:22:21,910 INFO     neural.trainer: Epoch   56 | train=0.47959  val=0.96634 | overfit=2.01× | patience [----------]
+2026-06-13 14:22:29,949 INFO     neural.trainer: Epoch   57 | train=0.47925  val=0.96592 | overfit=2.02× | patience [----------]
+2026-06-13 14:22:38,808 INFO     neural.trainer: Epoch   58 | train=0.47896  val=0.96525 | overfit=2.02× | patience [----------]
+2026-06-13 14:22:46,894 INFO     neural.trainer: Epoch   59 | train=0.47868  val=0.96376 | overfit=2.01× | patience [----------]
+2026-06-13 14:22:54,903 INFO     neural.trainer: Epoch   60 | train=0.47840  val=0.96293 | overfit=2.01× | patience [----------]
+2026-06-13 14:23:03,274 INFO     neural.trainer: Epoch   61 | train=0.47810  val=0.96244 | overfit=2.01× | patience [----------]
+2026-06-13 14:23:08,725 INFO     websocket.live: WebSocket disconnected  (total: 2)
+2026-06-13 14:23:08,924 INFO     websocket.live: WebSocket connected  (total: 3)
+2026-06-13 14:23:12,056 INFO     neural.trainer: Epoch   62 | train=0.47783  val=0.96153 | overfit=2.01× | patience [----------]
+2026-06-13 14:23:18,169 INFO     neural.trainer: Epoch   63 | train=0.47759  val=0.96070 | overfit=2.01× | patience [----------]
+2026-06-13 14:23:24,476 INFO     neural.trainer: Epoch   64 | train=0.47736  val=0.95999 | overfit=2.01× | patience [----------]
+2026-06-13 14:23:30,836 INFO     neural.trainer: Epoch   65 | train=0.47715  val=0.95913 | overfit=2.01× | patience [----------]
+2026-06-13 14:23:37,398 INFO     neural.trainer: Epoch   66 | train=0.47695  val=0.95849 | overfit=2.01× | patience [----------]
+2026-06-13 14:23:44,277 INFO     neural.trainer: Epoch   67 | train=0.47675  val=0.95803 | overfit=2.01× | patience [----------]
+2026-06-13 14:23:50,898 INFO     neural.trainer: Epoch   68 | train=0.47654  val=0.95762 | overfit=2.01× | patience [----------]
+2026-06-13 14:23:57,192 INFO     neural.trainer: Epoch   69 | train=0.47635  val=0.95719 | overfit=2.01× | patience [----------]
+2026-06-13 14:24:05,295 INFO     neural.trainer: Epoch   70 | train=0.47618  val=0.95662 | overfit=2.01× | patience [----------]
+2026-06-13 14:24:12,482 INFO     neural.trainer: Epoch   71 | train=0.47602  val=0.95576 | overfit=2.01× | patience [----------]
+2026-06-13 14:24:19,547 INFO     neural.trainer: Epoch   72 | train=0.47587  val=0.95561 | overfit=2.01× | patience [----------]
+2026-06-13 14:24:26,050 INFO     neural.trainer: Epoch   73 | train=0.47573  val=0.95500 | overfit=2.01× | patience [----------]
+2026-06-13 14:24:33,154 INFO     neural.trainer: Epoch   74 | train=0.47557  val=0.95456 | overfit=2.01× | patience [----------]
+2026-06-13 14:24:39,866 INFO     neural.trainer: Epoch   75 | train=0.47544  val=0.95430 | overfit=2.01× | patience [----------]
+2026-06-13 14:24:45,998 INFO     neural.trainer: Epoch   76 | train=0.47531  val=0.95362 | overfit=2.01× | patience [----------]
+2026-06-13 14:24:52,258 INFO     neural.trainer: Epoch   77 | train=0.47519  val=0.95357 | overfit=2.01× | patience [----------]
+2026-06-13 14:24:59,021 INFO     neural.trainer: Epoch   78 | train=0.47507  val=0.95325 | overfit=2.01× | patience [----------]
+2026-06-13 14:25:06,407 INFO     neural.trainer: Epoch   79 | train=0.47495  val=0.95268 | overfit=2.01× | patience [----------]
+2026-06-13 14:25:12,710 INFO     neural.trainer: Epoch   80 | train=0.47486  val=0.95235 | overfit=2.01× | patience [----------]
+2026-06-13 14:25:22,075 INFO     neural.trainer: Epoch   81 | train=0.47477  val=0.95203 | overfit=2.01× | patience [----------]
+2026-06-13 14:25:27,963 INFO     neural.trainer: Epoch   82 | train=0.47466  val=0.95174 | overfit=2.01× | patience [----------]
+2026-06-13 14:25:33,721 INFO     neural.trainer: Epoch   83 | train=0.47456  val=0.95144 | overfit=2.00× | patience [----------]
+2026-06-13 14:25:39,688 INFO     neural.trainer: Epoch   84 | train=0.47448  val=0.95125 | overfit=2.00× | patience [----------]
+2026-06-13 14:25:45,937 INFO     neural.trainer: Epoch   85 | train=0.47440  val=0.95095 | overfit=2.00× | patience [----------]
+2026-06-13 14:25:51,880 INFO     neural.trainer: Epoch   86 | train=0.47432  val=0.95070 | overfit=2.00× | patience [----------]
+2026-06-13 14:25:57,823 INFO     neural.trainer: Epoch   87 | train=0.47426  val=0.95050 | overfit=2.00× | patience [----------]
+2026-06-13 14:26:05,850 INFO     neural.trainer: Epoch   88 | train=0.47418  val=0.95025 | overfit=2.00× | patience [----------]
+2026-06-13 14:26:12,736 INFO     neural.trainer: Epoch   89 | train=0.47411  val=0.95017 | overfit=2.00× | patience [----------]
+2026-06-13 14:26:19,751 INFO     neural.trainer: Epoch   90 | train=0.47405  val=0.94987 | overfit=2.00× | patience [----------]
+2026-06-13 14:26:26,011 INFO     neural.trainer: Epoch   91 | train=0.47400  val=0.94978 | overfit=2.00× | patience [----------]
+2026-06-13 14:26:32,438 INFO     neural.trainer: Epoch   92 | train=0.47393  val=0.94949 | overfit=2.00× | patience [----------]
+2026-06-13 14:26:38,314 INFO     neural.trainer: Epoch   93 | train=0.47388  val=0.94936 | overfit=2.00× | patience [----------]
+2026-06-13 14:26:44,339 INFO     neural.trainer: Epoch   94 | train=0.47383  val=0.94919 | overfit=2.00× | patience [----------]
+2026-06-13 14:26:50,820 INFO     neural.trainer: Epoch   95 | train=0.47378  val=0.94905 | overfit=2.00× | patience [----------]
+2026-06-13 14:26:57,418 INFO     neural.trainer: Epoch   96 | train=0.47375  val=0.94893 | overfit=2.00× | patience [----------]
+2026-06-13 14:27:04,582 INFO     neural.trainer: Epoch   97 | train=0.47369  val=0.94883 | overfit=2.00× | patience [----------]
+2026-06-13 14:27:11,618 INFO     neural.trainer: Epoch   98 | train=0.47365  val=0.94864 | overfit=2.00× | patience [----------]
+2026-06-13 14:27:18,003 INFO     neural.trainer: Epoch   99 | train=0.47361  val=0.94855 | overfit=2.00× | patience [----------]
+2026-06-13 14:27:24,747 INFO     neural.trainer: Epoch  100 | train=0.47357  val=0.94844 | overfit=2.00× | patience [----------]
+2026-06-13 14:27:30,868 INFO     neural.trainer: Epoch  101 | train=0.47353  val=0.94835 | overfit=2.00× | patience [----------]
+2026-06-13 14:27:36,870 INFO     neural.trainer: Epoch  102 | train=0.47350  val=0.94824 | overfit=2.00× | patience [----------]
+2026-06-13 14:27:46,986 INFO     neural.trainer: Epoch  103 | train=0.47346  val=0.94812 | overfit=2.00× | patience [----------]
+2026-06-13 14:27:54,547 INFO     neural.trainer: Epoch  104 | train=0.47344  val=0.94801 | overfit=2.00× | patience [----------]
+2026-06-13 14:28:02,061 INFO     neural.trainer: Epoch  105 | train=0.47340  val=0.94794 | overfit=2.00× | patience [----------]
+2026-06-13 14:28:12,165 INFO     neural.trainer: Epoch  106 | train=0.47338  val=0.94782 | overfit=2.00× | patience [----------]
+2026-06-13 14:28:21,180 INFO     neural.trainer: Epoch  107 | train=0.47335  val=0.94772 | overfit=2.00× | patience [----------]
+2026-06-13 14:28:28,703 INFO     neural.trainer: Epoch  108 | train=0.47332  val=0.94770 | overfit=2.00× | patience [----------]
+2026-06-13 14:28:35,366 INFO     neural.trainer: Epoch  109 | train=0.47330  val=0.94758 | overfit=2.00× | patience [----------]
+2026-06-13 14:28:41,814 INFO     neural.trainer: Epoch  110 | train=0.47328  val=0.94753 | overfit=2.00× | patience [----------]
+2026-06-13 14:28:47,899 INFO     neural.trainer: Epoch  111 | train=0.47326  val=0.94745 | overfit=2.00× | patience [----------]
+2026-06-13 14:28:54,562 INFO     neural.trainer: Epoch  112 | train=0.47324  val=0.94736 | overfit=2.00× | patience [----------]
+2026-06-13 14:29:01,831 INFO     neural.trainer: Epoch  113 | train=0.47321  val=0.94732 | overfit=2.00× | patience [----------]
+2026-06-13 14:29:12,638 INFO     neural.trainer: Epoch  114 | train=0.47320  val=0.94725 | overfit=2.00× | patience [----------]
+2026-06-13 14:29:19,139 INFO     neural.trainer: Epoch  115 | train=0.47318  val=0.94719 | overfit=2.00× | patience [----------]
+2026-06-13 14:29:25,724 INFO     neural.trainer: Epoch  116 | train=0.47316  val=0.94713 | overfit=2.00× | patience [----------]
+2026-06-13 14:29:32,102 INFO     neural.trainer: Epoch  117 | train=0.47314  val=0.94712 | overfit=2.00× | patience [----------]
+2026-06-13 14:29:38,542 INFO     neural.trainer: Epoch  118 | train=0.47313  val=0.94706 | overfit=2.00× | patience [#---------]
+2026-06-13 14:29:46,312 INFO     neural.trainer: Epoch  119 | train=0.47312  val=0.94702 | overfit=2.00× | patience [----------]
+2026-06-13 14:29:53,786 INFO     neural.trainer: Epoch  120 | train=0.47310  val=0.94698 | overfit=2.00× | patience [----------]
+2026-06-13 14:30:00,541 INFO     neural.trainer: Epoch  121 | train=0.47309  val=0.94693 | overfit=2.00× | patience [----------]
+2026-06-13 14:30:07,864 INFO     neural.trainer: Epoch  122 | train=0.47308  val=0.94689 | overfit=2.00× | patience [----------]
+2026-06-13 14:30:16,462 INFO     neural.trainer: Epoch  123 | train=0.47306  val=0.94687 | overfit=2.00× | patience [----------]
+2026-06-13 14:30:24,444 INFO     neural.trainer: Epoch  124 | train=0.47305  val=0.94682 | overfit=2.00× | patience [----------]
+2026-06-13 14:30:31,512 INFO     neural.trainer: Epoch  125 | train=0.47304  val=0.94680 | overfit=2.00× | patience [----------]
+2026-06-13 14:30:38,595 INFO     neural.trainer: Epoch  126 | train=0.47303  val=0.94678 | overfit=2.00× | patience [----------]
+2026-06-13 14:30:45,563 INFO     neural.trainer: Epoch  127 | train=0.47302  val=0.94675 | overfit=2.00× | patience [----------]
+2026-06-13 14:30:51,804 INFO     neural.trainer: Epoch  128 | train=0.47302  val=0.94670 | overfit=2.00× | patience [----------]
+2026-06-13 14:30:58,038 INFO     neural.trainer: Epoch  129 | train=0.47301  val=0.94670 | overfit=2.00× | patience [----------]
+2026-06-13 14:31:04,529 INFO     neural.trainer: Epoch  130 | train=0.47300  val=0.94666 | overfit=2.00× | patience [#---------]
+2026-06-13 14:31:10,902 INFO     neural.trainer: Epoch  131 | train=0.47299  val=0.94663 | overfit=2.00× | patience [----------]
+2026-06-13 14:31:17,881 INFO     neural.trainer: Epoch  132 | train=0.47298  val=0.94662 | overfit=2.00× | patience [----------]
+2026-06-13 14:31:24,272 INFO     neural.trainer: Epoch  133 | train=0.47298  val=0.94659 | overfit=2.00× | patience [#---------]
+2026-06-13 14:31:30,554 INFO     neural.trainer: Epoch  134 | train=0.47297  val=0.94656 | overfit=2.00× | patience [----------]
+2026-06-13 14:31:36,881 INFO     neural.trainer: Epoch  135 | train=0.47296  val=0.94654 | overfit=2.00× | patience [----------]
+2026-06-13 14:31:44,574 INFO     neural.trainer: Epoch  136 | train=0.47296  val=0.94654 | overfit=2.00× | patience [----------]
+2026-06-13 14:31:53,578 INFO     neural.trainer: Epoch  137 | train=0.47295  val=0.94652 | overfit=2.00× | patience [#---------]
+2026-06-13 14:32:00,829 INFO     neural.trainer: Epoch  138 | train=0.47294  val=0.94649 | overfit=2.00× | patience [----------]
+2026-06-13 14:32:07,884 INFO     neural.trainer: Epoch  139 | train=0.47294  val=0.94647 | overfit=2.00× | patience [----------]
+2026-06-13 14:32:16,320 INFO     websocket.live: WebSocket disconnected  (total: 2)
+2026-06-13 14:32:16,498 INFO     neural.trainer: Epoch  140 | train=0.47293  val=0.94646 | overfit=2.00× | patience [----------]
+2026-06-13 14:32:17,302 INFO     websocket.live: WebSocket connected  (total: 3)
+2026-06-13 14:32:24,925 INFO     neural.trainer: Epoch  141 | train=0.47293  val=0.94645 | overfit=2.00× | patience [----------]
+2026-06-13 14:32:31,505 INFO     neural.trainer: Epoch  142 | train=0.47293  val=0.94644 | overfit=2.00× | patience [----------]
+2026-06-13 14:32:41,030 INFO     neural.trainer: Epoch  143 | train=0.47292  val=0.94643 | overfit=2.00× | patience [----------]
+2026-06-13 14:32:49,050 INFO     neural.trainer: Epoch  144 | train=0.47292  val=0.94641 | overfit=2.00× | patience [----------]
+2026-06-13 14:33:01,131 INFO     neural.trainer: Epoch  145 | train=0.47291  val=0.94641 | overfit=2.00× | patience [----------]
+2026-06-13 14:33:09,671 INFO     neural.trainer: Epoch  146 | train=0.47291  val=0.94640 | overfit=2.00× | patience [#---------]
+2026-06-13 14:33:16,585 INFO     neural.trainer: Epoch  147 | train=0.47291  val=0.94638 | overfit=2.00× | patience [----------]
+2026-06-13 14:33:25,094 INFO     neural.trainer: Epoch  148 | train=0.47290  val=0.94637 | overfit=2.00× | patience [----------]
+2026-06-13 14:33:32,993 INFO     neural.trainer: Epoch  149 | train=0.47290  val=0.94636 | overfit=2.00× | patience [#---------]
+2026-06-13 14:33:39,999 INFO     neural.trainer: Epoch  150 | train=0.47290  val=0.94635 | overfit=2.00× | patience [----------]
+2026-06-13 14:33:47,279 INFO     neural.trainer: Epoch  151 | train=0.47289  val=0.94634 | overfit=2.00× | patience [----------]
+2026-06-13 14:33:53,968 INFO     neural.trainer: Epoch  152 | train=0.47289  val=0.94633 | overfit=2.00× | patience [#---------]
+2026-06-13 14:34:01,171 INFO     neural.trainer: Epoch  153 | train=0.47289  val=0.94632 | overfit=2.00× | patience [----------]
+2026-06-13 14:34:09,874 INFO     neural.trainer: Epoch  154 | train=0.47289  val=0.94632 | overfit=2.00× | patience [#---------]
+2026-06-13 14:34:16,429 INFO     neural.trainer: Epoch  155 | train=0.47288  val=0.94631 | overfit=2.00× | patience [----------]
+2026-06-13 14:34:22,783 INFO     neural.trainer: Epoch  156 | train=0.47288  val=0.94630 | overfit=2.00× | patience [#---------]
+2026-06-13 14:34:28,887 INFO     neural.trainer: Epoch  157 | train=0.47288  val=0.94630 | overfit=2.00× | patience [----------]
+2026-06-13 14:34:35,323 INFO     neural.trainer: Epoch  158 | train=0.47288  val=0.94629 | overfit=2.00× | patience [#---------]
+2026-06-13 14:34:41,414 INFO     neural.trainer: Epoch  159 | train=0.47288  val=0.94629 | overfit=2.00× | patience [----------]
+2026-06-13 14:34:48,419 INFO     neural.trainer: Epoch  160 | train=0.47287  val=0.94628 | overfit=2.00× | patience [#---------]
+2026-06-13 14:34:54,827 INFO     neural.trainer: Epoch  161 | train=0.47287  val=0.94628 | overfit=2.00× | patience [----------]
+2026-06-13 14:35:01,053 INFO     neural.trainer: Epoch  162 | train=0.47287  val=0.94627 | overfit=2.00× | patience [#---------]
+2026-06-13 14:35:07,264 INFO     neural.trainer: Epoch  163 | train=0.47287  val=0.94627 | overfit=2.00× | patience [##--------]
+2026-06-13 14:35:13,759 INFO     neural.trainer: Epoch  164 | train=0.47287  val=0.94626 | overfit=2.00× | patience [----------]
+2026-06-13 14:35:20,606 INFO     neural.trainer: Epoch  165 | train=0.47287  val=0.94626 | overfit=2.00× | patience [#---------]
+2026-06-13 14:35:26,301 INFO     neural.trainer: Epoch  166 | train=0.47287  val=0.94625 | overfit=2.00× | patience [----------]
+2026-06-13 14:35:32,168 INFO     neural.trainer: Epoch  167 | train=0.47286  val=0.94625 | overfit=2.00× | patience [#---------]
+2026-06-13 14:35:38,406 INFO     neural.trainer: Epoch  168 | train=0.47286  val=0.94625 | overfit=2.00× | patience [##--------]
+2026-06-13 14:35:44,758 INFO     neural.trainer: Epoch  169 | train=0.47286  val=0.94624 | overfit=2.00× | patience [----------]
+2026-06-13 14:35:51,430 INFO     neural.trainer: Epoch  170 | train=0.47286  val=0.94624 | overfit=2.00× | patience [#---------]
+2026-06-13 14:35:58,037 INFO     neural.trainer: Epoch  171 | train=0.47286  val=0.94624 | overfit=2.00× | patience [##--------]
+2026-06-13 14:36:02,658 INFO     services.downloader: Downloading TSLA 5Min  2024-06-14 → 2026-06-13
+2026-06-13 14:36:03,384 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2024-06-14&end=2026-06-13&adjustment=split&feed=iex&limit=10000 "HTTP/1.1 200 OK"
+2026-06-13 14:36:03,912 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2024-06-14&end=2026-06-13&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3MjE4MzY4MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-13 14:36:04,110 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2024-06-14&end=2026-06-13&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3MjQ5NTIzMDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-13 14:36:04,368 INFO     neural.trainer: Epoch  172 | train=0.47286  val=0.94623 | overfit=2.00× | patience [###-------]
+2026-06-13 14:36:04,583 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2024-06-14&end=2026-06-13&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3MjgzMzA2MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-13 14:36:04,960 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2024-06-14&end=2026-06-13&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3MzE0MzU5MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-13 14:36:05,143 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2024-06-14&end=2026-06-13&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3MzQ3MDgzMDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-13 14:36:05,481 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2024-06-14&end=2026-06-13&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3Mzg2MDg5MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-13 14:36:05,682 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2024-06-14&end=2026-06-13&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3NDE4ODM3MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-13 14:36:06,006 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2024-06-14&end=2026-06-13&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3NDQ5MTE5MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-13 14:36:06,201 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2024-06-14&end=2026-06-13&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3NDgzNjA3MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-13 14:36:06,531 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2024-06-14&end=2026-06-13&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3NTE0ODEwMDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-13 14:36:06,703 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2024-06-14&end=2026-06-13&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3NTQ5MjIwMDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-13 14:36:07,056 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2024-06-14&end=2026-06-13&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3NTgxMjMwMDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-13 14:36:07,240 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2024-06-14&end=2026-06-13&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3NjExNjMzODAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-13 14:36:07,718 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2024-06-14&end=2026-06-13&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3NjQzNDIzMDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-13 14:36:08,104 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2024-06-14&end=2026-06-13&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3Njc3OTgwMDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-13 14:36:08,269 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2024-06-14&end=2026-06-13&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3NzA5MTM4MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-13 14:36:08,629 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2024-06-14&end=2026-06-13&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3NzQwMjM5MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-13 14:36:08,765 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2024-06-14&end=2026-06-13&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3NzczMDY4MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-13 14:36:08,863 INFO     httpx: HTTP Request: GET https://data.alpaca.markets/v2/stocks/bars?symbols=TSLA&timeframe=5Min&start=2024-06-14&end=2026-06-13&adjustment=split&feed=iex&limit=10000&page_token=VFNMQXxNfDE3ODA0MTc4MDAwMDAwMDAwMDA%3D "HTTP/1.1 200 OK"
+2026-06-13 14:36:09,861 INFO     services.downloader: Saved 40564 bars → /Volumes/My SSD/Chris Stuff/DEV/1DCNN_A/src/v2/backend/downloads/TSLA/5Min.csv
+2026-06-13 14:36:11,722 INFO     neural.trainer: Epoch  173 | train=0.47286  val=0.94623 | overfit=2.00× | patience [----------]
+2026-06-13 14:36:18,639 INFO     neural.trainer: Epoch  174 | train=0.47286  val=0.94623 | overfit=2.00× | patience [#---------]
+2026-06-13 14:36:25,005 INFO     neural.trainer: Epoch  175 | train=0.47286  val=0.94622 | overfit=2.00× | patience [##--------]
+2026-06-13 14:36:32,236 INFO     neural.trainer: Epoch  176 | train=0.47286  val=0.94622 | overfit=2.00× | patience [###-------]
+2026-06-13 14:36:38,891 INFO     neural.trainer: Epoch  177 | train=0.47286  val=0.94622 | overfit=2.00× | patience [####------]
+2026-06-13 14:36:45,541 INFO     neural.trainer: Epoch  178 | train=0.47285  val=0.94622 | overfit=2.00× | patience [----------]
+2026-06-13 14:36:52,550 INFO     neural.trainer: Epoch  179 | train=0.47285  val=0.94622 | overfit=2.00× | patience [#---------]
+2026-06-13 14:36:59,177 INFO     neural.trainer: Epoch  180 | train=0.47285  val=0.94621 | overfit=2.00× | patience [##--------]
+2026-06-13 14:37:06,003 INFO     neural.trainer: Epoch  181 | train=0.47285  val=0.94621 | overfit=2.00× | patience [###-------]
+2026-06-13 14:37:12,906 INFO     neural.trainer: Epoch  182 | train=0.47285  val=0.94621 | overfit=2.00× | patience [####------]
+2026-06-13 14:37:20,111 INFO     neural.trainer: Epoch  183 | train=0.47285  val=0.94621 | overfit=2.00× | patience [#####-----]
+2026-06-13 14:37:26,719 INFO     neural.trainer: Epoch  184 | train=0.47285  val=0.94620 | overfit=2.00× | patience [######----]
+2026-06-13 14:37:33,440 INFO     neural.trainer: Epoch  185 | train=0.47285  val=0.94620 | overfit=2.00× | patience [----------]
+2026-06-13 14:37:40,042 INFO     neural.trainer: Epoch  186 | train=0.47285  val=0.94620 | overfit=2.00× | patience [#---------]
+2026-06-13 14:37:46,683 INFO     neural.trainer: Epoch  187 | train=0.47285  val=0.94620 | overfit=2.00× | patience [##--------]
+2026-06-13 14:37:55,149 INFO     neural.trainer: Epoch  188 | train=0.47285  val=0.94620 | overfit=2.00× | patience [###-------]
+2026-06-13 14:38:02,792 INFO     neural.trainer: Epoch  189 | train=0.47285  val=0.94620 | overfit=2.00× | patience [####------]
+2026-06-13 14:38:09,865 INFO     neural.trainer: Epoch  190 | train=0.47285  val=0.94620 | overfit=2.00× | patience [#####-----]
+2026-06-13 14:38:16,108 INFO     neural.trainer: Epoch  191 | train=0.47285  val=0.94620 | overfit=2.00× | patience [######----]
+2026-06-13 14:38:22,232 INFO     neural.trainer: Epoch  192 | train=0.47285  val=0.94620 | overfit=2.00× | patience [#######---]
+2026-06-13 14:38:28,483 INFO     neural.trainer: Epoch  193 | train=0.47285  val=0.94620 | overfit=2.00× | patience [########--]
+2026-06-13 14:38:35,092 INFO     neural.trainer: Epoch  194 | train=0.47285  val=0.94619 | overfit=2.00× | patience [#########-]
+2026-06-13 14:38:41,533 INFO     neural.trainer: Epoch  195 | train=0.47285  val=0.94619 | overfit=2.00× | patience [----------]
+2026-06-13 14:38:47,448 INFO     neural.trainer: Epoch  196 | train=0.47285  val=0.94619 | overfit=2.00× | patience [#---------]
+2026-06-13 14:38:53,605 INFO     neural.trainer: Epoch  197 | train=0.47285  val=0.94619 | overfit=2.00× | patience [##--------]
+2026-06-13 14:38:59,543 INFO     neural.trainer: Epoch  198 | train=0.47285  val=0.94619 | overfit=2.00× | patience [###-------]
+2026-06-13 14:39:05,619 INFO     neural.trainer: Epoch  199 | train=0.47285  val=0.94619 | overfit=2.00× | patience [####------]
+2026-06-13 14:39:11,639 INFO     neural.trainer: Epoch  200 | train=0.47285  val=0.94619 | overfit=2.00× | patience [#####-----]
+2026-06-13 14:39:17,576 INFO     neural.trainer: Epoch  201 | train=0.47285  val=0.94619 | overfit=2.00× | patience [######----]
+2026-06-13 14:39:23,442 INFO     neural.trainer: Epoch  202 | train=0.47285  val=0.94619 | overfit=2.00× | patience [#######---]
+2026-06-13 14:39:29,456 INFO     neural.trainer: Epoch  203 | train=0.47285  val=0.94619 | overfit=2.00× | patience [########--]
+2026-06-13 14:39:35,626 INFO     neural.trainer: Epoch  204 | train=0.47285  val=0.94619 | overfit=2.00× | patience [#########-]
+2026-06-13 14:39:35,627 INFO     neural.trainer: Early stop: Plateau at epoch 204 (no improvement for 10 epochs)
+2026-06-13 15:12:24,269 INFO     websocket.live: WebSocket disconnected  (total: 2)
+2026-06-13 15:12:24,462 INFO     websocket.live: WebSocket connected  (total: 3)
+2026-06-13 15:12:36,553 INFO     websocket.live: WebSocket disconnected  (total: 2)
+2026-06-13 15:12:36,554 INFO     websocket.live: WebSocket disconnected  (total: 1)
+2026-06-13 15:12:36,554 INFO     websocket.live: WebSocket disconnected  (total: 0)
+2026-06-13 15:12:44,312 INFO     websocket.live: WebSocket connected  (total: 1)
+2026-06-13 15:12:44,388 INFO     websocket.live: WebSocket connected  (total: 2)
+2026-06-13 15:12:44,473 INFO     websocket.live: WebSocket connected  (total: 3)
+2026-06-13 15:12:50,435 INFO     websocket.live: WebSocket disconnected  (total: 2)
+2026-06-13 15:12:51,271 INFO     websocket.live: WebSocket connected  (total: 3)
+2026-06-13 15:20:55,342 INFO     websocket.live: WebSocket disconnected  (total: 2)
+2026-06-13 15:20:55,350 INFO     websocket.live: WebSocket disconnected  (total: 2)
+2026-06-13 15:20:55,728 INFO     websocket.live: WebSocket connected  (total: 3)
+2026-06-13 15:51:59,433 INFO     websocket.live: WebSocket disconnected  (total: 2)
+2026-06-13 15:51:59,721 INFO     websocket.live: WebSocket connected  (total: 3)
+2026-06-13 16:03:24,039 INFO     websocket.live: WebSocket disconnected  (total: 2)
+2026-06-13 16:03:24,040 INFO     websocket.live: WebSocket disconnected  (total: 1)
+2026-06-13 16:03:24,042 INFO     websocket.live: WebSocket disconnected  (total: 0)
+2026-06-13 16:03:24,045 INFO     websocket.live: WebSocket disconnected  (total: 0)
+2026-06-13 16:03:24,046 INFO     websocket.live: WebSocket disconnected  (total: 0)
+2026-06-13 16:03:24,046 INFO     websocket.live: WebSocket disconnected  (total: 0)
+2026-06-13 16:04:44,148 INFO     app: v2 backend starting — config loaded from /Volumes/My SSD/Chris Stuff/DEV/1DCNN_A/src/v2/backend/services/../config/config.json
+2026-06-13 16:04:44,172 INFO     websocket.live: WebSocket connected  (total: 1)
+2026-06-13 16:04:44,174 INFO     websocket.live: WebSocket disconnected  (total: 0)
+2026-06-13 16:04:44,176 INFO     websocket.live: WebSocket connected  (total: 1)
+2026-06-13 16:04:44,177 INFO     websocket.live: WebSocket disconnected  (total: 0)
+2026-06-13 16:05:07,843 INFO     app: v2 backend starting — config loaded from /Volumes/My SSD/Chris Stuff/DEV/1DCNN_A/src/v2/backend/services/../config/config.json
+2026-06-13 16:05:09,659 INFO     websocket.live: WebSocket connected  (total: 1)
+2026-06-13 16:05:10,591 INFO     websocket.live: WebSocket connected  (total: 2)
+2026-06-13 16:05:10,685 INFO     websocket.live: WebSocket disconnected  (total: 1)
+2026-06-13 16:05:10,691 INFO     websocket.live: WebSocket connected  (total: 2)
+2026-06-13 16:05:11,828 INFO     websocket.live: WebSocket connected  (total: 3)
+2026-06-13 16:13:58,444 INFO     websocket.live: WebSocket disconnected  (total: 2)
+2026-06-13 16:13:59,086 INFO     websocket.live: WebSocket connected  (total: 3)
+2026-06-13 16:35:46,912 INFO     websocket.live: WebSocket disconnected  (total: 2)
+2026-06-13 16:35:47,165 INFO     websocket.live: WebSocket disconnected  (total: 1)
+2026-06-13 16:35:47,166 INFO     websocket.live: WebSocket disconnected  (total: 0)
+2026-06-13 16:35:49,674 INFO     websocket.live: WebSocket connected  (total: 1)
+2026-06-13 16:35:49,820 INFO     websocket.live: WebSocket connected  (total: 2)
+2026-06-13 16:35:50,251 INFO     websocket.live: WebSocket connected  (total: 3)
+2026-06-14 03:45:06,503 INFO     websocket.live: WebSocket disconnected  (total: 2)
+2026-06-14 04:17:00,900 INFO     websocket.live: WebSocket disconnected  (total: 1)
+2026-06-14 04:17:00,904 INFO     websocket.live: WebSocket disconnected  (total: 0)
+2026-06-14 04:17:12,532 INFO     app: v2 backend starting — config loaded from /Volumes/My SSD/Chris Stuff/DEV/1DCNN_A/src/v2/backend/services/../config/config.json
+2026-06-14 04:17:12,547 INFO     websocket.live: WebSocket connected  (total: 1)
+2026-06-14 04:25:18,314 INFO     websocket.live: WebSocket connected  (total: 2)
