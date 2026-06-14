@@ -255,7 +255,7 @@ function DecisionTree({ profile }) {
       </div>
       <div>
         <p className="text-xs text-gray-500 mb-2">Full decision tree rules (depth 4)</p>
-        <pre className="font-mono text-xs text-gray-300 bg-gray-950 rounded p-3 overflow-auto max-h-64">
+        <pre className="font-mono text-xs text-gray-300 bg-gray-950 rounded p-3 overflow-auto">
           {profile.decision_tree_rules}
         </pre>
       </div>
