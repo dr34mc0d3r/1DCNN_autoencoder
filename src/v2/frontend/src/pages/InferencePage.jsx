@@ -154,6 +154,7 @@ export default function InferencePage() {
   const [csvInfo, setCsvInfo]         = useState(null);
   const [speed, setSpeed]     = useState("full");
   const [paused, setPaused]   = useState(false);
+  const [mode, setMode]       = useState("walkforward"); // "walkforward" | "live"
   const canvasRef             = useRef(null);
   const activeRef             = useRef(false);
   const pausedRef             = useRef(false);  // mirrors paused for use inside intervals
@@ -248,7 +249,7 @@ export default function InferencePage() {
     setPaused(false);
     setState("running");
     try {
-      await api.startInfer({ ...form, speed });
+      await api.startInfer({ ...form, speed, mode });
     } catch (e) {
       activeRef.current = false;
       setError(e.message);
@@ -299,33 +300,72 @@ export default function InferencePage() {
       {/* ── Cross-symbol guide ── */}
       <CrossSymbolGuide activeModel={activeModel} csvInfo={csvInfo} />
 
+      {/* ── Mode toggle ── */}
+      <div className="flex gap-2 mb-4">
+        {[
+          { value: "walkforward", label: "Walk-forward" },
+          { value: "live",        label: "Live (Alpaca)" },
+        ].map(({ value, label }) => (
+          <button
+            key={value}
+            onClick={() => setMode(value)}
+            disabled={state === "running"}
+            className={`px-4 py-1.5 rounded-full text-sm font-medium transition-colors
+              ${mode === value
+                ? "bg-indigo-600 text-white"
+                : "bg-gray-800 text-gray-400 hover:bg-gray-700 disabled:opacity-50"}`}
+          >
+            {label}
+          </button>
+        ))}
+      </div>
+
       {/* ── Controls ── */}
       <div className="flex gap-3 items-end mb-6 flex-wrap">
-        {[["infer_start", "Start Date", "date"], ["infer_end", "End Date", "date"]].map(([k, label, type]) => (
-          <div key={k} className="flex flex-col gap-1">
-            <label className="text-xs text-gray-400">{label}</label>
-            <input
-              type={type}
-              value={form[k]}
-              onChange={(e) => setForm((f) => ({ ...f, [k]: e.target.value }))}
-              className="bg-gray-800 border border-gray-700 rounded px-3 py-2 text-sm"
-            />
-          </div>
-        ))}
-
-        {/* Stream speed dropdown */}
-        <div className="flex flex-col gap-1">
-          <label className="text-xs text-gray-400">Stream Speed</label>
-          <select
-            value={speed}
-            onChange={(e) => setSpeed(e.target.value)}
-            className="bg-gray-800 border border-gray-700 rounded px-3 py-2 text-sm focus:outline-none focus:border-indigo-500"
-          >
-            {SPEED_OPTIONS.map(o => (
-              <option key={o.value} value={o.value}>{o.label}</option>
+        {mode === "walkforward" && (
+          <>
+            {[["infer_start", "Start Date", "date"], ["infer_end", "End Date", "date"]].map(([k, label, type]) => (
+              <div key={k} className="flex flex-col gap-1">
+                <label className="text-xs text-gray-400">{label}</label>
+                <input
+                  type={type}
+                  value={form[k]}
+                  onChange={(e) => setForm((f) => ({ ...f, [k]: e.target.value }))}
+                  className="bg-gray-800 border border-gray-700 rounded px-3 py-2 text-sm"
+                />
+              </div>
             ))}
-          </select>
-        </div>
+
+            {/* Stream speed dropdown */}
+            <div className="flex flex-col gap-1">
+              <label className="text-xs text-gray-400">Stream Speed</label>
+              <select
+                value={speed}
+                onChange={(e) => setSpeed(e.target.value)}
+                className="bg-gray-800 border border-gray-700 rounded px-3 py-2 text-sm focus:outline-none focus:border-indigo-500"
+              >
+                {SPEED_OPTIONS.map(o => (
+                  <option key={o.value} value={o.value}>{o.label}</option>
+                ))}
+              </select>
+            </div>
+          </>
+        )}
+
+        {mode === "live" && (
+          <div className="flex flex-col gap-1 text-sm text-gray-400 mr-2">
+            <p>
+              Polls Alpaca every 60 s for new{" "}
+              <span className="text-gray-300 font-mono">
+                {activeModel?.symbol ?? csvInfo?.symbol ?? "—"} {csvInfo?.timeframe ?? "—"}
+              </span>{" "}
+              bars. Results appear only during market hours.
+            </p>
+            {current && state === "running" && (
+              <p className="text-gray-300 text-xs">Last bar: {current.timestamp}</p>
+            )}
+          </div>
+        )}
 
         <button
           onClick={handleStart}
