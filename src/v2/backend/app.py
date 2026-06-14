@@ -9,13 +9,11 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from api import cluster, cluster_profile, config, download, export, infer, models, reconstruct, status, train, windows
-from services import config_manager
+from services import config_manager, log_control
 from websocket.live import heartbeat_loop, ws_endpoint
 
 
 def _configure_logging() -> None:
-    log_dir = Path(__file__).parent / "logs"
-    log_dir.mkdir(exist_ok=True)
     logging.config.dictConfig({
         "version": 1,
         "disable_existing_loggers": False,
@@ -24,14 +22,12 @@ def _configure_logging() -> None:
         },
         "handlers": {
             "console": {"class": "logging.StreamHandler", "formatter": "default"},
-            "file": {
-                "class": "logging.FileHandler",
-                "filename": str(log_dir / "server.log"),
-                "formatter": "default",
-            },
         },
-        "root": {"level": "INFO", "handlers": ["console", "file"]},
+        "root": {"level": "INFO", "handlers": ["console"]},
     })
+    # File handler owned by log_control so it can be toggled at runtime
+    cfg = config_manager.load()
+    log_control.setup(cfg.get("logging_enabled", True))
 
 
 @asynccontextmanager

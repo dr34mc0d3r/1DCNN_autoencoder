@@ -696,6 +696,16 @@ export default function ConfigPage() {
     setMsg("");
   }
 
+  async function handleLoggingToggle() {
+    const newVal = !cfg.logging_enabled;
+    setCfg(c => ({ ...c, logging_enabled: newVal }));
+    try {
+      await api.setLogging(newVal);
+    } catch {
+      setCfg(c => ({ ...c, logging_enabled: !newVal }));
+    }
+  }
+
   async function handleSave() {
     setSaving(true);
     setMsg("");
@@ -861,6 +871,29 @@ export default function ConfigPage() {
             )}
           </div>
         )}
+      </section>
+
+      {/* ── System ── */}
+      <section className="mb-6">
+        <h2 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3 border-b border-gray-800 pb-1">
+          System
+        </h2>
+        <div className="flex items-center justify-between px-4 py-3 bg-gray-900 rounded-lg">
+          <div>
+            <p className="text-sm text-gray-200">File Logging</p>
+            <p className="text-xs text-gray-500 mt-0.5">Write server events to logs/server.log</p>
+          </div>
+          <button
+            onClick={handleLoggingToggle}
+            className={`relative inline-flex h-6 w-11 shrink-0 items-center rounded-full transition-colors focus:outline-none
+              ${cfg.logging_enabled ? "bg-indigo-600" : "bg-gray-700"}`}
+          >
+            <span
+              className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform
+                ${cfg.logging_enabled ? "translate-x-6" : "translate-x-1"}`}
+            />
+          </button>
+        </div>
       </section>
 
       <div className="flex items-center gap-4 mt-2">
