@@ -217,6 +217,32 @@ def run_pipeline(
     return X_clean, df, scaler
 
 
+# ── Scheduler param keys (for meta.json — only the active scheduler's params) ─
+
+_SCHEDULER_PARAM_KEYS: dict[str, dict[str, str]] = {
+    "exponential": {"gamma":        "scheduler_exp_gamma"},
+    "plateau":     {"factor":       "scheduler_plateau_factor",
+                    "patience":     "scheduler_plateau_patience",
+                    "min_lr":       "scheduler_plateau_min_lr"},
+    "step":        {"step_size":    "scheduler_step_size",
+                    "gamma":        "scheduler_step_gamma"},
+    "multistep":   {"milestones":   "scheduler_multistep_milestones",
+                    "gamma":        "scheduler_multistep_gamma"},
+    "cosine":      {"t_max":        "scheduler_cosine_t_max",
+                    "eta_min":      "scheduler_cosine_eta_min"},
+    "warmup":      {"epochs":       "scheduler_warmup_epochs",
+                    "start_factor": "scheduler_warmup_start_factor"},
+    "cyclic":      {"base_lr":      "scheduler_cyclic_base_lr",
+                    "max_lr":       "scheduler_cyclic_max_lr",
+                    "step_size":    "scheduler_cyclic_step_size",
+                    "mode":         "scheduler_cyclic_mode"},
+}
+
+_PROJECT_ROOT = os.path.abspath(
+    os.path.join(os.path.dirname(__file__), "..", "..", "..", "..")
+)
+
+
 # ── Model bundle storage ──────────────────────────────────────────────────────
 #
 # Each trained model lives in its own directory:
@@ -262,24 +288,59 @@ def save_named_model(
     model: Any,
     scaler: RobustScaler,
     cfg: dict,
-    final_lr: float | None = None,
+    training_result: dict | None = None,
 ) -> None:
     """Save model + scaler + meta into models/{name}/ and mark it active."""
     d = bundle_dir(name)
     os.makedirs(d, exist_ok=True)
     torch.save(model.state_dict(), os.path.join(d, "model.pt"))
     joblib.dump(scaler, os.path.join(d, "scaler.pkl"))
+
+    tr = training_result or {}
+    scheduler_name = cfg.get("scheduler", "none")
+    scheduler_params = {
+        k: cfg.get(v)
+        for k, v in _SCHEDULER_PARAM_KEYS.get(scheduler_name, {}).items()
+    }
+    feat_cols = config_manager.feature_cols()
+    csv_rel = os.path.relpath(
+        csv_path(cfg.get("symbol", ""), cfg.get("timeframe", "")),
+        _PROJECT_ROOT,
+    )
+
     meta = {
+        # ── existing fields (kept flat for frontend compatibility) ──────────
         "name":        name,
         "symbol":      cfg.get("symbol", ""),
         "timeframe":   cfg.get("timeframe", ""),
         "window_size": cfg.get("window_size", 0),
         "latent_dim":  cfg.get("latent_dim", 0),
         "n_clusters":  cfg.get("n_clusters", 0),
-        "scheduler":   cfg.get("scheduler", "none"),
-        "final_lr":    final_lr,
+        "scheduler":   scheduler_name,
+        "final_lr":    tr.get("final_lr"),
         "saved_at":    datetime.now().isoformat(timespec="seconds"),
         "has_kmeans":  False,
+        # ── eval-training-config fields ─────────────────────────────────────
+        "csv_path":          csv_rel,
+        "feature_columns":   feat_cols,
+        "n_features":        len(feat_cols),
+        "test_split":        cfg.get("test_split", 0.2),
+        "batch_size":        cfg.get("batch_size"),
+        "initial_lr":        cfg.get("lr"),
+        "epochs_attempted":  cfg.get("epochs"),
+        "epochs_trained":    tr.get("epochs_trained"),
+        "early_stop_reason": tr.get("stop_reason"),
+        "final_train_loss":  tr.get("final_train_loss"),
+        "final_val_loss":    tr.get("final_val_loss"),
+        "best_val_loss":     tr.get("best_val_loss"),
+        "scheduler_params":  scheduler_params,
+        "guard_patience":           cfg.get("guard_patience"),
+        "guard_min_delta":          cfg.get("guard_min_delta"),
+        "guard_overfit_ratio":      cfg.get("guard_overfit_ratio"),
+        "guard_explosion_factor":   cfg.get("guard_explosion_factor"),
+        "guard_oscillation_window": cfg.get("guard_oscillation_window"),
+        "guard_oscillation_cv":     cfg.get("guard_oscillation_cv"),
+        "guard_collapse_threshold": cfg.get("guard_collapse_threshold"),
     }
     with open(os.path.join(d, "meta.json"), "w") as f:
         json.dump(meta, f, indent=2)

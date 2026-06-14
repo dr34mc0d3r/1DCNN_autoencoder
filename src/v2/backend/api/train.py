@@ -70,18 +70,18 @@ async def _run_training(model_name: str) -> None:
             if _cancel_event and _cancel_event.is_set():
                 raise asyncio.CancelledError
 
-        stop_reason = await train(
+        result = await train(
             model, train_loader, test_loader,
             epochs=cfg["epochs"], lr=cfg["lr"], device=device,
             guard=guard, progress_cb=on_epoch, scheduler_cfg=cfg,
         )
 
-        storage.save_named_model(model_name, model, scaler, cfg, final_lr=_state["lr"])
+        storage.save_named_model(model_name, model, scaler, cfg, training_result=result)
 
-        _state.update({"state": "done", "stop_reason": stop_reason})
+        _state.update({"state": "done", "stop_reason": result["stop_reason"]})
         await manager.send("training_complete", {
-            "stop_reason": stop_reason,
-            "final_epoch": _state["epoch"],
+            "stop_reason": result["stop_reason"],
+            "final_epoch": result["epochs_trained"],
             "model_name":  model_name,
         })
 

@@ -55,7 +55,8 @@ def test_make_windows_shape(pipeline_outputs):
     cfg = config_manager.load()
     assert X_clean.ndim == 3
     assert X_clean.shape[1] == cfg["window_size"]
-    assert X_clean.shape[2] == 14
+    from services import config_manager as cm
+    assert X_clean.shape[2] == len(cm.feature_cols())
 
 
 def test_run_pipeline_returns_tuple(pipeline_outputs):
@@ -77,7 +78,8 @@ def test_save_load_scaler(tmp_backend, patch_config_manager, pipeline_outputs):
     from neural.model import ConvAutoencoder
     _, _, scaler = pipeline_outputs
     cfg = config_manager.load()
-    model = ConvAutoencoder(14, cfg["latent_dim"])
+    from services import config_manager as cm
+    model = ConvAutoencoder(len(cm.feature_cols()), cfg["latent_dim"])
     storage.save_named_model("test_scaler", model, scaler, cfg)
     loaded = storage.load_scaler()
     assert loaded is not None

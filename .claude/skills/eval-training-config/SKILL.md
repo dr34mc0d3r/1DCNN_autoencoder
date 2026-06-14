@@ -40,19 +40,19 @@ and per-head evaluation priorities for this platform. All recommendations should
 tuned against those priors, not generic time-series advice.
 
 ### 1. Read the current settings
-List the model directory and read every plausible config/settings file. Extract the
-training-relevant knobs into a normalized picture. Look specifically for:
-- sequence/window length, stride, horizon
-- batch size, hidden dim(s), number of layers, dropout
-- learning rate, optimizer, weight decay, epochs, early-stopping/patience
-- train/val/test split definition (ratios or dates), and whether splitting is
-  chronological vs shuffled
-- normalization/scaling strategy and where it's fit
-- loss function(s); for multi-task models, the per-head loss weights
-- model family (LSTM / TCN / etc.) and any class-weighting/sampling
+The primary source is **`meta.json`** in the model directory — read it first. For
+v2 models it contains every training knob in a single flat JSON. Extract:
+- `window_size`, `latent_dim`, `n_features`, `feature_columns`
+- `batch_size`, `initial_lr`, `final_lr`, `scheduler`, `scheduler_params`
+- `epochs_attempted`, `epochs_trained`, `early_stop_reason`
+- `final_train_loss`, `final_val_loss`, `best_val_loss`
+- `test_split`, `csv_path`
+- `guard_*` fields (patience, min_delta, overfit_ratio, explosion_factor,
+  oscillation_window, oscillation_cv, collapse_threshold)
 
-If a setting can't be found, say so explicitly rather than guessing — an *absent*
-setting (e.g. no early stopping, no class weighting) is itself a finding.
+If `meta.json` is absent or fields are missing, fall back to any other config
+files in the directory (`*.json`, `*.yaml`, `*.toml`, `config.py`). An *absent*
+setting (e.g. no early stopping recorded) is itself a finding — say so explicitly.
 
 ### 2. Profile the data
 Run the bundled profiler (uses `uv`, frugal on memory by sampling large files):

@@ -212,19 +212,25 @@ async def train(
     guard: TrainingGuard,
     progress_cb: Callable[[int, float, float, str, float], None] | None = None,
     scheduler_cfg: dict | None = None,
-) -> str:
+) -> dict:
     """
     Run the autoencoder training loop.
 
     Each epoch's train and validation passes run in a thread pool executor so
     the asyncio event loop stays free to flush WebSocket messages between epochs.
     progress_cb is awaited after each epoch with (epoch, train_loss, val_loss, guard_status, lr).
+
+    Returns a dict: stop_reason, epochs_trained, final_train_loss, final_val_loss,
+    best_val_loss, final_lr.
     """
     model.to(device)
     criterion = nn.MSELoss()
     optimizer = torch.optim.Adam(model.parameters(), lr=lr)
     scheduler = _make_scheduler(optimizer, scheduler_cfg or {})
     loop = asyncio.get_event_loop()
+
+    last_train_loss = 0.0
+    last_val_loss   = 0.0
 
     for epoch in range(1, epochs + 1):
         # Run CPU-bound passes in a thread so the event loop can flush WS messages
@@ -234,6 +240,9 @@ async def train(
         val_loss = await loop.run_in_executor(
             None, _val_epoch, model, test_loader, criterion, device
         )
+
+        last_train_loss = train_loss
+        last_val_loss   = val_loss
 
         if isinstance(scheduler, ReduceLROnPlateau):
             scheduler.step(val_loss)
@@ -250,6 +259,20 @@ async def train(
 
         if guard.check(epoch, train_loss, val_loss):
             logger.info("Early stop: %s", guard.stop_reason)
-            return guard.stop_reason or "stopped"
+            return {
+                "stop_reason":      guard.stop_reason or "stopped",
+                "epochs_trained":   epoch,
+                "final_train_loss": train_loss,
+                "final_val_loss":   val_loss,
+                "best_val_loss":    guard._best_val,
+                "final_lr":         current_lr,
+            }
 
-    return "completed"
+    return {
+        "stop_reason":      "completed",
+        "epochs_trained":   epochs,
+        "final_train_loss": last_train_loss,
+        "final_val_loss":   last_val_loss,
+        "best_val_loss":    guard._best_val,
+        "final_lr":         optimizer.param_groups[0]["lr"],
+    }

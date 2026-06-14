@@ -60,20 +60,26 @@ async def test_train_runs_two_epochs():
     guard  = TrainingGuard(patience=50)
     epochs_seen = []
 
-    async def cb(epoch, tl, vl, gs):
+    async def cb(epoch, tl, vl, gs, lr):
         epochs_seen.append(epoch)
 
-    reason = await train(model, train_dl, test_dl, epochs=2, lr=1e-3,
+    result = await train(model, train_dl, test_dl, epochs=2, lr=1e-3,
                          device=device, guard=guard, progress_cb=cb)
     assert len(epochs_seen) == 2
-    assert reason is not None
+    assert result["stop_reason"] is not None
 
 
 @pytest.mark.asyncio
-async def test_train_returns_string_reason():
+async def test_train_returns_result_dict():
     model = ConvAutoencoder(N_FEAT, LATENT)
     train_dl, test_dl = _tiny_loaders()
     device = torch.device("cpu")
-    reason = await train(model, train_dl, test_dl, epochs=1, lr=1e-3,
+    result = await train(model, train_dl, test_dl, epochs=1, lr=1e-3,
                          device=device, guard=TrainingGuard())
-    assert isinstance(reason, str)
+    assert isinstance(result, dict)
+    assert "stop_reason" in result
+    assert "epochs_trained" in result
+    assert "final_train_loss" in result
+    assert "final_val_loss" in result
+    assert "best_val_loss" in result
+    assert "final_lr" in result

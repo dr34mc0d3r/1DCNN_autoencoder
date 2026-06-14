@@ -34,7 +34,7 @@ def _make_ohlcv_df(n: int = 600) -> pd.DataFrame:
     ts_start = pd.Timestamp("2023-01-03 14:30:00")
     timestamps = pd.date_range(ts_start, periods=n, freq="5min")
     return pd.DataFrame({
-        "timestamp":   timestamps.strftime("%Y-%m-%d %H:%M:%S"),
+        "timestamp":   timestamps,
         "open":        opens,
         "high":        highs,
         "low":         lows,
