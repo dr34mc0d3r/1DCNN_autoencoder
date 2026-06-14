@@ -526,3 +526,102 @@ def delete_named_model(name: str) -> None:
     if active_model_name() == name:
         with open(_active_json_path(), "w") as f:
             json.dump({"name": None}, f)
+
+
+def save_data_profile() -> None:
+    """Compute and save data_profile.json to the active bundle dir.
+
+    Mirrors the logic in .claude/skills/eval-training-config/scripts/profile_data.py
+    so the eval skill can skip re-running the pipeline when this file is present.
+    """
+    d = _active_bundle_dir()
+    if d is None:
+        return
+
+    cfg        = config_manager.load()
+    feat_cols  = config_manager.feature_cols()
+    window_size = cfg["window_size"]
+    test_split  = cfg["test_split"]
+    train_split = 1.0 - test_split
+    batch_size  = cfg.get("batch_size", 256)
+    latent_dim  = cfg.get("latent_dim", 32)
+
+    df_raw     = load_bars(cfg["symbol"], cfg["timeframe"])
+    n_rows_raw = len(df_raw)
+    df         = clean_data(df_raw)
+    df         = add_features(df)
+    df         = drop_feature_nans(df)
+    n_rows_eng = len(df)
+
+    # Pre-scale feature stats
+    feature_stats: dict = {}
+    for col in feat_cols:
+        s = df[col]
+        feature_stats[col] = {
+            "min":  round(float(s.min()),  6),
+            "max":  round(float(s.max()),  6),
+            "mean": round(float(s.mean()), 6),
+            "std":  round(float(s.std()),  6),
+        }
+
+    spreads = {col: float(df[col].max() - df[col].min()) for col in feat_cols}
+    nz = {c: v for c, v in spreads.items() if v > 0}
+    widest    = max(nz, key=nz.get)    if nz else feat_cols[0]
+    narrowest = min(nz, key=nz.get)    if nz else feat_cols[0]
+    scale_ratio = round(nz[widest] / nz[narrowest], 1) if nz else 1.0
+
+    nulls = df[feat_cols].isna().sum()
+    null_counts = {c: int(v) for c, v in nulls.items() if v > 0}
+
+    ts_col = pd.to_datetime(df["timestamp"], errors="coerce").dropna().sort_values()
+    time_range    = [str(ts_col.iloc[0]), str(ts_col.iloc[-1])]
+    time_monotonic = bool(ts_col.is_monotonic_increasing)
+    deltas = ts_col.diff().dropna()
+    time_step_median = str(deltas.median()) if len(deltas) > 0 else "0"
+    med = deltas.median() if len(deltas) > 0 else pd.Timedelta(seconds=300)
+    large_time_gaps = int(len(deltas[deltas > med * 5])) if med.total_seconds() > 0 else 0
+
+    # Scale + window + gap filter
+    split_row  = int(len(df) * train_split)
+    fitted     = RobustScaler().fit(df[feat_cols].iloc[:split_row])
+    df_scaled  = df.copy()
+    df_scaled[feat_cols] = fitted.transform(df_scaled[feat_cols])
+    X          = make_windows(df_scaled, feat_cols, window_size)
+    X_clean, _ = filter_gap_windows(X, df_scaled, window_size)
+
+    n_total = len(X_clean)
+    n_train = int(n_total * train_split)
+    n_test  = n_total - n_train
+
+    approx_batch_mb = round(batch_size * window_size * len(feat_cols) * 4 / 1_048_576, 2)
+
+    profile = {
+        "model_dir":                str(d),
+        "symbol":                   cfg["symbol"],
+        "timeframe":                cfg["timeframe"],
+        "n_rows_raw":               n_rows_raw,
+        "n_rows_after_engineering": n_rows_eng,
+        "rows_lost_to_nan_warmup":  n_rows_raw - n_rows_eng,
+        "n_features":               len(feat_cols),
+        "feature_columns":          list(feat_cols),
+        "feature_stats":            feature_stats,
+        "scale_ratio_max_to_min":   scale_ratio,
+        "widest_feature":           widest,
+        "narrowest_feature":        narrowest,
+        "null_counts":              null_counts,
+        "duplicate_rows":           0,
+        "time_range":               time_range,
+        "time_monotonic":           time_monotonic,
+        "time_step_median":         time_step_median,
+        "large_time_gaps":          large_time_gaps,
+        "window_size":              window_size,
+        "test_split":               test_split,
+        "n_windows_total":          n_total,
+        "n_windows_train":          n_train,
+        "n_windows_test":           n_test,
+        "approx_batch_mb":          approx_batch_mb,
+        "batch_size":               batch_size,
+        "latent_dim":               latent_dim,
+    }
+    with open(os.path.join(d, "data_profile.json"), "w") as f:
+        json.dump(profile, f, indent=2, default=str)

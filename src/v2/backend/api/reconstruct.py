@@ -4,7 +4,10 @@ api/reconstruct.py — POST /api/reconstruct and GET /api/temporal.
 Reconstruction comparison and temporal cluster pattern analysis.
 """
 
+import json
 import logging
+import os
+from datetime import datetime
 from typing import Optional
 
 import numpy as np
@@ -57,11 +60,24 @@ def run_reconstruct(req: ReconstructRequest) -> dict:
     # Rename keys from feature_0..N to actual column names
     named_mse = {feat_cols[int(k.split("_")[1])]: v for k, v in mse_map.items()}
 
+    overall_mse = float(((sample - recon) ** 2).mean())
+
+    # Persist reconstruction_stats.json
+    d = storage._active_bundle_dir()
+    if d:
+        with open(os.path.join(d, "reconstruction_stats.json"), "w") as fh:
+            json.dump({
+                "overall_mse":     round(overall_mse, 8),
+                "per_feature_mse": {k: round(v, 8) for k, v in named_mse.items()},
+                "n_samples":       n,
+                "computed_at":     datetime.now().isoformat(timespec="seconds"),
+            }, fh, indent=2)
+
     return {
-        "original":       sample.tolist(),
-        "reconstructed":  recon.tolist(),
+        "original":        sample.tolist(),
+        "reconstructed":   recon.tolist(),
         "per_feature_mse": named_mse,
-        "overall_mse":    float(((sample - recon) ** 2).mean()),
+        "overall_mse":     overall_mse,
     }
 
 

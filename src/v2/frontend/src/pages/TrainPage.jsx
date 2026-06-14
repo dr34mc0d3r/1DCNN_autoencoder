@@ -4,6 +4,7 @@ import {
 } from "recharts";
 import { api } from "../api.js";
 import { ws } from "../ws.js";
+import { captureRechartsSvg } from "../utils/exportUtils.js";
 
 // ── Data Preview ───────────────────────────────────────────────────────────────
 
@@ -150,7 +151,10 @@ export default function TrainPage() {
   const [guard, setGuard]     = useState("");
   const [stopReason, setStop] = useState("");
   const [error, setError]     = useState("");
-  const logRef = useRef(null);
+  const logRef    = useRef(null);
+  const chartRef  = useRef(null);
+  // Mirror epochs in a ref so the WS complete handler sees current data
+  const epochsRef = useRef([]);
 
   useEffect(() => {
     api.getConfig()
@@ -160,12 +164,25 @@ export default function TrainPage() {
 
   useEffect(() => {
     const offEpoch = ws.on("training_epoch", (data) => {
-      setEpochs((prev) => [...prev, data]);
+      setEpochs((prev) => {
+        const next = [...prev, data];
+        epochsRef.current = next;
+        return next;
+      });
       setGuard(data.guard_status ?? "");
     });
     const offDone = ws.on("training_complete", (data) => {
       setStatus("done");
       setStop(data.stop_reason ?? "");
+      // Auto-save loss_curves.png (backend already writes epoch_log.csv)
+      (async () => {
+        try {
+          const dataUrl = await captureRechartsSvg(chartRef);
+          if (dataUrl) await api.saveArtifact("loss_curves.png", dataUrl);
+        } catch (err) {
+          console.warn("Auto-save loss_curves.png failed:", err);
+        }
+      })();
     });
     const offErr = ws.on("error", (data) => {
       setError(data.message ?? "Unknown error");
@@ -287,7 +304,7 @@ export default function TrainPage() {
       )}
 
       {/* ── Loss curves ── */}
-      <div className="bg-gray-900 rounded-xl p-4 mb-6">
+      <div ref={chartRef} className="bg-gray-900 rounded-xl p-4 mb-6">
         <p className="text-sm text-gray-400 mb-3">Loss Curves</p>
         <ResponsiveContainer width="100%" height={260}>
           <LineChart data={epochs}>

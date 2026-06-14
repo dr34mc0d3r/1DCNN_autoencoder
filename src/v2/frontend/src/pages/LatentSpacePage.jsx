@@ -1,9 +1,10 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
   ScatterChart, Scatter, XAxis, YAxis, ZAxis, Tooltip, Cell, ResponsiveContainer,
   LineChart, Line, CartesianGrid, Legend,
 } from "recharts";
 import { api } from "../api.js";
+import { captureRechartsSvg } from "../utils/exportUtils.js";
 
 const COLORS = ["#6366f1","#f59e0b","#10b981","#ef4444","#3b82f6","#8b5cf6","#ec4899","#14b8a6"];
 
@@ -138,6 +139,9 @@ export default function LatentSpacePage() {
   const [state, setState]             = useState("idle");
   const [qualityLoading, setQualityLoading] = useState(false);
   const [error, setError]             = useState("");
+  const clusterViewRef  = useRef(null);
+  const densityViewRef  = useRef(null);
+  const qualityChartRef = useRef(null);
 
   useEffect(() => {
     api.getActiveModel().then(m => setActiveModel(Object.keys(m).length ? m : null)).catch(() => {});
@@ -155,6 +159,17 @@ export default function LatentSpacePage() {
           setScatter(res.result.scatter);
           setResult(res.result);
           setState("done");
+          // Auto-save t-SNE PNGs after a tick so React renders the charts first
+          setTimeout(async () => {
+            try {
+              const clusterUrl = await captureRechartsSvg(clusterViewRef);
+              if (clusterUrl) await api.saveArtifact("tsne_cluster.png", clusterUrl);
+              const densityUrl = await captureRechartsSvg(densityViewRef);
+              if (densityUrl) await api.saveArtifact("tsne_density.png", densityUrl);
+            } catch (err) {
+              console.warn("Auto-save t-SNE PNGs failed:", err);
+            }
+          }, 800);
         } else if (res.state === "error") {
           clearInterval(poll);
           setError(res.error ?? "Clustering failed");
@@ -173,6 +188,15 @@ export default function LatentSpacePage() {
     try {
       const res = await api.clusterQuality();
       setQuality(res.scores);
+      // Auto-save quality chart after render tick
+      setTimeout(async () => {
+        try {
+          const dataUrl = await captureRechartsSvg(qualityChartRef);
+          if (dataUrl) await api.saveArtifact("cluster_quality.png", dataUrl);
+        } catch (err) {
+          console.warn("Auto-save cluster_quality.png failed:", err);
+        }
+      }, 800);
     } catch (e) {
       setError(e.message);
     } finally {
@@ -317,7 +341,7 @@ export default function LatentSpacePage() {
 
       {/* t-SNE Cluster View */}
       {scatter.length > 0 && (
-        <div className="bg-gray-900 rounded-xl p-4 mb-6">
+        <div ref={clusterViewRef} className="bg-gray-900 rounded-xl p-4 mb-6">
           <p className="text-sm text-gray-400 mb-1">t-SNE Projection — Cluster View</p>
           <p className="text-xs text-gray-600 mb-3">Small dots + transparency; best for seeing cluster separation.</p>
           <ResponsiveContainer width="100%" height={480}>
@@ -352,7 +376,7 @@ export default function LatentSpacePage() {
 
       {/* t-SNE Density View */}
       {scatter.length > 0 && (
-        <div className="bg-gray-900 rounded-xl p-4 mb-6">
+        <div ref={densityViewRef} className="bg-gray-900 rounded-xl p-4 mb-6">
           <p className="text-sm text-gray-400 mb-1">t-SNE Projection — Density View</p>
           <p className="text-xs text-gray-600 mb-3">Up to 5 000 windows sampled. Each point is one window; colour = cluster.</p>
           <ResponsiveContainer width="100%" height={340}>
@@ -376,7 +400,7 @@ export default function LatentSpacePage() {
 
       {/* Cluster Quality */}
       {qualityData.length > 0 && (
-        <div className="bg-gray-900 rounded-xl p-4 mb-6">
+        <div ref={qualityChartRef} className="bg-gray-900 rounded-xl p-4 mb-6">
           <p className="text-sm text-gray-400 mb-1">Cluster Quality (K=2…16)</p>
           <p className="text-xs text-gray-600 mb-3">
             Silhouette: higher = better &nbsp;·&nbsp; Davies-Bouldin: lower = better &nbsp;·&nbsp;

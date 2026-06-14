@@ -35,6 +35,8 @@ export const api = {
   getWindows:     (n = 2000) => _request("GET",  `/windows?n=${n}`),
   reconstruct:    (n = 500)  => _request("POST", "/reconstruct", { n }),
   getTemporal:    ()         => _request("GET",  "/temporal"),
+  saveArtifact:    (filename, dataUrl) => _request("POST", "/export/artifact", { filename, data_url: dataUrl }),
+  saveCsvArtifact: (filename, text)    => _request("POST", "/export/artifact", { filename, text }),
   listModels:       ()       => _request("GET",    "/models"),
   getActiveModel:   ()       => _request("GET",    "/models/active"),
   activateModel:    (name)   => _request("POST",   `/models/${encodeURIComponent(name)}/activate`),

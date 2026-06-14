@@ -5,6 +5,7 @@ Extracts latent vectors for all training windows, fits K-Means,
 runs t-SNE, and returns scatter + centroid data for the Latent Space page.
 """
 
+import json
 import logging
 import os
 
@@ -56,6 +57,24 @@ async def _run_cluster() -> None:
         np.save(os.path.join(bundle, "window_means.npy"),  X_means)
         np.save(os.path.join(bundle, "valid_indices.npy"), valid_indices)
 
+        # clustering_report.csv
+        total = len(labels)
+        with open(os.path.join(bundle, "clustering_report.csv"), "w") as fh:
+            fh.write("cluster,count,pct_of_total\n")
+            for k in range(n_clusters):
+                count = labels.count(k)
+                fh.write(f"{k},{count},{round(count / total * 100, 2)}\n")
+
+        # latent_stats.json — per-dimension health check
+        dim_stds = Z.std(axis=0)
+        with open(os.path.join(bundle, "latent_stats.json"), "w") as fh:
+            json.dump({
+                "dim_means":     [round(float(v), 6) for v in Z.mean(axis=0)],
+                "dim_stds":      [round(float(v), 6) for v in dim_stds],
+                "n_active_dims": int((dim_stds > 0.1).sum()),
+                "latent_dim":    int(Z.shape[1]),
+            }, fh, indent=2)
+
         # t-SNE — subsample to keep runtime reasonable
         n_tsne = min(5000, len(Z))
         idx    = np.random.choice(len(Z), n_tsne, replace=False)
@@ -72,6 +91,10 @@ async def _run_cluster() -> None:
             {"x": float(tsne_coords[i, 0]), "y": float(tsne_coords[i, 1]), "label": lbl_sub[i]}
             for i in range(n_tsne)
         ]
+
+        # tsne_coords.json — saved for eval reference (scatter already computed)
+        with open(os.path.join(bundle, "tsne_coords.json"), "w") as fh:
+            json.dump(scatter, fh)
 
         _state.update({
             "state": "done",
@@ -121,4 +144,8 @@ def get_cluster_quality() -> dict:
         Z = model.encoder(X_t).cpu().numpy()
 
     scores = cluster_quality(Z)
+    d = storage._active_bundle_dir()
+    if d:
+        with open(os.path.join(d, "cluster_quality.json"), "w") as fh:
+            json.dump({str(k): v for k, v in scores.items()}, fh, indent=2)
     return {"scores": {str(k): v for k, v in scores.items()}}

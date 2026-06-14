@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { api } from "../api.js";
 import FieldInfo from "../components/FieldInfo.jsx";
+import { renderWindowsCanvas } from "../utils/exportUtils.js";
 
 // ── Field info ─────────────────────────────────────────────────────────────────
 
@@ -134,6 +135,17 @@ export default function WindowsPage() {
     try {
       const res = await api.getWindows(count);
       setData(res);
+      // Auto-save all 3 layouts as PNGs (off-screen, no DOM needed)
+      (async () => {
+        try {
+          for (const layout of ["contact", "heatmap", "thumbnail"]) {
+            const dataUrl = renderWindowsCanvas(res.windows, res.window_size, res.n_features, layout);
+            if (dataUrl) await api.saveArtifact(`windows_${layout}.png`, dataUrl);
+          }
+        } catch (err) {
+          console.warn("Auto-save windows PNGs failed:", err);
+        }
+      })();
     } catch (e) {
       console.error(e);
     } finally {

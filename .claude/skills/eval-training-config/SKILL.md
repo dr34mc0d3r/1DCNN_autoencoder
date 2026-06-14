@@ -65,16 +65,28 @@ reads meta.json and runs the full v2 pipeline itself):
 PYTHONPATH=src/v2/backend uv run .claude/skills/eval-training-config/scripts/profile_data.py <MODEL_DIR>
 ```
 
-The script runs the CSV through the identical pipeline used during training:
-load → clean → add_features → drop_nans → then profiles the 27-feature engineered
-DataFrame pre-scale, then completes scale → window → gap_filter to get exact window
-counts.
+**Fast path**: if `data_profile.json` is present in the model directory (written automatically
+at training completion), the script prints it and exits immediately — no pipeline re-run needed.
 
-It returns JSON containing: raw row count, rows lost to NaN warmup, per-feature
+The script returns JSON containing: raw row count, rows lost to NaN warmup, per-feature
 min/max/mean/std (pre-scale), scale ratio with widest/narrowest features named,
 null counts, duplicate rows, time range/cadence/monotonicity/large gaps, total/
 train/test window counts, and an approximate per-batch memory footprint. Read the
 whole JSON before reasoning.
+
+Also check for these secondary artifacts in the model directory — read them if present,
+they enrich the analysis without extra computation:
+
+| File | Contents | Use for |
+|---|---|---|
+| `epoch_log.csv` | epoch, train_loss, val_loss, lr, guard_status per epoch | Training stability |
+| `cluster_quality.json` | Silhouette/DB/CH scores for K=2..16 | K selection analysis |
+| `clustering_report.csv` | cluster, count, pct_of_total | Balance check |
+| `latent_stats.json` | dim_means, dim_stds, n_active_dims | Latent collapse detection |
+| `reconstruction_stats.json` | overall_mse, per_feature_mse, n_samples | Reconstruction quality |
+| `feature_importances.json` | Sorted feature importances from decision tree | Feature analysis |
+| `forward_returns.csv` | cluster, mean, median, p25, p75, hit_rate, n | Predictiveness check |
+| `decision_tree_rules.md` | Full depth-4 tree text + importance table | Feature narrative |
 
 ### 3. Evaluate config against data
 Work through this checklist, comparing each current setting to what the data implies:
@@ -100,6 +112,24 @@ Work through this checklist, comparing each current setting to what the data imp
   gap (slight overfit is expected) or a large one (guard too loose, or too few epochs)?
 - **Missing/duplicate data** — non-trivial null % or duplicates should be addressed
   before training; note imputation/dedup needs.
+- **Training stability** (if `epoch_log.csv` present) — compute CV of val_loss over the
+  last 20% of epochs. CV > 0.05 is unstable. Was loss monotonically decreasing? Did
+  guard_status change in the final epochs? Oscillating loss near the end = guard too
+  loose or LR too high.
+- **K selection** (if `cluster_quality.json` present) — was chosen K near the silhouette
+  elbow? If silhouette peaks at K=5 but model used K=8, the extra clusters are probably
+  noise splits.
+- **Cluster balance** (if `clustering_report.csv` present) — any cluster > 50%? Any < 1%?
+  A dominant single cluster means the model found one large attractor regime.
+- **Latent health** (if `latent_stats.json` present) — how many of the 32 dims are active
+  (std > 0.1)? Fewer than ~20 active dims suggests latent collapse. More than 30 active
+  dims with good clustering = the model is using its capacity well.
+- **Reconstruction quality** (if `reconstruction_stats.json` present) — which features
+  have the highest per-feature MSE? Consistently high-MSE features are ones the model
+  deprioritises. Note if these correlate with high-|z| features in `cluster_fingerprints.json`.
+- **Predictiveness** (if `forward_returns.csv` present) — any cluster with hit_rate > 55%
+  AND n > 30? Any cluster with hit_rate < 45% AND n > 30? These are directionally notable.
+  Wide P25–P75 spread = the cluster is a volatility regime, not a directional signal.
 
 ### 4. Decide recommendations
 For each setting you'd change, state: current value → suggested value → the specific
@@ -125,6 +155,22 @@ _Data: <csv path> (<n_rows_total> rows, <time_range>)_
 
 ## Suggested settings for this data
 <recommended changes: current → suggested → why, tied to the data profile>
+
+## Training Stability
+<only if epoch_log.csv present — CV of last-20%-epoch val_loss, was loss monotonically
+decreasing, did guard fire and which guard, anything notable in the final epochs>
+
+## Cluster & Latent Analysis
+<only if cluster artifacts present — was chosen K near the silhouette elbow, cluster
+balance (any dominant or near-empty clusters), latent dim active count vs total>
+
+## Reconstruction Quality
+<only if reconstruction_stats.json present — overall MSE, top 3 worst-reconstructed
+features, what this implies about what the model weights vs ignores>
+
+## Predictiveness
+<only if forward_returns.csv present — any cluster with notable hit_rate (>55% or <45%
+with n>30), P25–P75 spread notes, overall signal quality assessment>
 
 ## What to watch after training on the new settings
 <concrete signals: train/val reconstruction loss gap, whether early stopping fires

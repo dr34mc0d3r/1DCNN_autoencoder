@@ -6,6 +6,9 @@ feature fingerprints, decision tree rules, representative OHLCV windows, and
 forward return distributions.
 """
 
+import json
+import os
+
 import numpy as np
 from fastapi import APIRouter, HTTPException, Query
 from sklearn.tree import DecisionTreeClassifier, export_text
@@ -72,6 +75,25 @@ def get_cluster_profile() -> dict:
         key=lambda x: x["importance"],
         reverse=True,
     )
+
+    # Persist artifacts
+    d = storage._active_bundle_dir()
+    if d:
+        # decision_tree_rules.md
+        importance_table = "\n".join(
+            f"| {row['feature']} | {row['importance']:.4f} |" for row in importances
+        )
+        md = (
+            f"# Decision Tree Rules\n\n"
+            f"## Feature Importances\n\n| Feature | Importance |\n|---|---|\n{importance_table}\n\n"
+            f"## Full Rules (depth 4)\n\n```\n{tree_rules}\n```\n"
+        )
+        with open(os.path.join(d, "decision_tree_rules.md"), "w") as fh:
+            fh.write(md)
+        with open(os.path.join(d, "feature_importances.json"), "w") as fh:
+            json.dump(importances, fh, indent=2)
+        with open(os.path.join(d, "cluster_fingerprints.json"), "w") as fh:
+            json.dump(fingerprints, fh, indent=2)
 
     return {
         "n_clusters":          n_clusters,
@@ -186,6 +208,15 @@ def get_forward_returns(horizon: int = Query(4)) -> dict:
             "hit_rate": round(float((arr > 0).mean()), 4),
             "n":        len(rets),
         }
+
+    # Persist forward_returns.csv
+    d = storage._active_bundle_dir()
+    if d:
+        with open(os.path.join(d, "forward_returns.csv"), "w") as fh:
+            fh.write("cluster,mean,median,p25,p75,hit_rate,n\n")
+            for k in range(n_clusters):
+                c = clusters_out[str(k)]
+                fh.write(f"{k},{c['mean']},{c['median']},{c['p25']},{c['p75']},{c['hit_rate']},{c['n']}\n")
 
     return {
         "horizon":           horizon,
