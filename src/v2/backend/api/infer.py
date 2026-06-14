@@ -59,6 +59,10 @@ async def _run_inference(req: InferRequest) -> None:
         logger.exception("Inference failed")
         _state.update({"state": "error", "error": str(exc)})
         await manager.send("error", {"message": str(exc)})
+    finally:
+        # Ensure state is never left permanently at "running" (e.g. on asyncio cancellation)
+        if _state["state"] == "running":
+            _state["state"] = "done"
 
 
 async def _run_live_inference(req: InferRequest) -> None:
@@ -74,13 +78,13 @@ async def _run_live_inference(req: InferRequest) -> None:
     feat_cols   = config_manager.feature_cols()
     device      = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-    model  = storage.load_model(len(feat_cols), latent_dim, device)
-    scaler = storage.load_scaler()
-    kmeans = storage.load_kmeans()
-    model.eval()
-
     last_ts = None
     try:
+        model  = storage.load_model(len(feat_cols), latent_dim, device)
+        scaler = storage.load_scaler()
+        kmeans = storage.load_kmeans()
+        model.eval()
+
         while not _cancel_event.is_set():
             raw_bars = await alpaca.fetch_latest_bars(symbol, timeframe, window_size + 250)
 
@@ -132,10 +136,12 @@ async def _run_live_inference(req: InferRequest) -> None:
         logger.exception("Live inference failed")
         _state.update({"state": "error", "error": str(exc)})
         await manager.send("error", {"message": str(exc)})
-        return
-
-    _state["state"] = "done"
-    await manager.send("infer_complete", {"stop_reason": "cancelled"})
+    else:
+        _state["state"] = "done"
+        await manager.send("infer_complete", {"stop_reason": "cancelled"})
+    finally:
+        if _state["state"] == "running":
+            _state["state"] = "done"
 
 
 @router.post("")
