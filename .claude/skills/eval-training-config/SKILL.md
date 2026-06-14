@@ -58,17 +58,23 @@ files in the directory (`*.json`, `*.yaml`, `*.toml`, `config.py`). An *absent*
 setting (e.g. no early stopping recorded) is itself a finding — say so explicitly.
 
 ### 2. Profile the data
-Run the bundled profiler (uses `uv`, frugal on memory by sampling large files):
+Run the bundled profiler, passing the **model directory** (not the CSV — the script
+reads meta.json and runs the full v2 pipeline itself):
 
 ```bash
-uv run .claude/skills/eval-training-config/scripts/profile_data.py <CSV_PATH>
-# optional hints if auto-detection misses:
-#   --target <col> --time <col>
+PYTHONPATH=src/v2/backend uv run .claude/skills/eval-training-config/scripts/profile_data.py <MODEL_DIR>
 ```
 
-It returns JSON: row count, columns/dtypes, missingness, duplicates, numeric ranges,
-a feature-scale ratio, time column range/cadence/gaps, and target distribution +
-imbalance ratio. Read the whole JSON before reasoning.
+The script runs the CSV through the identical pipeline used during training:
+load → clean → add_features → drop_nans → then profiles the 27-feature engineered
+DataFrame pre-scale, then completes scale → window → gap_filter to get exact window
+counts.
+
+It returns JSON containing: raw row count, rows lost to NaN warmup, per-feature
+min/max/mean/std (pre-scale), scale ratio with widest/narrowest features named,
+null counts, duplicate rows, time range/cadence/monotonicity/large gaps, total/
+train/test window counts, and an approximate per-batch memory footprint. Read the
+whole JSON before reasoning.
 
 ### 3. Evaluate config against data
 Work through this checklist, comparing each current setting to what the data implies:

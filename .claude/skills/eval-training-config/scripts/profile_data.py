@@ -1,173 +1,144 @@
 #!/usr/bin/env python
-# /// script
-# requires-python = ">=3.10"
-# dependencies = ["pandas", "numpy"]
-# ///
-
-
-# run with prompt:
-# evaluate the config in ./models/lstm_v3 against data/AAPL_1h.csv
 """
-Profile a training CSV and emit a compact JSON summary on stdout.
+Profile a v2 model's training data by running it through the full v2 feature
+engineering pipeline — identical to what the model was actually trained on.
 
-Usage:
-    uv run scripts/profile_data.py /path/to/data.csv [--target COL] [--time COL] [--sample N]
+Run from the project root:
+    PYTHONPATH=src/v2/backend uv run .claude/skills/eval-training-config/scripts/profile_data.py <model_dir>
 
-The output is meant to be read back by Claude, which reasons over it to
-evaluate model-training settings. It is deliberately memory-frugal: on a
-machine with ~3.5GB RAM, large CSVs are sampled rather than fully loaded.
+Outputs a JSON blob to stdout for Claude to reason over.
 """
+
 import argparse
 import json
+import os
 import sys
 
-import numpy as np
-import pandas as pd
-
-
-def human_bytes(n: float) -> str:
-    for unit in ("B", "KB", "MB", "GB", "TB"):
-        if abs(n) < 1024.0:
-            return f"{n:.1f}{unit}"
-        n /= 1024.0
-    return f"{n:.1f}PB"
-
-
-def count_rows(path: str) -> int:
-    # Count lines without loading the file into memory; subtract header.
-    total = 0
-    with open(path, "rb") as f:
-        for _ in f:
-            total += 1
-    return max(total - 1, 0)
-
-
-def guess_time_col(df: pd.DataFrame) -> str | None:
-    candidates = [c for c in df.columns
-                  if any(k in c.lower() for k in ("time", "date", "timestamp", "dt"))]
-    for c in candidates:
-        try:
-            pd.to_datetime(df[c], errors="raise")
-            return c
-        except Exception:
-            continue
-    return None
-
-
-def guess_target_col(df: pd.DataFrame) -> str | None:
-    for c in df.columns:
-        if c.lower() in ("target", "label", "y", "signal", "direction", "class"):
-            return c
-    return None
+# Add v2 backend to path (script is always invoked from project root)
+sys.path.insert(0, os.path.abspath("src/v2/backend"))
 
 
 def main() -> int:
     ap = argparse.ArgumentParser()
-    ap.add_argument("csv")
-    ap.add_argument("--target", default=None, help="target/label column name")
-    ap.add_argument("--time", default=None, help="datetime/index column name")
-    ap.add_argument("--sample", type=int, default=200_000,
-                    help="max rows to load for stats (full row count is still reported)")
+    ap.add_argument("model_dir", help="Path to the model bundle directory (must contain meta.json)")
     args = ap.parse_args()
 
-    report: dict = {"path": args.csv}
-
-    try:
-        n_rows = count_rows(args.csv)
-    except Exception as e:
-        print(json.dumps({"error": f"could not read file: {e}"}))
-        return 1
-    report["n_rows_total"] = n_rows
-
-    # Memory-frugal load: if the file is large, take an evenly spaced sample so
-    # we still see the whole time span rather than just the head.
-    read_kwargs = {}
-    sampled = False
-    if n_rows > args.sample:
-        sampled = True
-        step = max(n_rows // args.sample, 1)
-        skip = lambda i: i != 0 and (i % step != 0)  # noqa: E731
-        read_kwargs["skiprows"] = skip
-
-    try:
-        df = pd.read_csv(args.csv, **read_kwargs)
-    except Exception as e:
-        print(json.dumps({"error": f"pandas failed to parse: {e}",
-                          "n_rows_total": n_rows}))
+    meta_path = os.path.join(args.model_dir, "meta.json")
+    if not os.path.exists(meta_path):
+        print(json.dumps({"error": f"meta.json not found in {args.model_dir}"}))
         return 1
 
-    report["sampled"] = sampled
-    report["n_rows_loaded"] = int(len(df))
-    report["n_columns"] = int(df.shape[1])
-    report["columns"] = list(map(str, df.columns))
-    report["dtypes"] = {str(c): str(t) for c, t in df.dtypes.items()}
-    report["approx_memory_full_df"] = human_bytes(
-        df.memory_usage(deep=True).sum() * (n_rows / max(len(df), 1))
-    )
+    with open(meta_path) as f:
+        meta = json.load(f)
 
-    # Missingness and duplicates
-    nulls = df.isna().sum()
-    report["null_counts"] = {str(c): int(v) for c, v in nulls.items() if v > 0}
-    report["null_pct"] = {str(c): round(100 * v / max(len(df), 1), 3)
-                          for c, v in nulls.items() if v > 0}
-    report["duplicate_rows"] = int(df.duplicated().sum())
+    symbol      = meta.get("symbol")
+    timeframe   = meta.get("timeframe")
+    window_size = meta.get("window_size", 64)
+    test_split  = meta.get("test_split", 0.2)
+    train_split = 1.0 - test_split
+    batch_size  = meta.get("batch_size", 256)
+    latent_dim  = meta.get("latent_dim", 32)
 
-    # Numeric summary (kept terse)
-    num = df.select_dtypes(include=[np.number])
-    if not num.empty:
+    try:
+        from services import storage, config_manager
+        import numpy as np
+        import pandas as pd
+        from sklearn.preprocessing import RobustScaler
+    except ImportError as e:
+        print(json.dumps({"error": f"Could not import v2 backend: {e}. Run from project root with PYTHONPATH=src/v2/backend"}))
+        return 1
+
+    report: dict = {
+        "model_dir": args.model_dir,
+        "symbol":    symbol,
+        "timeframe": timeframe,
+    }
+
+    try:
+        # ── 1. Load raw bars ──────────────────────────────────────────────────
+        df_raw = storage.load_bars(symbol, timeframe)
+        report["n_rows_raw"] = int(len(df_raw))
+
+        # ── 2. Clean ──────────────────────────────────────────────────────────
+        df = storage.clean_data(df_raw)
+
+        # ── 3. Engineer features ──────────────────────────────────────────────
+        df = storage.add_features(df)
+
+        # ── 4. Drop NaN warmup rows ───────────────────────────────────────────
+        df = storage.drop_feature_nans(df)
+        report["n_rows_after_engineering"] = int(len(df))
+        report["rows_lost_to_nan_warmup"]  = report["n_rows_raw"] - report["n_rows_after_engineering"]
+
+        feat_cols = config_manager.feature_cols()
+        report["n_features"]      = len(feat_cols)
+        report["feature_columns"] = feat_cols
+
+        # ── 5. Profile PRE-SCALE features ─────────────────────────────────────
+        # Stats on the unscaled engineered features — scale ratio is meaningful here.
+        num  = df[feat_cols]
         desc = num.describe().T
-        report["numeric_summary"] = {
-            str(c): {
-                "min": float(desc.loc[c, "min"]),
-                "max": float(desc.loc[c, "max"]),
-                "mean": float(desc.loc[c, "mean"]),
-                "std": float(desc.loc[c, "std"]),
+        report["feature_stats"] = {
+            col: {
+                "min":  round(float(desc.loc[col, "min"]),  6),
+                "max":  round(float(desc.loc[col, "max"]),  6),
+                "mean": round(float(desc.loc[col, "mean"]), 6),
+                "std":  round(float(desc.loc[col, "std"]),  6),
             }
-            for c in desc.index
+            for col in feat_cols
         }
-        # Flag features on wildly different scales (normalization smell test)
-        spreads = {c: float(desc.loc[c, "max"] - desc.loc[c, "min"]) for c in desc.index}
+        spreads = {col: float(desc.loc[col, "max"] - desc.loc[col, "min"]) for col in feat_cols}
         nz = {c: v for c, v in spreads.items() if v > 0}
         if nz:
             report["scale_ratio_max_to_min"] = round(max(nz.values()) / min(nz.values()), 1)
+            report["widest_feature"]          = max(nz, key=nz.get)
+            report["narrowest_feature"]       = min(nz, key=nz.get)
 
-    # Time column analysis
-    time_col = args.time or guess_time_col(df)
-    if time_col and time_col in df.columns:
-        try:
-            ts = pd.to_datetime(df[time_col], errors="coerce").dropna().sort_values()
-            report["time_col"] = time_col
-            report["time_range"] = [str(ts.iloc[0]), str(ts.iloc[-1])]
-            report["time_monotonic"] = bool(ts.is_monotonic_increasing)
-            if len(ts) > 2:
-                deltas = ts.diff().dropna()
-                report["time_step_median"] = str(deltas.median())
-                # Gaps notably larger than the typical cadence
-                med = deltas.median()
-                if med.total_seconds() > 0:
-                    big = deltas[deltas > med * 5]
-                    report["large_time_gaps"] = int(len(big))
-        except Exception as e:
-            report["time_col_error"] = str(e)
+        # Null / duplicate check (should be empty after drop_feature_nans)
+        nulls = df[feat_cols].isna().sum()
+        report["null_counts"]    = {c: int(v) for c, v in nulls.items() if v > 0}
+        report["duplicate_rows"] = int(df.duplicated().sum())
 
-    # Target column analysis
-    target_col = args.target or guess_target_col(df)
-    if target_col and target_col in df.columns:
-        report["target_col"] = target_col
-        s = df[target_col]
-        nunique = int(s.nunique(dropna=True))
-        report["target_nunique"] = nunique
-        if nunique <= 20:  # treat as classification target
-            vc = s.value_counts(dropna=False)
-            report["target_distribution"] = {str(k): int(v) for k, v in vc.items()}
-            counts = vc.values
-            if len(counts) > 1 and counts.min() > 0:
-                report["target_imbalance_ratio"] = round(float(counts.max() / counts.min()), 2)
-        else:  # regression-style target
-            report["target_regression_stats"] = {
-                "min": float(s.min()), "max": float(s.max()),
-                "mean": float(s.mean()), "std": float(s.std()),
-            }
+        # ── 6. Time column stats ──────────────────────────────────────────────
+        ts = pd.to_datetime(df["timestamp"], errors="coerce").dropna().sort_values()
+        report["time_range"]    = [str(ts.iloc[0]), str(ts.iloc[-1])]
+        report["time_monotonic"] = bool(ts.is_monotonic_increasing)
+        if len(ts) > 2:
+            deltas = ts.diff().dropna()
+            report["time_step_median"] = str(deltas.median())
+            med = deltas.median()
+            if med.total_seconds() > 0:
+                report["large_time_gaps"] = int(len(deltas[deltas > med * 5]))
+
+        # ── 7. Scale (fit on train portion only, matching training exactly) ───
+        split_row = int(len(df) * train_split)
+        scaler = RobustScaler().fit(df[feat_cols].iloc[:split_row])
+        df[feat_cols] = scaler.transform(df[feat_cols])
+
+        # ── 8. Window + gap filter ────────────────────────────────────────────
+        X = storage.make_windows(df, feat_cols, window_size)
+        X_clean, _ = storage.filter_gap_windows(X, df, window_size)
+
+        n_total = int(len(X_clean))
+        n_train = int(n_total * train_split)
+        n_test  = n_total - n_train
+
+        report["window_size"]     = window_size
+        report["test_split"]      = test_split
+        report["n_windows_total"] = n_total
+        report["n_windows_train"] = n_train
+        report["n_windows_test"]  = n_test
+
+        # ── 9. Memory estimate for one training batch ─────────────────────────
+        bytes_per_batch = batch_size * window_size * len(feat_cols) * 4  # float32
+        report["approx_batch_mb"] = round(bytes_per_batch / 1_048_576, 2)
+        report["batch_size"]      = batch_size
+        report["latent_dim"]      = latent_dim
+
+    except Exception as e:
+        report["error"] = str(e)
+        print(json.dumps(report, indent=2, default=str))
+        return 1
 
     print(json.dumps(report, indent=2, default=str))
     return 0
