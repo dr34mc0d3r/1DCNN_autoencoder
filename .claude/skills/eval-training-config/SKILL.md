@@ -26,10 +26,14 @@ without tying it to something concrete in the config or the data profile.
 
 ## Inputs
 
-The user provides a model directory and a CSV path. If either is missing, ask once.
-- **Model dir**: contains config files — any of `*.yaml`, `*.yml`, `*.json`, `*.toml`,
-  `config.py`, `hyperparameters.*`, `args.*`, `train.py`, `*.txt`, checkpoints, logs.
-- **Data CSV**: the dataset used (or to be used) for training.
+The user provides a **model directory** (e.g. `src/v2/backend/models/TSLA5Min_LR_Exp`).
+If it is missing, ask once.
+
+The CSV path is read from `meta.json` (`csv_path` field) — do **not** ask the user
+for it. If `meta.json` is absent or `csv_path` is missing, fall back to the
+convention `src/v2/backend/downloads/{symbol}/{timeframe}.csv` using `symbol` and
+`timeframe` from the same file. Only ask the user for the CSV if neither source
+resolves to an existing file.
 
 ## Procedure
 
