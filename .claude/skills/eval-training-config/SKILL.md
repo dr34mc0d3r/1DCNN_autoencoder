@@ -3,7 +3,7 @@ name: eval-training-config
 description: >
   Evaluate a trained model's training settings/hyperparameters against the dataset
   it was (or will be) trained on, and recommend better settings for that data. Use
-  this whenever the user points at a model directory and a training CSV and asks to
+  this whenever the user points at a model directory and asks to
   "evaluate", "review", "check", "tune", or "suggest settings for" a model or its
   config — e.g. "run evaluate on path/to/model" or "are these hyperparameters right
   for this data?". Triggers even when the user doesn't say the word "skill". Produces
@@ -15,10 +15,9 @@ description: >
 
 # Evaluate Training Config
 
-Given (1) a **model directory** containing the settings/config used to build a model
-and (2) a path to the **training data CSV**, evaluate whether the current settings
-suit the data, recommend better settings, and write a timestamped markdown report
-into the model directory.
+Given a **model directory**, evaluate whether the training settings suit the data,
+recommend better settings, and write a timestamped markdown report into the model
+directory.
 
 The real work here is *reasoning*, not computation — but ground every recommendation
 in actual numbers from the data using the bundled profiler. Never suggest a setting
@@ -75,27 +74,26 @@ imbalance ratio. Read the whole JSON before reasoning.
 Work through this checklist, comparing each current setting to what the data implies:
 
 - **Window vs data length** — given `n_rows_total` and the cadence, how many training
-  windows does the current `seq_len`/stride actually yield? Is it enough for the
-  train split alone? Flag if seq_len is large relative to available rows.
+  windows does the current `window_size` actually yield after gap filtering? Is it
+  enough for the train split alone? Flag if `window_size` is large relative to
+  available rows.
 - **Time-series leakage** (high priority) — splits must be **chronological**, not
   shuffled. Scaler/normalizer stats must be fit on **train only**, never the full
   series. Any feature using future information (look-ahead) is leakage. If
   `time_monotonic` is false, flag it. Check split dates fall inside `time_range`.
-- **Class imbalance** — if `target_imbalance_ratio` is high (say > ~3:1), the current
-  loss/sampling probably needs class weighting, focal loss, or resampling; plain
-  accuracy will be misleading. Recommend a metric (macro-F1, balanced accuracy).
 - **Normalization** — a large `scale_ratio_max_to_min` (e.g. volume vs price) means
   unscaled features will dominate; recommend per-feature scaling fit on train.
-- **Memory feasibility (~3.5GB RAM)** — sanity-check `batch_size × seq_len ×
-  n_features × hidden_dim`. If it's likely to OOM on a 3.5GB box, recommend smaller
-  batches, gradient accumulation, smaller hidden dims, or precomputed features. Treat
+- **Memory feasibility (~3.5GB RAM)** — sanity-check `batch_size × window_size ×
+  n_features × latent_dim`. If it's likely to OOM on a 3.5GB box, recommend smaller
+  batches, gradient accumulation, smaller latent dims, or precomputed features. Treat
   RAM as a hard constraint, not a nice-to-have.
-- **Learning rate / epochs / early stopping** — does LR suit batch size? Is there
-  early stopping with patience? Are epochs reasonable for the window count?
+- **Learning rate / scheduler / guard** — does the LR and scheduler suit the window
+  count and batch size? Are the guard thresholds appropriate (patience, oscillation CV,
+  overfit ratio)? Did early stopping fire very early — was a guard setting too tight?
+- **Reconstruction loss trend** — is `final_train_loss` vs `best_val_loss` a healthy
+  gap (slight overfit is expected) or a large one (guard too loose, or too few epochs)?
 - **Missing/duplicate data** — non-trivial null % or duplicates should be addressed
   before training; note imputation/dedup needs.
-- **Multi-task balance** (if applicable) — are per-head loss weights set deliberately,
-  or will one head dominate? Tie suggestions to the target stats per head if present.
 
 ### 4. Decide recommendations
 For each setting you'd change, state: current value → suggested value → the specific
@@ -123,9 +121,9 @@ _Data: <csv path> (<n_rows_total> rows, <time_range>)_
 <recommended changes: current → suggested → why, tied to the data profile>
 
 ## What to watch after training on the new settings
-<concrete signals: train/val loss gap, per-head metric movement, whether early
-stopping fires, NaN/exploding gradients, calibration, the metric to trust given
-imbalance — and what each would mean>
+<concrete signals: train/val reconstruction loss gap, whether early stopping fires
+and which guard triggered, NaN/exploding gradients, latent-space cluster separation
+if K-Means is run — and what each signal would mean>
 
 ## Other notes
 <data quality fixes, leakage risks, memory headroom, anything else relevant>
