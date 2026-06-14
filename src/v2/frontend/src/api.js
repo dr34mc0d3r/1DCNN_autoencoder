@@ -14,6 +14,7 @@ async function _request(method, path, body) {
 export const api = {
   getConfig:      ()         => _request("GET",  "/config"),
   updateConfig:   (body)     => _request("POST", "/config", body),
+  setLogging:     (enabled)  => _request("POST", "/config/logging", { enabled }),
   getStatus:      ()         => _request("GET",  "/status"),
   listDownloads:  ()                         => _request("GET",    "/download/list"),
   deleteDownload: (ticker, timeframe)        => _request("DELETE", `/download/list/${ticker}/${timeframe}`),

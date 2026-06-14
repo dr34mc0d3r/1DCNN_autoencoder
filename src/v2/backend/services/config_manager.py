@@ -59,6 +59,8 @@ _DEFAULTS: dict[str, Any] = {
     "scheduler_cyclic_max_lr":    1e-2,
     "scheduler_cyclic_step_size": 10,
     "scheduler_cyclic_mode":      "triangular2",
+    # System
+    "logging_enabled": True,
 }
 
 _FEATURE_COLS = [
