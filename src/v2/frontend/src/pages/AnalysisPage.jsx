@@ -154,6 +154,234 @@ function ChartPanel({ title, description, guide, onExecute, loading, hasData, ch
 
 // ── Page ───────────────────────────────────────────────────────────────────────
 
+function AnalysisGuide() {
+  const [open, setOpen] = useState(false);
+
+  const Section = ({ title, color = "#6366f1", children }) => (
+    <div className="border-l-2 pl-5 mb-8" style={{ borderColor: color }}>
+      <h3 className="text-base font-semibold mb-3" style={{ color }}>{title}</h3>
+      {children}
+    </div>
+  );
+
+  const Tag = ({ label, color }) => (
+    <span className="inline-block text-xs font-semibold px-2 py-0.5 rounded mr-1 mb-1"
+      style={{ background: `${color}22`, color, border: `1px solid ${color}55` }}>
+      {label}
+    </span>
+  );
+
+  const bullets = (items, color = "#9ca3af") => (
+    <ul className="space-y-1.5 mt-2">
+      {items.map((t, i) => (
+        <li key={i} className="flex gap-2 text-sm" style={{ color: "#9ca3af" }}>
+          <span style={{ color, flexShrink: 0 }}>›</span>
+          <span>{t}</span>
+        </li>
+      ))}
+    </ul>
+  );
+
+  return (
+    <div className="bg-gray-900 border border-gray-800 rounded-xl mb-6 overflow-hidden">
+      <button
+        onClick={() => setOpen(v => !v)}
+        className="w-full flex items-center justify-between px-4 py-3 text-sm font-semibold text-gray-300 hover:text-gray-100 hover:bg-gray-800/40 transition-colors"
+      >
+        <span className="flex items-center gap-2">
+          Understanding Analysis
+          <span className="text-[11px] font-normal bg-indigo-900/40 text-indigo-300 border border-indigo-800 rounded px-1.5 py-0.5">
+            Beginner's Guide
+          </span>
+        </span>
+        <span className="text-gray-500 text-xs">{open ? "▲ Hide" : "▼ Show"}</span>
+      </button>
+      {open && (
+        <div className="border-t border-gray-800 px-6 py-6">
+
+          {/* Section 1 — What This Page Shows */}
+          <Section title="What This Page Shows" color="#6366f1">
+            <p className="text-sm text-gray-400 mb-4">The Analysis page runs every training window through the trained model and collects statistics. Unlike the Inference page (which processes data in real time), Analysis processes the entire training dataset in one pass to reveal structural patterns in what the model learned.</p>
+            <div className="grid grid-cols-3 gap-4">
+              <div className="bg-gray-800/60 rounded-lg p-4">
+                <p className="text-xs font-semibold text-indigo-400 mb-2">Reconstruction Quality</p>
+                <p className="text-xs text-gray-500">How accurately the model rebuilds windows. The 20 random windows shown side-by-side reveal which patterns the model handles well vs poorly.</p>
+              </div>
+              <div className="bg-gray-800/60 rounded-lg p-4">
+                <p className="text-xs font-semibold text-amber-400 mb-2">Feature Reconstruction Error</p>
+                <p className="text-xs text-gray-500">Which of the 26 features the model finds hardest to reconstruct. These features are the most informationally complex.</p>
+              </div>
+              <div className="bg-gray-800/60 rounded-lg p-4">
+                <p className="text-xs font-semibold text-teal-400 mb-2">Temporal Patterns</p>
+                <p className="text-xs text-gray-500">When (hour of day, day of week) each cluster tends to appear. This reveals real market microstructure embedded in the training data.</p>
+              </div>
+            </div>
+          </Section>
+
+          {/* Section 2 — Reconstruction Comparison */}
+          <Section title="Reconstruction Comparison" color="#f59e0b">
+            <div className="mb-4 rounded-lg overflow-hidden bg-gray-950">
+              <svg viewBox="0 0 400 120" className="w-full">
+                <rect width="400" height="120" fill="#111827"/>
+                {/* Pair 1 — good */}
+                <text x="55" y="12" textAnchor="middle" fontSize="8" fill="#9ca3af">Original</text>
+                <text x="95" y="12" textAnchor="middle" fontSize="8" fill="#9ca3af">Rebuilt</text>
+                <rect x="20" y="16" width="30" height="40" rx="2" fill="#2d3748" stroke="#4b5563" strokeWidth="0.5"/>
+                <rect x="22" y="18" width="26" height="36" fill="url(#g1a)"/>
+                <rect x="60" y="16" width="30" height="40" rx="2" fill="#2d3748" stroke="#4b5563" strokeWidth="0.5"/>
+                <rect x="62" y="18" width="26" height="36" fill="url(#g1b)"/>
+                <text x="55" y="68" textAnchor="middle" fontSize="9" fill="#10b981">MSE: 0.002</text>
+                <text x="55" y="78" textAnchor="middle" fontSize="8" fill="#6b7280">good</text>
+                {/* Pair 2 — medium */}
+                <text x="190" y="12" textAnchor="middle" fontSize="8" fill="#9ca3af">Original</text>
+                <text x="230" y="12" textAnchor="middle" fontSize="8" fill="#9ca3af">Rebuilt</text>
+                <rect x="155" y="16" width="30" height="40" rx="2" fill="#2d3748" stroke="#4b5563" strokeWidth="0.5"/>
+                <rect x="157" y="18" width="26" height="36" fill="url(#g2a)"/>
+                <rect x="195" y="16" width="30" height="40" rx="2" fill="#2d3748" stroke="#4b5563" strokeWidth="0.5"/>
+                <rect x="197" y="18" width="26" height="36" fill="url(#g2b)"/>
+                <text x="190" y="68" textAnchor="middle" fontSize="9" fill="#f59e0b">MSE: 0.008</text>
+                <text x="190" y="78" textAnchor="middle" fontSize="8" fill="#6b7280">medium</text>
+                {/* Pair 3 — poor */}
+                <text x="325" y="12" textAnchor="middle" fontSize="8" fill="#9ca3af">Original</text>
+                <text x="365" y="12" textAnchor="middle" fontSize="8" fill="#9ca3af">Rebuilt</text>
+                <rect x="290" y="16" width="30" height="40" rx="2" fill="#2d3748" stroke="#4b5563" strokeWidth="0.5"/>
+                <rect x="292" y="18" width="26" height="36" fill="url(#g3a)"/>
+                {/* bright patch in original */}
+                <rect x="306" y="20" width="10" height="8" fill="#e5e7eb" rx="1"/>
+                <rect x="330" y="16" width="30" height="40" rx="2" fill="#2d3748" stroke="#4b5563" strokeWidth="0.5"/>
+                <rect x="332" y="18" width="26" height="36" fill="url(#g3b)"/>
+                <text x="325" y="68" textAnchor="middle" fontSize="9" fill="#ef4444">MSE: 0.021</text>
+                <text x="325" y="78" textAnchor="middle" fontSize="8" fill="#6b7280">poor</text>
+                <defs>
+                  <linearGradient id="g1a" x1="0" y1="0" x2="1" y2="1">
+                    <stop offset="0%" stopColor="#4b5563"/>
+                    <stop offset="100%" stopColor="#1f2937"/>
+                  </linearGradient>
+                  <linearGradient id="g1b" x1="0" y1="0" x2="1" y2="1">
+                    <stop offset="0%" stopColor="#4b5563"/>
+                    <stop offset="100%" stopColor="#1e2535"/>
+                  </linearGradient>
+                  <linearGradient id="g2a" x1="0" y1="0" x2="1" y2="1">
+                    <stop offset="0%" stopColor="#6b7280"/>
+                    <stop offset="100%" stopColor="#1f2937"/>
+                  </linearGradient>
+                  <linearGradient id="g2b" x1="0" y1="0" x2="1" y2="1">
+                    <stop offset="0%" stopColor="#4b5563"/>
+                    <stop offset="100%" stopColor="#374151"/>
+                  </linearGradient>
+                  <linearGradient id="g3a" x1="0" y1="0" x2="1" y2="1">
+                    <stop offset="0%" stopColor="#9ca3af"/>
+                    <stop offset="100%" stopColor="#1f2937"/>
+                  </linearGradient>
+                  <linearGradient id="g3b" x1="0" y1="0" x2="1" y2="1">
+                    <stop offset="0%" stopColor="#4b5563"/>
+                    <stop offset="100%" stopColor="#1f2937"/>
+                  </linearGradient>
+                </defs>
+              </svg>
+            </div>
+            {bullets([
+              "Low MSE windows (green) are patterns the model has seen many times and reconstructs almost perfectly — these are the 'core' of the training distribution",
+              "High MSE windows (red) are patterns the model found difficult — unusual market behaviour, large price moves, or features that rarely appear in this configuration",
+              "The distribution of MSE values across all 20 windows tells you how consistent the training was. Mostly green = well-trained on diverse patterns; mostly red = the model struggled",
+              "If you see many high-MSE windows in the Reconstruction comparison, consider retraining with more epochs or a different scheduler",
+            ], "#f59e0b")}
+          </Section>
+
+          {/* Section 3 — Per-Feature Reconstruction Error */}
+          <Section title="Per-Feature Reconstruction Error" color="#f97316">
+            {bullets([
+              "This bar chart shows the average MSE contribution per feature across all training windows — which rows of the pixel window are hardest to rebuild",
+              "High error in return/log_return features = the model found price returns unpredictable, which is expected and normal",
+              "High error in volume features = volume spikes are rare and hard to model — the model doesn't see enough of them to learn the pattern reliably",
+              "High error in oscillator features (rsi_14, stoch_k) = these features hit extreme values infrequently; the model rarely saw overbought/oversold in training",
+              "Low error across all features = the model reconstructs everything well. This is a sign of sufficient training, not a sign that features are unimportant.",
+              "This chart links directly to the Inference page's Feature MSE panel — the same features that score high here will score high during live inference on unusual bars",
+            ], "#f97316")}
+          </Section>
+
+          {/* Section 4 — Hour-of-Day Pattern */}
+          <Section title="Hour-of-Day Pattern" color="#14b8a6">
+            <div className="mb-4 rounded-lg overflow-hidden bg-gray-950">
+              <svg viewBox="0 0 400 130" className="w-full">
+                <rect width="400" height="130" fill="#111827"/>
+                {/* Column headers — hours */}
+                {["9","10","11","12","1","2","3","4"].map((h, i) => (
+                  <text key={h} x={80 + i * 38 + 14} y="14" textAnchor="middle" fontSize="9" fill="#6b7280">{h}</text>
+                ))}
+                {/* Row labels — clusters */}
+                {[0,1,2,3,4].map(c => (
+                  <text key={c} x="72" y={26 + c * 18 + 10} textAnchor="end" fontSize="8" fill="#9ca3af">C{c}</text>
+                ))}
+                {/* Heatmap cells — intensity pattern */}
+                {[
+                  [0.85,0.4,0.2,0.15,0.2,0.25,0.3,0.8],  // C0: open + close spikes
+                  [0.2,0.3,0.5,0.75,0.8,0.7,0.4,0.2],     // C1: mid-day
+                  [0.1,0.2,0.15,0.2,0.25,0.35,0.7,0.9],   // C2: close
+                  [0.5,0.4,0.3,0.2,0.2,0.3,0.4,0.5],      // C3: uniform
+                  [0.3,0.6,0.4,0.3,0.2,0.4,0.5,0.3],      // C4: late morning
+                ].map((row, ri) =>
+                  row.map((val, ci) => {
+                    const r = Math.round(20 + val * 214);
+                    const g = Math.round(184 + val * 30);
+                    const b = Math.round(166 * (1 - val * 0.6));
+                    return (
+                      <rect key={`${ri}-${ci}`}
+                        x={80 + ci * 38} y={20 + ri * 18}
+                        width="34" height="15"
+                        rx="2"
+                        fill={`rgb(${r},${g},${b})`}
+                        opacity={0.2 + val * 0.8}
+                      />
+                    );
+                  })
+                )}
+                <text x="200" y="120" textAnchor="middle" fontSize="8" fill="#4b5563">Hour of day (market hours) →</text>
+              </svg>
+            </div>
+            {bullets([
+              "Each cell shows what % of windows in that hour were assigned to that cluster. Darker = more frequent.",
+              "Market open (9–10am) and market close (3–4pm) often show distinct cluster patterns — these are structurally different trading periods",
+              "A cluster that appears uniformly across all hours captures patterns that aren't time-specific (e.g. a pure momentum pattern)",
+              "A cluster that only appears in the first hour may be capturing opening gap behaviour — the model learned this as a distinct pattern",
+              "These patterns are in the training data's time structure, not caused by the model. If your training data is from a specific period, the temporal patterns reflect that period's market microstructure.",
+            ], "#14b8a6")}
+          </Section>
+
+          {/* Section 5 — Day-of-Week Distribution */}
+          <Section title="Day-of-Week Distribution" color="#3b82f6">
+            {bullets([
+              "Similar to hour-of-day, but aggregated by trading day. Monday often has distinct patterns from Wednesday due to different institutional flow.",
+              "Clusters concentrated on Friday afternoon may be capturing position-unwinding behaviour before the weekend",
+              "A cluster appearing more on earnings-heavy days (often Tuesday–Wednesday for large caps) may be capturing earnings-reaction patterns",
+              "If your training data is short (<1 year), day-of-week patterns may not be statistically reliable — small samples per day",
+            ], "#3b82f6")}
+          </Section>
+
+          {/* Section 6 — Finding Hidden Patterns */}
+          <Section title="Finding Hidden Patterns" color="#10b981">
+            {bullets([
+              "Cross-reference hour-of-day and day-of-week: if Cluster 3 is concentrated at Friday 3pm, it's a specific time-of-week regime. Watch for it during live inference at that time.",
+              "High per-feature MSE on volume features + hour-of-day showing high volume-cluster frequency at open = the model detected but struggled to learn opening volume spikes",
+              "Compare the feature MSE chart here to the Cluster Profile's feature fingerprints. If ema_50 has high reconstruction error, and Cluster 0 has a strong ema_50 z-score, they're related.",
+              "After retraining with different settings, re-run Analysis to see if feature reconstruction improved. This is your main quality benchmark after training.",
+              "If temporal patterns look identical across all clusters (no time-of-day specialisation), the model may not have learned time as a meaningful dimension. Consider whether the hour features are having the intended effect.",
+            ], "#10b981")}
+          </Section>
+
+          {/* Tags */}
+          <div className="flex flex-wrap gap-1 mt-2">
+            <Tag label="full-dataset pass" color="#6366f1" />
+            <Tag label="reconstruction quality" color="#f59e0b" />
+            <Tag label="temporal patterns" color="#14b8a6" />
+          </div>
+
+        </div>
+      )}
+    </div>
+  );
+}
+
 export default function AnalysisPage() {
   const [activeModel, setActiveModel] = useState(null);
   const [recon,        setRecon]       = useState(null);
@@ -242,6 +470,7 @@ export default function AnalysisPage() {
   return (
     <div>
       <h1 className="text-2xl font-bold mb-4">Analysis</h1>
+      <AnalysisGuide />
 
       <div className="flex items-center gap-2 mb-5 bg-gray-900 border border-gray-800 rounded-lg px-3 py-2 text-xs w-fit">
         <span className="text-gray-600 uppercase tracking-wider font-semibold">Model</span>
