@@ -91,7 +91,8 @@ async def _run_live_inference(req: InferRequest) -> None:
             if len(raw_bars) >= window_size:
                 df = pd.DataFrame(raw_bars)
                 df = df.rename(columns={"t": "timestamp", "o": "open", "h": "high",
-                                        "l": "low", "c": "close", "v": "volume"})
+                                        "l": "low", "c": "close", "v": "volume",
+                                        "vw": "vwap", "n": "trade_count"})
                 df["timestamp"] = pd.to_datetime(df["timestamp"])
                 df = storage.clean_data(df)
                 df = storage.add_features(df)
