@@ -388,27 +388,41 @@ export default function InferencePage() {
     c.timeScale().subscribeVisibleLogicalRangeChange(candleRangeHandler);
     m.timeScale().subscribeVisibleLogicalRangeChange(mseRangeHandler);
 
+    // Crosshair sync uses coordinateToTime() on the TARGET chart so that the visual
+    // x-position (not the timestamp) drives alignment. The two charts show different
+    // calendar times at the same x because of the warmup-bar offset, so timestamp
+    // lookup across charts cannot work — matching by visual coordinate does.
     const candleCrosshairHandler = param => {
-      if (crosshairSyncingRef.current) return;
+      if (crosshairSyncingRef.current || !param.point) return;
       crosshairSyncingRef.current = true;
       if (!param.time || !mseSeriesRef.current) {
         m.clearCrosshairPosition();
       } else {
-        const mseVal = mseTimeMapRef.current.get(param.time);
-        if (mseVal != null) m.setCrosshairPosition(mseVal, param.time, mseSeriesRef.current);
-        else m.clearCrosshairPosition();
+        const mseTime = m.timeScale().coordinateToTime(param.point.x);
+        if (mseTime != null) {
+          const mseVal = mseTimeMapRef.current.get(mseTime);
+          if (mseVal != null) m.setCrosshairPosition(mseVal, mseTime, mseSeriesRef.current);
+          else m.clearCrosshairPosition();
+        } else {
+          m.clearCrosshairPosition();
+        }
       }
       crosshairSyncingRef.current = false;
     };
     const mseCrosshairHandler = param => {
-      if (crosshairSyncingRef.current) return;
+      if (crosshairSyncingRef.current || !param.point) return;
       crosshairSyncingRef.current = true;
       if (!param.time || !candleSeriesRef.current) {
         c.clearCrosshairPosition();
       } else {
-        const bar = candleAccumRef.current.get(param.time);
-        if (bar != null) c.setCrosshairPosition(bar.c, param.time, candleSeriesRef.current);
-        else c.clearCrosshairPosition();
+        const candleTime = c.timeScale().coordinateToTime(param.point.x);
+        if (candleTime != null) {
+          const bar = candleAccumRef.current.get(candleTime);
+          if (bar != null) c.setCrosshairPosition(bar.c, candleTime, candleSeriesRef.current);
+          else c.clearCrosshairPosition();
+        } else {
+          c.clearCrosshairPosition();
+        }
       }
       crosshairSyncingRef.current = false;
     };
