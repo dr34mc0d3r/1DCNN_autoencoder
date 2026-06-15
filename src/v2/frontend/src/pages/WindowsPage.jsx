@@ -27,52 +27,191 @@ function Spinner({ className = "h-4 w-4" }) {
 
 function WindowsGuide() {
   const [open, setOpen] = useState(false);
+
+  const Section = ({ title, color = "#6366f1", children }) => (
+    <div className="border-l-2 pl-5 mb-8" style={{ borderColor: color }}>
+      <h3 className="text-base font-semibold mb-3" style={{ color }}>{title}</h3>
+      {children}
+    </div>
+  );
+
+  const Tag = ({ label, color }) => (
+    <span className="inline-block text-xs font-semibold px-2 py-0.5 rounded mr-1 mb-1"
+      style={{ background: `${color}22`, color, border: `1px solid ${color}55` }}>
+      {label}
+    </span>
+  );
+
+  const bullets = (items) => (
+    <ul className="space-y-1.5 mt-2">
+      {items.map((t, i) => (
+        <li key={i} className="flex gap-2 text-sm" style={{ color: "#9ca3af" }}>
+          <span style={{ color: "#9ca3af", flexShrink: 0 }}>›</span>
+          <span>{t}</span>
+        </li>
+      ))}
+    </ul>
+  );
+
+  const featureGroups = [
+    { rows: [0, 1, 2],        color: "#10b981", label: "Trend",       names: ["ema_9", "ema_21", "ema_50"] },
+    { rows: [3, 4, 5],        color: "#6366f1", label: "Momentum",    names: ["macd", "macd_9", "macd_hist"] },
+    { rows: [6, 7, 8, 9],     color: "#f59e0b", label: "Candle",      names: ["body", "upper_wick", "lower_wick", "candle_efficiency"] },
+    { rows: [10, 11, 12, 13], color: "#3b82f6", label: "Returns",     names: ["return", "vol_return", "log_return", "volume_ratio"] },
+    { rows: [14, 15],         color: "#ef4444", label: "Volatility",  names: ["atr_14", "rolling_vol"] },
+    { rows: [16, 17, 18],     color: "#14b8a6", label: "Range",       names: ["bb_width", "bb_pct", "vwap_dev"] },
+    { rows: [19, 20, 21],     color: "#ec4899", label: "Oscillators", names: ["rsi_14", "stoch_k", "stoch_d"] },
+    { rows: [22, 23],         color: "#9ca3af", label: "Time",        names: ["hour_sin", "hour_cos"] },
+    { rows: [24],             color: "#f97316", label: "Price",       names: ["close"] },
+  ];
+
+  const ROW_H = 11;
+  const SVG_W = 480;
+  const BAND_W = 8;
+  const NAME_X = 28;
+  const TOTAL_ROWS = 25;
+  const svgHeight = TOTAL_ROWS * ROW_H + 20;
+
   return (
     <div className="bg-gray-900 border border-gray-800 rounded-xl mb-6 overflow-hidden">
       <button
         onClick={() => setOpen(v => !v)}
         className="w-full flex items-center justify-between px-4 py-3 text-sm font-semibold text-gray-300 hover:text-gray-100 hover:bg-gray-800/40 transition-colors"
       >
-        <span>Reading the Window Viewer</span>
+        <span className="flex items-center gap-2">
+          Reading the Window Viewer
+          <span className="text-[11px] font-normal bg-indigo-900/40 text-indigo-300 border border-indigo-800 rounded px-1.5 py-0.5">
+            Beginner's Guide
+          </span>
+        </span>
         <span className="text-gray-500 text-xs">{open ? "▲ Hide" : "▼ Show"}</span>
       </button>
 
       {open && (
-        <div className="border-t border-gray-800 px-5 py-4 space-y-4 text-sm text-gray-400">
+        <div className="border-t border-gray-800 px-6 py-6">
 
-          <div>
-            <p className="text-gray-200 font-semibold mb-1">What you're looking at</p>
-            <p>Each window is a slice of <strong className="text-gray-300">14 normalised technical indicator features</strong> — rows are time steps, columns are features. Pixel brightness represents the scaled value: dark = low, bright = high. This is exactly what the model sees during both training and inference.</p>
-          </div>
+          {/* Section 1 — What You're Looking At */}
+          <Section title="What You're Looking At" color="#6366f1">
+            <p className="text-sm mb-4" style={{ color: "#9ca3af" }}>
+              Each greyscale image is one training window: 26 feature rows × 64 bar columns. Every pixel's
+              brightness encodes a scaled feature value — brighter = higher, darker = lower. The scaler
+              normalises each feature to [0, 1] across training data before encoding to pixels.
+            </p>
+            <div className="flex gap-1 mb-4">
+              <Tag label="26 features per bar" color="#6366f1" />
+              <Tag label="64 bars per window" color="#6366f1" />
+              <Tag label="normalised 0–1" color="#6366f1" />
+            </div>
 
-          <div>
-            <p className="text-gray-300 font-medium mb-0.5">Contact Sheet view</p>
-            <p>Best for spotting outliers. Windows that look dramatically different from the majority are rare regimes — the model typically assigns these to low-frequency clusters. Look for:</p>
-            <ul className="list-disc list-inside space-y-1 mt-1">
-              <li><strong className="text-gray-300">All-dark windows</strong> — low volatility, flat price action, compressed range.</li>
-              <li><strong className="text-gray-300">All-bright windows</strong> — breakout or strong directional move.</li>
-              <li><strong className="text-gray-300">Striped / high-contrast windows</strong> — oscillating or choppy conditions.</li>
-            </ul>
-          </div>
+            {/* Feature Row Map SVG */}
+            <div className="overflow-x-auto">
+              <svg
+                viewBox={`0 0 ${SVG_W} ${svgHeight}`}
+                xmlns="http://www.w3.org/2000/svg"
+                style={{ background: "#111827", borderRadius: 8, width: "100%", maxWidth: SVG_W }}
+              >
+                {featureGroups.map((group) => {
+                  const startRow = group.rows[0];
+                  const endRow   = group.rows[group.rows.length - 1];
+                  const bandY    = startRow * ROW_H + 10;
+                  const bandH    = (endRow - startRow + 1) * ROW_H;
+                  const midY     = bandY + bandH / 2;
 
-          <div>
-            <p className="text-gray-300 font-medium mb-0.5">Heatmap Strip view</p>
-            <p>All windows concatenated left-to-right in time order. A sudden shift in the brightness pattern marks a transition between market conditions — useful for sanity-checking that the CSV spans multiple distinct regimes. Long uniform stretches mean the model is seeing a homogeneous period.</p>
-          </div>
+                  return (
+                    <g key={group.label}>
+                      {/* Colour band */}
+                      <rect x="2" y={bandY} width={BAND_W} height={bandH} fill={group.color} rx="2" opacity="0.8" />
+                      {/* Group label — rotated into the band */}
+                      <text
+                        x="6"
+                        y={midY}
+                        textAnchor="middle"
+                        dominantBaseline="middle"
+                        fill={group.color}
+                        fontSize="7"
+                        fontWeight="600"
+                        transform={`rotate(-90, 6, ${midY})`}
+                      >
+                        {group.label}
+                      </text>
+                      {/* Feature name rows */}
+                      {group.rows.map((rowIdx, ri) => {
+                        const y = rowIdx * ROW_H + 10;
+                        const isEven = rowIdx % 2 === 0;
+                        return (
+                          <g key={rowIdx}>
+                            <rect x={NAME_X} y={y} width={SVG_W - NAME_X - 4} height={ROW_H} fill={isEven ? "#1f2937" : "#111827"} />
+                            <text x={NAME_X + 6} y={y + ROW_H / 2 + 0.5} dominantBaseline="middle" fill="#9ca3af" fontSize="8" fontFamily="monospace">
+                              {String(rowIdx).padStart(2, "0")}
+                            </text>
+                            <text x={NAME_X + 22} y={y + ROW_H / 2 + 0.5} dominantBaseline="middle" fill="#e5e7eb" fontSize="8" fontFamily="monospace">
+                              {group.names[ri]}
+                            </text>
+                          </g>
+                        );
+                      })}
+                    </g>
+                  );
+                })}
+              </svg>
+            </div>
+          </Section>
 
-          <div>
-            <p className="text-gray-300 font-medium mb-0.5">Thumbnail Grid view</p>
-            <p>Same windows packed tightly — useful for seeing the overall distribution of appearances at a glance. If the grid looks monotonous (everything mid-grey), the training data may be too uniform. If you see clear visual clusters, the K-Means clustering should work well.</p>
-          </div>
+          {/* Section 2 — Patterns to Look For */}
+          <Section title="Patterns to Look For" color="#f59e0b">
+            {bullets([
+              "Smooth horizontal gradient (gradually brightening left to right) = a consistent trend — price/features changing steadily over the 64 bars",
+              "Checkerboard / alternating bright-dark columns = choppy market, no sustained direction",
+              "Sudden brightness change near the right edge (most recent bars) = a recent event: spike, reversal, or news-driven move",
+              "A fully uniform row (all one shade) = that feature barely moved in this window. Common for slow oscillators (ema_50, stoch_d) in flat markets",
+              "Rows 22-23 (hour_sin/hour_cos) will always form smooth sine-like curves — they encode time of day, not price",
+            ])}
+          </Section>
 
-          <div>
-            <p className="text-gray-300 font-medium mb-0.5">What to watch for</p>
-            <ul className="list-disc list-inside space-y-1">
-              <li>If all windows look nearly identical, consider extending the date range to include more varied conditions before retraining.</li>
-              <li>Windows that are extreme outliers (pure black or pure white) may indicate bad data or a scaler issue — cross-check the CSV.</li>
-              <li>The window count input lets you trade off between a representative sample (large count, slower) and a quick visual check (small count, fast).</li>
-            </ul>
-          </div>
+          {/* Section 3 — The Three View Modes */}
+          <Section title="The Three View Modes" color="#14b8a6">
+            <div className="grid grid-cols-3 gap-3 mt-2">
+              {[
+                {
+                  name: "Contact Sheet",
+                  desc: "Windows in a grid. Best for spotting outlier windows and comparing many at once. If one window looks very different from all others, it may be an anomalous period.",
+                },
+                {
+                  name: "Heatmap Strip",
+                  desc: "Windows concatenated left-to-right in time order. Best for seeing how market behaviour changed over the training period. A colour shift in the strip = regime transition.",
+                },
+                {
+                  name: "Thumbnail Grid",
+                  desc: "Compact overview showing the diversity of all sampled windows. Best for a quick sanity check — if all thumbnails look similar, the training data may lack variety.",
+                },
+              ].map(({ name, desc }) => (
+                <div key={name} className="rounded-lg p-3" style={{ background: "#1f2937", border: "1px solid #374151" }}>
+                  <p className="text-xs font-semibold mb-1" style={{ color: "#14b8a6" }}>{name}</p>
+                  <p className="text-xs" style={{ color: "#9ca3af" }}>{desc}</p>
+                </div>
+              ))}
+            </div>
+          </Section>
+
+          {/* Section 4 — Data Quality Signals */}
+          <Section title="Data Quality Signals" color="#ef4444">
+            {bullets([
+              "All windows look nearly identical = low data variety. Try a longer date range or a more volatile symbol",
+              "A feature row that is completely black across all windows = that feature has near-zero variance after scaling. Check for calculation errors",
+              "A feature row that is completely white = the scaler was dominated by one extreme outlier. The scaler clips at the training min/max",
+              "If you see a sudden transition in the Heatmap Strip where the entire image brightens or darkens = a major volatility regime change in the data",
+            ])}
+          </Section>
+
+          {/* Section 5 — Finding Hidden Patterns */}
+          <Section title="Finding Hidden Patterns" color="#10b981">
+            {bullets([
+              "Use the Heatmap Strip as a rough regime timeline before running K-Means. Areas of similar texture = windows that will likely cluster together",
+              "Look for windows where only rows 6-9 (candle shape features) are bright while momentum rows are flat = pure candle-pattern regime, not trend-driven",
+              "Contact Sheet with 200+ windows: if you see 3-4 visually distinct 'types' of windows, that suggests a natural cluster count in Config",
+              "After training, compare these windows to the Cluster Profile's representative windows — the visual similarity should confirm the clustering",
+            ])}
+          </Section>
 
         </div>
       )}

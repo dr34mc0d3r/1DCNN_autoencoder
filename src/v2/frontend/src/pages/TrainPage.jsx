@@ -6,6 +6,171 @@ import { api } from "../api.js";
 import { ws } from "../ws.js";
 import { captureRechartsSvg } from "../utils/exportUtils.js";
 
+// ── Train Guide ────────────────────────────────────────────────────────────────
+
+function TrainGuide() {
+  const [open, setOpen] = useState(false);
+
+  const Section = ({ title, color = "#6366f1", children }) => (
+    <div className="border-l-2 pl-5 mb-8" style={{ borderColor: color }}>
+      <h3 className="text-base font-semibold mb-3" style={{ color }}>{title}</h3>
+      {children}
+    </div>
+  );
+
+  const bullets = (items) => (
+    <ul className="space-y-1.5 mt-2">
+      {items.map((t, i) => (
+        <li key={i} className="flex gap-2 text-sm" style={{ color: "#9ca3af" }}>
+          <span style={{ color: "#9ca3af", flexShrink: 0 }}>›</span>
+          <span>{t}</span>
+        </li>
+      ))}
+    </ul>
+  );
+
+  return (
+    <div className="bg-gray-900 border border-gray-800 rounded-xl mb-6 overflow-hidden">
+      <button
+        onClick={() => setOpen(v => !v)}
+        className="w-full flex items-center justify-between px-4 py-3 text-sm font-semibold text-gray-300 hover:text-gray-100 hover:bg-gray-800/40 transition-colors"
+      >
+        <span className="flex items-center gap-2">
+          Understanding Training
+          <span className="text-[11px] font-normal bg-indigo-900/40 text-indigo-300 border border-indigo-800 rounded px-1.5 py-0.5">
+            Beginner's Guide
+          </span>
+        </span>
+        <span className="text-gray-500 text-xs">{open ? "▲ Hide" : "▼ Show"}</span>
+      </button>
+
+      {open && (
+        <div className="border-t border-gray-800 px-6 py-6">
+
+          {/* Section 1 — What Training Actually Does */}
+          <Section title="What Training Actually Does" color="#6366f1">
+            <p className="text-sm" style={{ color: "#9ca3af" }}>
+              Training teaches the autoencoder to recognise patterns by repeatedly compressing and rebuilding
+              windows of bar data. It never predicts price direction — it learns what "normal" looks like.
+            </p>
+            {bullets([
+              "Each epoch = one pass through all training windows. The model adjusts its internal weights to reduce reconstruction error",
+              "Loss = average reconstruction error across all windows. Lower loss means the model rebuilds windows more accurately",
+              "Training loss uses the training set (80% of data). Validation loss uses the held-out validation set (most recent 20%)",
+              "The model saves automatically when validation loss hits a new best — so even if training stops early, you keep the best checkpoint",
+            ])}
+          </Section>
+
+          {/* Section 2 — Reading the Loss Curves */}
+          <Section title="Reading the Loss Curves" color="#f59e0b">
+            <div className="overflow-x-auto mb-4">
+              <svg viewBox="0 0 560 180" xmlns="http://www.w3.org/2000/svg" style={{ background: "#111827", borderRadius: 8, width: "100%", maxWidth: 560 }}>
+                {/* Panel 1 — Healthy */}
+                <rect x="20" y="20" width="120" height="70" fill="#1f2937" rx="4" stroke="#374151" strokeWidth="1" />
+                <line x1="30" y1="82" x2="130" y2="82" stroke="#374151" strokeWidth="1" />
+                <line x1="30" y1="25" x2="30" y2="82" stroke="#374151" strokeWidth="1" />
+                <polyline points="30,72 50,62 70,52 90,44 110,39 130,36" fill="none" stroke="#10b981" strokeWidth="1.5" />
+                <polyline points="30,75 50,66 70,57 90,50 110,45 130,42" fill="none" stroke="#f59e0b" strokeWidth="1.5" />
+                <text x="80" y="105" textAnchor="middle" fill="#10b981" fontSize="9">✓ Healthy convergence</text>
+
+                {/* Panel 2 — Overfitting */}
+                <rect x="160" y="20" width="120" height="70" fill="#1f2937" rx="4" stroke="#374151" strokeWidth="1" />
+                <line x1="170" y1="82" x2="270" y2="82" stroke="#374151" strokeWidth="1" />
+                <line x1="170" y1="25" x2="170" y2="82" stroke="#374151" strokeWidth="1" />
+                <polyline points="170,72 190,62 210,50 230,40 250,33 270,28" fill="none" stroke="#10b981" strokeWidth="1.5" />
+                <polyline points="170,75 190,65 210,56 230,55 250,59 270,66" fill="none" stroke="#f59e0b" strokeWidth="1.5" />
+                <text x="220" y="105" textAnchor="middle" fill="#f59e0b" fontSize="9">⚠ Overfitting</text>
+
+                {/* Panel 3 — Underfitting */}
+                <rect x="300" y="20" width="120" height="70" fill="#1f2937" rx="4" stroke="#374151" strokeWidth="1" />
+                <line x1="310" y1="82" x2="410" y2="82" stroke="#374151" strokeWidth="1" />
+                <line x1="310" y1="25" x2="310" y2="82" stroke="#374151" strokeWidth="1" />
+                <polyline points="310,66 330,65 350,64 370,63 390,63 410,62" fill="none" stroke="#10b981" strokeWidth="1.5" />
+                <polyline points="310,70 330,69 350,68 370,68 390,67 410,67" fill="none" stroke="#f59e0b" strokeWidth="1.5" />
+                <text x="360" y="105" textAnchor="middle" fill="#f59e0b" fontSize="9">⚠ Underfitting</text>
+
+                {/* Panel 4 — Guard stop */}
+                <rect x="440" y="20" width="120" height="70" fill="#1f2937" rx="4" stroke="#374151" strokeWidth="1" />
+                <line x1="450" y1="82" x2="550" y2="82" stroke="#374151" strokeWidth="1" />
+                <line x1="450" y1="25" x2="450" y2="82" stroke="#374151" strokeWidth="1" />
+                <polyline points="450,72 466,63 482,54 498,47" fill="none" stroke="#10b981" strokeWidth="1.5" />
+                <polyline points="450,75 466,67 482,59 498,53" fill="none" stroke="#f59e0b" strokeWidth="1.5" />
+                <line x1="498" y1="25" x2="498" y2="82" stroke="#ef4444" strokeWidth="1.5" strokeDasharray="4 2" />
+                <text x="498" y="20" textAnchor="middle" fill="#ef4444" fontSize="11" fontWeight="bold">✕</text>
+                <text x="495" y="105" textAnchor="middle" fill="#14b8a6" fontSize="9">✓ Guard fired</text>
+
+                {/* Legend */}
+                <line x1="20" y1="165" x2="36" y2="165" stroke="#10b981" strokeWidth="1.5" />
+                <text x="40" y="168" fill="#9ca3af" fontSize="9">Train loss</text>
+                <line x1="100" y1="165" x2="116" y2="165" stroke="#f59e0b" strokeWidth="1.5" />
+                <text x="120" y="168" fill="#9ca3af" fontSize="9">Val loss</text>
+              </svg>
+            </div>
+            {bullets([
+              "Healthy: both losses declining and staying close together = ideal. Train will typically be slightly below val",
+              "Overfitting: model memorised the training data; val loss worsens. The overfit_ratio guard catches this",
+              "Underfitting: model hasn't learned enough. Usually means too few epochs, too high learning rate, or too large latent_dim",
+              "Guard stop: one of the 6 safety guards detected a training problem and stopped early. Check the guard status column in the epoch log",
+            ])}
+          </Section>
+
+          {/* Section 3 — Train vs Validation Loss */}
+          <Section title="Train vs Validation Loss" color="#3b82f6">
+            {bullets([
+              "The training set is the first 80% of bars (chronologically). The validation set is the most recent 20%",
+              "A small gap between train and val loss (e.g. 0.003 vs 0.0035) is healthy — slight overfitting is normal and expected",
+              "A large gap (e.g. 0.001 train vs 0.008 val) means the model learned the training period but didn't generalise to the validation period",
+              "If both losses are identical or val is lower than train, the model may not have trained enough yet — or there's data leakage",
+              "Delta column in the epoch log shows how much val loss improved each epoch. Negative delta = improvement.",
+            ])}
+          </Section>
+
+          {/* Section 4 — The Guard System */}
+          <Section title="The Guard System" color="#ef4444">
+            <div className="grid grid-cols-2 gap-3 mt-2">
+              {[
+                { name: "Patience / Plateau", desc: "No improvement for N epochs → reduce LR or stop. Set guard_patience." },
+                { name: "Overfitting", desc: "Train loss / val loss ratio exceeds threshold → stop. Set guard_overfit_ratio." },
+                { name: "Collapse", desc: "Loss drops below a tiny threshold → weights collapsed to near-zero → stop. Set guard_collapse_threshold." },
+                { name: "Explosion", desc: "Loss rises by explosion_factor × previous → diverging training → stop." },
+                { name: "Oscillation", desc: "Val loss oscillating without converging (measured by CV over a window) → stop." },
+              ].map(({ name, desc }) => (
+                <div key={name} className="rounded-lg p-3" style={{ background: "#1f2937", border: "1px solid #374151" }}>
+                  <p className="text-xs font-semibold mb-1" style={{ color: "#ef4444" }}>{name}</p>
+                  <p className="text-xs" style={{ color: "#9ca3af" }}>{desc}</p>
+                </div>
+              ))}
+            </div>
+          </Section>
+
+          {/* Section 5 — What to Watch For */}
+          <Section title="What to Watch For" color="#14b8a6">
+            {bullets([
+              "LR drops in the LR column mean the scheduler fired — this is expected behaviour, not an error",
+              "Guard status column: 'ok' is good; 'plateau' means LR was reduced; red status means training is about to stop",
+              "If training stops before epoch 30, the patience or oscillation guards may be too tight — increase guard_patience in Config",
+              "If val loss never improves at all, the learning rate may be too high — try the Exponential or Plateau scheduler",
+              "A good training run shows both losses below 0.01, with val loss roughly 1.1–1.5× train loss",
+            ])}
+          </Section>
+
+          {/* Section 6 — When is Training Good Enough? */}
+          <Section title="When is Training Good Enough?" color="#10b981">
+            {bullets([
+              "Val loss has plateaued for 20+ epochs with no improvement = the model has learned all it can from this data",
+              "Both losses below 0.005 is a strong result for a 26-feature autoencoder",
+              "Check the Windows page after training — if windows look visually diverse, the scaler and features are working",
+              "The Analysis page's Feature MSE chart will tell you which features the model struggled with — that's useful signal, not a failure",
+              "You can always retrain with different Config settings — the new model overwrites the active bundle",
+            ])}
+          </Section>
+
+        </div>
+      )}
+    </div>
+  );
+}
+
 // ── Data Preview ───────────────────────────────────────────────────────────────
 
 function DataTable({ columns, rows, caption }) {
@@ -266,6 +431,8 @@ export default function TrainPage() {
           </button>
         </div>
       </div>
+
+      <TrainGuide />
 
       <DataPreview />
 
