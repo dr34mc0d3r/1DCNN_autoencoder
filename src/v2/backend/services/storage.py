@@ -61,7 +61,7 @@ def clean_data(df: pd.DataFrame) -> pd.DataFrame:
     return df
 
 
-def add_features(df: pd.DataFrame) -> pd.DataFrame:
+def add_features(df: pd.DataFrame, trade_count_fill_flat: bool = True) -> pd.DataFrame:
     # ── Trend ────────────────────────────────────────────────────────────────
     df["ema_9"]  = df["close"].ewm(span=9,  adjust=False).mean()
     df["ema_21"] = df["close"].ewm(span=21, adjust=False).mean()
@@ -91,8 +91,13 @@ def add_features(df: pd.DataFrame) -> pd.DataFrame:
     if "trade_count" in df.columns:
         df["trade_count_ratio"] = df["trade_count"] / df["trade_count"].rolling(20).mean()
         df["trade_count_ratio"] = df["trade_count_ratio"].clip(upper=df["trade_count_ratio"].quantile(0.99))
-    else:
+    elif trade_count_fill_flat:
         df["trade_count_ratio"] = 1.0  # IEX feed omits trade count; neutral fill
+    else:
+        # Volume-ratio proxy: relative volume activity substitutes for trade count.
+        # Better than a constant but not equivalent to true trade count.
+        df["trade_count_ratio"] = df["volume"] / df["volume"].rolling(20).mean()
+        df["trade_count_ratio"] = df["trade_count_ratio"].clip(upper=df["trade_count_ratio"].quantile(0.99))
     # Alpaca IEX free-tier reports partial volume, producing extreme spikes in
     # vol_return (observed max: 1836×). Clip at the 99th percentile.
     # Quantile is computed on the full passed-in dataset (mild leakage). See src/v2/WARNINGS.md.
