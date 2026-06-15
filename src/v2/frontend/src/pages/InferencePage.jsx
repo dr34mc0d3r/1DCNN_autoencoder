@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { createChart, CandlestickSeries, HistogramSeries, LineSeries, LineStyle } from "lightweight-charts";
+import { createChart, CandlestickSeries, HistogramSeries, LineSeries, LineStyle, createSeriesMarkers } from "lightweight-charts";
 import {
   XAxis, YAxis, Tooltip, ResponsiveContainer,
   BarChart, Bar, Cell,
@@ -113,12 +113,13 @@ function msePercentileRank(mse, baseline) {
 }
 
 function MSEChart({ data, p95, p50, markers, onChartCreated, runId }) {
-  const containerRef     = useRef(null);
-  const chartRef         = useRef(null);
-  const lineRef          = useRef(null);
-  const p95LineRef       = useRef(null);
-  const p50LineRef       = useRef(null);
-  const hasInitialFitRef = useRef(false);
+  const containerRef      = useRef(null);
+  const chartRef          = useRef(null);
+  const lineRef           = useRef(null);
+  const markersPluginRef  = useRef(null);
+  const p95LineRef        = useRef(null);
+  const p50LineRef        = useRef(null);
+  const hasInitialFitRef  = useRef(false);
 
   useEffect(() => { hasInitialFitRef.current = false; }, [runId]);
 
@@ -137,15 +138,16 @@ function MSEChart({ data, p95, p50, markers, onChartCreated, runId }) {
       color: "#6366f1", lineWidth: 1,
       lastValueVisible: false, priceLineVisible: false,
     });
-    chartRef.current = chart;
-    lineRef.current  = line;
+    chartRef.current         = chart;
+    lineRef.current          = line;
+    markersPluginRef.current = createSeriesMarkers(line, []);
     onChartCreated?.(chart, line);
 
     const ro = new ResizeObserver(() => {
       chart.applyOptions({ width: containerRef.current?.clientWidth ?? 800 });
     });
     ro.observe(containerRef.current);
-    return () => { ro.disconnect(); chart.remove(); };
+    return () => { ro.disconnect(); chart.remove(); markersPluginRef.current = null; };
   }, []);
 
   useEffect(() => {
@@ -182,9 +184,9 @@ function MSEChart({ data, p95, p50, markers, onChartCreated, runId }) {
   }, [p50]);
 
   useEffect(() => {
-    if (!lineRef.current || !markers?.length) return;
-    lineRef.current.setMarkers(
-      markers.map(m => ({
+    if (!markersPluginRef.current) return;
+    markersPluginRef.current.setMarkers(
+      (markers || []).map(m => ({
         time:     m.time,
         position: "aboveBar",
         color:    COLORS[m.cluster % COLORS.length],
