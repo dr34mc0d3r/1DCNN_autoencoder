@@ -52,98 +52,231 @@ const tooltipStyle = { backgroundColor: "#111827", border: "none" };
 
 function ClusterProfileGuide() {
   const [open, setOpen] = useState(false);
+
+  const Section = ({ title, color = "#6366f1", children }) => (
+    <div className="border-l-2 pl-5 mb-8" style={{ borderColor: color }}>
+      <h3 className="text-base font-semibold mb-3" style={{ color }}>{title}</h3>
+      {children}
+    </div>
+  );
+
+  const Tag = ({ label, color }) => (
+    <span className="inline-block text-xs font-semibold px-2 py-0.5 rounded mr-1 mb-1"
+      style={{ background: `${color}22`, color, border: `1px solid ${color}55` }}>
+      {label}
+    </span>
+  );
+
+  const bullets = (items, color = "#9ca3af") => (
+    <ul className="space-y-1.5 mt-2">
+      {items.map((t, i) => (
+        <li key={i} className="flex gap-2 text-sm" style={{ color: "#9ca3af" }}>
+          <span style={{ color, flexShrink: 0 }}>›</span>
+          <span>{t}</span>
+        </li>
+      ))}
+    </ul>
+  );
+
   return (
     <div className="bg-gray-900 border border-gray-800 rounded-xl mb-6 overflow-hidden">
       <button
         onClick={() => setOpen(v => !v)}
         className="w-full flex items-center justify-between px-4 py-3 text-sm font-semibold text-gray-300 hover:text-gray-100 hover:bg-gray-800/40 transition-colors"
       >
-        <span>What to look for &amp; Finding Patterns</span>
+        <span className="flex items-center gap-2">
+          Understanding Cluster Profiles
+          <span className="text-[11px] font-normal bg-indigo-900/40 text-indigo-300 border border-indigo-800 rounded px-1.5 py-0.5">
+            Beginner's Guide
+          </span>
+        </span>
         <span className="text-gray-500 text-xs">{open ? "▲ Hide" : "▼ Show"}</span>
       </button>
 
       {open && (
-        <div className="border-t border-gray-800 px-5 py-4 space-y-5 text-sm text-gray-400">
+        <div className="border-t border-gray-800 px-6 py-6">
 
-          {/* ── What to look for ── */}
-          <div>
-            <p className="text-gray-200 font-semibold mb-2">What to look for</p>
-            <div className="space-y-3">
+          {/* Section 1 — What is a Cluster Profile? */}
+          <Section title="What is a Cluster Profile?" color="#6366f1">
+            <p className="text-sm mb-3" style={{ color: "#9ca3af" }}>
+              After training, K-Means assigned every window in the training set to one of N clusters. The Cluster Profile page is a forensic tool — it asks "what is special about the windows in cluster X?" and gives you several angles to answer that question.
+            </p>
+            {bullets([
+              "Feature Fingerprint: z-scores showing which features are unusually high or low compared to the overall training average",
+              "Decision Tree: a simple if-then-else rule set that best separates this cluster from all others",
+              "Representative Windows: the 5 windows most similar to the cluster centre — what 'typical' looks like",
+              "Forward Returns: how price typically moved in the bars immediately after windows belonging to this cluster",
+            ], "#6366f1")}
+          </Section>
 
-              <div>
-                <p className="text-gray-300 font-medium mb-0.5">Feature Fingerprint</p>
-                <ul className="list-disc list-inside space-y-1">
-                  <li><strong className="text-gray-300">|z| &gt; 1.5 (indigo/red bars)</strong> — this cluster has a meaningfully elevated or depressed level of that feature compared to the full dataset. Strong defining characteristic.</li>
-                  <li><strong className="text-gray-300">|z| &lt; 0.5 (gray bars)</strong> — this feature is near the global average for this cluster. It's not what makes this cluster distinctive.</li>
-                  <li><strong className="text-gray-300">Multiple features with high |z| in the same direction</strong> — the cluster represents a coherent market regime. E.g., high rsi_14 + high return + positive body = momentum cluster.</li>
-                  <li><strong className="text-gray-300">Conflicting z directions</strong> — mixed regime. The autoencoder found something unusual, but it doesn't fit a single clean narrative.</li>
-                </ul>
-              </div>
+          {/* Section 2 — The Feature Fingerprint — Z-Scores */}
+          <Section title="The Feature Fingerprint — Z-Scores" color="#f59e0b">
+            {/* Dual cluster fingerprint SVG */}
+            <svg viewBox="0 0 520 170" className="w-full mb-4 rounded-lg" style={{ background: "#111827" }}>
+              {/* Left panel label */}
+              <text x="130" y="14" textAnchor="middle" fontSize="10" fill="#f59e0b">Cluster A — Trending</text>
+              {/* Centre axis left panel */}
+              <line x1="130" y1="20" x2="130" y2="162" stroke="#374151" strokeWidth="1" />
 
-              <div>
-                <p className="text-gray-300 font-medium mb-0.5">Decision Tree Rules</p>
-                <ul className="list-disc list-inside space-y-1">
-                  <li><strong className="text-gray-300">High feature importance</strong> — that feature most cleanly separates clusters from each other globally. If the same feature also has a high |z| in the fingerprint for your selected cluster, it's a defining characteristic.</li>
-                  <li><strong className="text-gray-300">Feature appears early in the tree (near root)</strong> — it's a primary split. The first split separates the majority of windows.</li>
-                  <li><strong className="text-gray-300">Tree rules feel interpretable</strong> — "rsi_14 &lt;= 42" followed by cluster 4 → low-RSI oversold regime. Good sign the model learned real structure.</li>
-                  <li><strong className="text-gray-300">Tree rules feel arbitrary</strong> — small threshold differences between branches — suggests the clusters are close together in feature space. The model may have over-split.</li>
-                </ul>
-              </div>
+              {/* Left panel bars: feature labels on left, bars extending right (green) or left (red) of x=130 */}
+              {/* ema_9 z=+1.8 */}
+              <text x="126" y="34" textAnchor="end" fontSize="8" fill="#9ca3af">ema_9</text>
+              <rect x="130" y="27" width="54" height="9" fill="#10b981" opacity="0.8" />
+              {/* return z=+1.4 */}
+              <text x="126" y="48" textAnchor="end" fontSize="8" fill="#9ca3af">return</text>
+              <rect x="130" y="41" width="42" height="9" fill="#10b981" opacity="0.8" />
+              {/* rsi_14 z=+1.2 */}
+              <text x="126" y="62" textAnchor="end" fontSize="8" fill="#9ca3af">rsi_14</text>
+              <rect x="130" y="55" width="36" height="9" fill="#10b981" opacity="0.8" />
+              {/* bb_pct z=+0.8 */}
+              <text x="126" y="76" textAnchor="end" fontSize="8" fill="#9ca3af">bb_pct</text>
+              <rect x="130" y="69" width="24" height="9" fill="#10b981" opacity="0.8" />
+              {/* volume_ratio z=-0.3 */}
+              <text x="126" y="90" textAnchor="end" fontSize="8" fill="#9ca3af">volume_ratio</text>
+              <rect x="121" y="83" width="9" height="9" fill="#ef4444" opacity="0.7" />
+              {/* macd_hist z=+1.6 */}
+              <text x="126" y="104" textAnchor="end" fontSize="8" fill="#9ca3af">macd_hist</text>
+              <rect x="130" y="97" width="48" height="9" fill="#10b981" opacity="0.8" />
+              {/* atr_14 z=-0.9 */}
+              <text x="126" y="118" textAnchor="end" fontSize="8" fill="#9ca3af">atr_14</text>
+              <rect x="103" y="111" width="27" height="9" fill="#ef4444" opacity="0.7" />
+              {/* stoch_k z=+1.1 */}
+              <text x="126" y="132" textAnchor="end" fontSize="8" fill="#9ca3af">stoch_k</text>
+              <rect x="130" y="125" width="33" height="9" fill="#10b981" opacity="0.8" />
 
-              <div>
-                <p className="text-gray-300 font-medium mb-0.5">Representative Windows</p>
-                <ul className="list-disc list-inside space-y-1">
-                  <li><strong className="text-gray-300">All 5 look similar</strong> — tight, well-defined cluster. The model consistently puts these kinds of windows together.</li>
-                  <li><strong className="text-gray-300">Varied shapes across the 5</strong> — looser cluster. The model identified a broader regime (e.g. "low volatility") without a specific candle pattern.</li>
-                  <li><strong className="text-gray-300">dist close to 0</strong> — very typical example of this cluster; a reliable representative.</li>
-                  <li><strong className="text-gray-300">dist much higher than Rank 0</strong> — the cluster is spread out in latent space; the "centre" is somewhat abstract.</li>
-                </ul>
-              </div>
+              {/* Divider */}
+              <line x1="260" y1="10" x2="260" y2="165" stroke="#374151" strokeWidth="1" strokeDasharray="4 3" />
 
-              <div>
-                <p className="text-gray-300 font-medium mb-0.5">Forward Returns</p>
-                <ul className="list-disc list-inside space-y-1">
-                  <li><strong className="text-gray-300">Hit rate &gt; 55% with n &gt; 30</strong> — clusters that appear before more up-moves than down. Statistically notable; worth tracking.</li>
-                  <li><strong className="text-gray-300">Hit rate &lt; 45% with n &gt; 30</strong> — clusters that tend to precede down-moves. Potential short-bias signal.</li>
-                  <li><strong className="text-gray-300">n &lt; 20</strong> — too few non-overlapping samples for this cluster. Don't draw conclusions; it may be a rare regime.</li>
-                  <li><strong className="text-gray-300">Large P25–P75 spread</strong> — wide distribution of outcomes. Mean return may be misleading; the cluster appears in both trending and choppy conditions.</li>
-                </ul>
-              </div>
+              {/* Right panel label */}
+              <text x="390" y="14" textAnchor="middle" fontSize="10" fill="#f59e0b">Cluster B — Mean Reversion</text>
+              {/* Centre axis right panel */}
+              <line x1="390" y1="20" x2="390" y2="162" stroke="#374151" strokeWidth="1" />
+
+              {/* Right panel bars */}
+              {/* ema_9 z=-1.2 */}
+              <text x="386" y="34" textAnchor="end" fontSize="8" fill="#9ca3af">ema_9</text>
+              <rect x="354" y="27" width="36" height="9" fill="#ef4444" opacity="0.8" />
+              {/* return z=-1.6 */}
+              <text x="386" y="48" textAnchor="end" fontSize="8" fill="#9ca3af">return</text>
+              <rect x="342" y="41" width="48" height="9" fill="#ef4444" opacity="0.8" />
+              {/* rsi_14 z=-1.8 (oversold) */}
+              <text x="386" y="62" textAnchor="end" fontSize="8" fill="#9ca3af">rsi_14</text>
+              <rect x="336" y="55" width="54" height="9" fill="#ef4444" opacity="0.8" />
+              {/* bb_pct z=-1.4 */}
+              <text x="386" y="76" textAnchor="end" fontSize="8" fill="#9ca3af">bb_pct</text>
+              <rect x="348" y="69" width="42" height="9" fill="#ef4444" opacity="0.8" />
+              {/* volume_ratio z=+1.3 */}
+              <text x="386" y="90" textAnchor="end" fontSize="8" fill="#9ca3af">volume_ratio</text>
+              <rect x="390" y="83" width="39" height="9" fill="#10b981" opacity="0.8" />
+              {/* macd_hist z=-0.8 */}
+              <text x="386" y="104" textAnchor="end" fontSize="8" fill="#9ca3af">macd_hist</text>
+              <rect x="366" y="97" width="24" height="9" fill="#ef4444" opacity="0.7" />
+              {/* atr_14 z=+1.1 */}
+              <text x="386" y="118" textAnchor="end" fontSize="8" fill="#9ca3af">atr_14</text>
+              <rect x="390" y="111" width="33" height="9" fill="#10b981" opacity="0.8" />
+            </svg>
+            {bullets([
+              "Z-score = (cluster average − overall training mean) / overall training std. A z-score of +1.5 means this cluster's average value for that feature is 1.5 standard deviations above the training mean.",
+              "High positive z-scores tell you what features are unusually elevated in this cluster. High RSI + high EMA slope = uptrend cluster.",
+              "High negative z-scores tell you what's unusually low. Low RSI + negative return = potential mean-reversion setup.",
+              "Features near zero (z-score −0.3 to +0.3) are not distinctive for this cluster — they don't define it.",
+              "Comparing two clusters' fingerprints reveals what market conditions they represent. Opposite z-scores = opposite market regimes.",
+            ], "#f59e0b")}
+          </Section>
+
+          {/* Section 3 — The Decision Tree */}
+          <Section title="The Decision Tree" color="#3b82f6">
+            {bullets([
+              "The decision tree is trained on the cluster labels to find simple rules that separate one cluster from all others",
+              "It is a description, not a prediction — it tells you which feature thresholds the model found distinguishing, but doesn't cause the cluster assignment",
+              "The first split (root node) uses the single most separating feature. This is usually the most important feature for understanding what the cluster represents",
+              "Depth 4 means up to 4 yes/no questions to classify a window. Shallower trees are easier to read; deeper trees are more precise",
+              "Feature importance percentages (shown below the tree text) tell you which features collectively contributed most to separating this cluster",
+            ], "#3b82f6")}
+          </Section>
+
+          {/* Section 4 — Representative Windows */}
+          <Section title="Representative Windows" color="#ec4899">
+            {bullets([
+              "These are the 5 windows with the smallest distance to the cluster centroid in 32-dimensional latent space — the 'most average' examples of this cluster",
+              "Visually similar windows across the 5 thumbnails confirm the cluster is coherent — if they look random, the cluster may not have a clear interpretation",
+              "Look at the right edge of each window (most recent bars) — what does the latest price action look like for this cluster?",
+              "Compare representative windows across two different clusters — the visual difference is what the model learned to distinguish",
+              "The MiniCandlestick chart shows OHLCV bars for those windows — you can see whether the cluster captures trending candles, doji-heavy consolidation, or high-wick reversals",
+            ], "#ec4899")}
+          </Section>
+
+          {/* Section 5 — Forward Return Analysis */}
+          <Section title="Forward Return Analysis" color="#10b981">
+            {/* Forward return bar chart SVG */}
+            <svg viewBox="0 0 480 140" className="w-full mb-4 rounded-lg" style={{ background: "#111827" }}>
+              {/* Axes */}
+              <line x1="40" y1="10" x2="40" y2="110" stroke="#374151" strokeWidth="1" />
+              <line x1="40" y1="65" x2="460" y2="65" stroke="#374151" strokeWidth="1" strokeDasharray="3 2" />
+              <line x1="40" y1="110" x2="460" y2="110" stroke="#374151" strokeWidth="1" />
+              {/* Y axis label */}
+              <text x="12" y="68" textAnchor="middle" fontSize="8" fill="#6b7280" transform="rotate(-90,12,68)">% return</text>
+              {/* Zero label */}
+              <text x="35" y="68" textAnchor="end" fontSize="8" fill="#6b7280">0%</text>
+              {/* Bars: 6 clusters, each ~55px wide with 10px gap */}
+              {/* C0: +0.8% → green bar going up from y=65 */}
+              <rect x="50" y="41" width="42" height="24" fill="#10b981" opacity="0.85" />
+              <text x="71" y="115" textAnchor="middle" fontSize="8" fill="#9ca3af">C0</text>
+              <text x="71" y="38" textAnchor="middle" fontSize="7" fill="#10b981">+0.8%</text>
+              <text x="71" y="126" textAnchor="middle" fontSize="7" fill="#6b7280">58%</text>
+              {/* C1: -0.4% → red bar going down from y=65 */}
+              <rect x="105" y="65" width="42" height="12" fill="#ef4444" opacity="0.85" />
+              <text x="126" y="115" textAnchor="middle" fontSize="8" fill="#9ca3af">C1</text>
+              <text x="126" y="88" textAnchor="middle" fontSize="7" fill="#ef4444">−0.4%</text>
+              <text x="126" y="126" textAnchor="middle" fontSize="7" fill="#6b7280">44%</text>
+              {/* C2: +0.2% → light green */}
+              <rect x="160" y="59" width="42" height="6" fill="#10b981" opacity="0.6" />
+              <text x="181" y="115" textAnchor="middle" fontSize="8" fill="#9ca3af">C2</text>
+              <text x="181" y="56" textAnchor="middle" fontSize="7" fill="#10b981">+0.2%</text>
+              <text x="181" y="126" textAnchor="middle" fontSize="7" fill="#6b7280">51%</text>
+              {/* C3: +1.2% → tall green */}
+              <rect x="215" y="29" width="42" height="36" fill="#10b981" opacity="0.85" />
+              <text x="236" y="115" textAnchor="middle" fontSize="8" fill="#9ca3af">C3</text>
+              <text x="236" y="26" textAnchor="middle" fontSize="7" fill="#10b981">+1.2%</text>
+              <text x="236" y="126" textAnchor="middle" fontSize="7" fill="#6b7280">62%</text>
+              {/* C4: -0.9% → tall red */}
+              <rect x="270" y="65" width="42" height="27" fill="#ef4444" opacity="0.85" />
+              <text x="291" y="115" textAnchor="middle" fontSize="8" fill="#9ca3af">C4</text>
+              <text x="291" y="102" textAnchor="middle" fontSize="7" fill="#ef4444">−0.9%</text>
+              <text x="291" y="126" textAnchor="middle" fontSize="7" fill="#6b7280">40%</text>
+              {/* C5: -0.1% → tiny red */}
+              <rect x="325" y="65" width="42" height="3" fill="#ef4444" opacity="0.6" />
+              <text x="346" y="115" textAnchor="middle" fontSize="8" fill="#9ca3af">C5</text>
+              <text x="346" y="78" textAnchor="middle" fontSize="7" fill="#ef4444">−0.1%</text>
+              <text x="346" y="126" textAnchor="middle" fontSize="7" fill="#6b7280">49%</text>
+              {/* Legend label */}
+              <text x="420" y="120" textAnchor="middle" fontSize="7" fill="#6b7280">% = hit rate</text>
+            </svg>
+            {bullets([
+              "Mean return: average price change in the N bars after a window is assigned to this cluster. Positive = price typically rose after this pattern.",
+              "Hit rate: % of times price moved in the positive direction after this cluster. 50% = random (no edge). Above 55% starts to be interesting.",
+              "Small sample sizes (N < 200) mean high variance — don't over-interpret. Look for clusters with N > 500 and consistent hit rates.",
+              "Mean vs median: a cluster with mean +0.5% but median +0.05% likely has a few large outlier moves driving the average. Median is more reliable.",
+              "These are historical patterns from training data — they describe what happened, not what will happen. Treat them as hypotheses to watch, not trading signals.",
+            ], "#10b981")}
+          </Section>
+
+          {/* Section 6 — Finding Hidden Patterns */}
+          <Section title="Finding Hidden Patterns" color="#14b8a6">
+            {bullets([
+              "Cluster with high RSI + high return z-scores + positive forward returns = a momentum cluster. Price was rising and continued rising.",
+              "Cluster with low RSI + negative bb_pct + high volume_ratio = an oversold-with-volume cluster — potential mean reversion setup worth watching.",
+              "Compare cluster appearances by time of day (Analysis page → Hour-of-Day Heatmap). A cluster that only appears at market open is likely capturing the opening gap behaviour.",
+              "If a cluster has a feature fingerprint dominated by hour_sin/hour_cos, it's a time-of-day cluster, not a price-action cluster — less useful for pattern analysis.",
+              "Use forward returns to rank clusters by edge: which cluster has the most consistent hit rate AND meaningful mean return? That's your 'interesting' cluster to monitor in Inference.",
+            ], "#14b8a6")}
+            <div className="mt-4">
+              <Tag label="z-score fingerprints" color="#f59e0b" />
+              <Tag label="decision tree" color="#3b82f6" />
+              <Tag label="forward returns" color="#10b981" />
             </div>
-          </div>
+          </Section>
 
-          {/* ── Finding patterns ── */}
-          <div>
-            <p className="text-gray-200 font-semibold mb-2">Finding Hidden Patterns</p>
-            <div className="space-y-3">
-
-              <div>
-                <p className="text-gray-300 font-medium mb-0.5">Step 1 — Identify the dominant feature story for each cluster</p>
-                <p>Read the fingerprint top-to-bottom. The first 2–3 bars tell you the main story. "High rsi_14, high return, high vol_return" = momentum. "Low rsi_14, negative body, low rolling_vol" = slow bleed. "High bb_width, high atr_14" = expansion. "Low bb_width, low rolling_vol" = compression/consolidation.</p>
-              </div>
-
-              <div>
-                <p className="text-gray-300 font-medium mb-0.5">Step 2 — Cross-reference fingerprint and forward returns</p>
-                <p>Momentum clusters (high return z) often have high hit rates — the market was already moving and tended to continue. Oversold clusters (low rsi, negative body) may have high hit rates if they represent mean-reversion setups. A high |z| cluster with a near-50% hit rate suggests a volatility regime, not a directional one.</p>
-              </div>
-
-              <div>
-                <p className="text-gray-300 font-medium mb-0.5">Step 3 — Use representative windows to build intuition</p>
-                <p>Screenshot the Rank 0 candles for each cluster and label them manually ("opening gap fill", "midday grind up", "pre-close fade"). Over time, these labels become your regime names. Confirm against the Analysis page's Hour-of-Day Heatmap — if a cluster you labelled "opening range" shows up mostly at 9:30–10:00, that's validation.</p>
-              </div>
-
-              <div>
-                <p className="text-gray-300 font-medium mb-0.5">Step 4 — Watch for high-z clusters with low window counts</p>
-                <p>A cluster with &lt; 5% of windows but z-scores above 2.0 is a rare, extreme regime. These often correspond to earnings, macro events, or flash moves. The model separated them from everything else because they're genuinely different — even if there aren't enough samples for forward-return statistics.</p>
-              </div>
-
-              <div>
-                <p className="text-gray-300 font-medium mb-0.5">Step 5 — Compare clusters after retraining</p>
-                <p>After retraining with a different gamma, K, or vol_return clip, re-run this page. If the same 3–4 clusters appear with similar fingerprints, the model has learned stable market regimes. If the clusters look completely different each time, the model is fitting noise — consider increasing training data or regularising the latent dim.</p>
-              </div>
-
-            </div>
-          </div>
         </div>
       )}
     </div>
