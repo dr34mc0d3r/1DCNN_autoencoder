@@ -672,6 +672,297 @@ const SCHEDULER_FIELDS = {
   ],
 };
 
+// ── ConfigGuide ────────────────────────────────────────────────────────────────
+
+function ConfigGuide() {
+  const [open, setOpen] = useState(false);
+
+  const Section = ({ title, color = "#6366f1", children }) => (
+    <div className="border-l-2 pl-5 mb-8" style={{ borderColor: color }}>
+      <h3 className="text-base font-semibold mb-3" style={{ color }}>{title}</h3>
+      {children}
+    </div>
+  );
+
+  const Tag = ({ label, color }) => (
+    <span className="inline-block text-xs font-semibold px-2 py-0.5 rounded mr-1 mb-1"
+      style={{ background: `${color}22`, color, border: `1px solid ${color}55` }}>
+      {label}
+    </span>
+  );
+
+  const bullets = (items, color = "#9ca3af") => (
+    <ul className="space-y-1.5 mt-2">
+      {items.map((t, i) => (
+        <li key={i} className="flex gap-2 text-sm" style={{ color: "#9ca3af" }}>
+          <span style={{ color, flexShrink: 0 }}>›</span>
+          <span>{t}</span>
+        </li>
+      ))}
+    </ul>
+  );
+
+  return (
+    <div className="bg-gray-900 border border-gray-800 rounded-xl mb-6 overflow-hidden">
+      <button
+        onClick={() => setOpen(v => !v)}
+        className="w-full flex items-center justify-between px-4 py-3 text-sm font-semibold text-gray-300 hover:text-gray-100 hover:bg-gray-800/40 transition-colors"
+      >
+        <span className="flex items-center gap-2">
+          Understanding Configuration
+          <span className="text-[11px] font-normal bg-indigo-900/40 text-indigo-300 border border-indigo-800 rounded px-1.5 py-0.5">
+            Beginner's Guide
+          </span>
+        </span>
+        <span className="text-gray-500 text-xs">{open ? "▲ Hide" : "▼ Show"}</span>
+      </button>
+      {open && (
+        <div className="border-t border-gray-800 px-6 py-6">
+
+          {/* Section 1 — The Three Types of Settings */}
+          <Section title="The Three Types of Settings" color="#6366f1">
+            <div className="grid grid-cols-3 gap-4 mb-4">
+              <div className="bg-gray-800/60 rounded-lg p-4">
+                <p className="text-xs font-semibold text-indigo-400 mb-2">Model Architecture</p>
+                <p className="text-xs text-gray-400 font-mono mb-2">window_size · latent_dim · n_clusters</p>
+                <p className="text-xs text-gray-500">These define what the model IS. Changing these requires retraining from scratch. Think of them as the model's physical structure.</p>
+              </div>
+              <div className="bg-gray-800/60 rounded-lg p-4">
+                <p className="text-xs font-semibold text-amber-400 mb-2">Training Dynamics</p>
+                <p className="text-xs text-gray-400 font-mono mb-2">epochs · lr · scheduler</p>
+                <p className="text-xs text-gray-500">These control HOW the model learns. They affect training speed and final quality but not the model's structure.</p>
+              </div>
+              <div className="bg-gray-800/60 rounded-lg p-4">
+                <p className="text-xs font-semibold text-red-400 mb-2">Safety Guards</p>
+                <p className="text-xs text-gray-400 font-mono mb-2">guard_patience · guard_overfit_ratio · …</p>
+                <p className="text-xs text-gray-500">These protect the training process from pathological behaviour. They stop training if something goes wrong.</p>
+              </div>
+            </div>
+            <p className="text-sm text-gray-400">The Preset cards apply a curated set of all three types at once. Start with <span className="text-indigo-300 font-mono">'Standard 5Min'</span> unless you have a specific reason to change.</p>
+          </Section>
+
+          {/* Section 2 — The Window */}
+          <Section title="The Window" color="#f59e0b">
+            <div className="mb-4 rounded-lg overflow-hidden bg-gray-950">
+              <svg viewBox="0 0 520 120" className="w-full">
+                <rect width="520" height="120" fill="#111827"/>
+                {/* X-axis */}
+                <line x1="30" y1="100" x2="490" y2="100" stroke="#374151" strokeWidth="1"/>
+                {/* Price line */}
+                <polyline fill="none" stroke="#4b5563" strokeWidth="1.5"
+                  points="30,75 50,70 70,65 85,72 100,60 115,55 130,62 145,58 160,52 175,60 190,65 205,58 220,50 235,55 250,48 265,52 280,45 295,55 310,60 325,52 340,58 355,50 370,55 385,48 400,52 415,45 430,55 445,50 460,45 475,50 490,42"/>
+                {/* Window 1 — green */}
+                <rect x="30" y="38" width="130" height="62" fill="#10b98118" stroke="#10b981" strokeWidth="1.5" rx="2"/>
+                <text x="40" y="33" fontSize="9" fill="#10b981">Window 1</text>
+                <text x="68" y="115" fontSize="8" fill="#10b98199">64 bars</text>
+                {/* Window 2 — amber */}
+                <rect x="80" y="38" width="130" height="62" fill="#f59e0b18" stroke="#f59e0b" strokeWidth="1.5" rx="2"/>
+                <text x="90" y="24" fontSize="9" fill="#f59e0b">Window 2</text>
+                <text x="118" y="115" fontSize="8" fill="#f59e0b99">64 bars</text>
+                {/* Window 3 — indigo */}
+                <rect x="130" y="38" width="130" height="62" fill="#6366f118" stroke="#6366f1" strokeWidth="1.5" rx="2"/>
+                <text x="140" y="15" fontSize="9" fill="#6366f1">Window 3</text>
+                <text x="168" y="115" fontSize="8" fill="#6366f199">64 bars</text>
+                {/* Slide arrow */}
+                <text x="430" y="68" fontSize="10" fill="#9ca3af">Slide →</text>
+                {/* X-axis label */}
+                <text x="240" y="115" textAnchor="middle" fontSize="9" fill="#6b7280">Training data timeline →</text>
+              </svg>
+            </div>
+            <p className="text-sm text-gray-400 mb-3">The model never sees the entire price history at once. Instead, it processes overlapping 64-bar windows, learning to compress and reconstruct each one. A longer <span className="text-amber-300 font-mono">window_size</span> captures more context but requires more training data and memory.</p>
+            {bullets([
+              "window_size=64 on 5Min bars = 5.3 trading hours of context per window",
+              "Increasing window_size to 128 doubles the input size — you need roughly 4× more training windows to compensate",
+              "The same window_size must be used at inference time as during training",
+            ], "#f59e0b")}
+          </Section>
+
+          {/* Section 3 — The Latent Dimension */}
+          <Section title="The Latent Dimension" color="#ec4899">
+            <div className="mb-4 rounded-lg overflow-hidden bg-gray-950">
+              <svg viewBox="0 0 400 80" className="w-full">
+                <rect width="400" height="80" fill="#111827"/>
+                {/* Input block */}
+                <rect x="10" y="10" width="80" height="60" fill="#1f2937" stroke="#374151" strokeWidth="1" rx="3"/>
+                <text x="50" y="36" textAnchor="middle" fontSize="9" fill="#9ca3af">26 × 64</text>
+                <text x="50" y="48" textAnchor="middle" fontSize="8" fill="#6b7280">= 1,664 inputs</text>
+                {/* Arrow right */}
+                <polygon points="98,37 92,33 92,41" fill="#ec4899"/>
+                <line x1="90" y1="37" x2="108" y2="37" stroke="#ec4899" strokeWidth="1.5"/>
+                {/* Funnel compress */}
+                <polygon points="108,18 148,30 148,50 108,62" fill="#ec489920" stroke="#ec4899" strokeWidth="1"/>
+                {/* Latent block */}
+                <rect x="148" y="28" width="28" height="24" fill="#1f2937" stroke="#ec4899" strokeWidth="1.5" rx="3"/>
+                <text x="162" y="43" textAnchor="middle" fontSize="9" fill="#ec4899">32</text>
+                <text x="162" y="70" textAnchor="middle" fontSize="8" fill="#ec4899">latent_dim</text>
+                {/* Arrow right */}
+                <polygon points="186,37 180,33 180,41" fill="#ec4899"/>
+                <line x1="176" y1="37" x2="194" y2="37" stroke="#ec4899" strokeWidth="1.5"/>
+                {/* Funnel expand */}
+                <polygon points="194,30 234,18 234,62 194,50" fill="#ec489920" stroke="#ec4899" strokeWidth="1"/>
+                {/* Arrow right */}
+                <polygon points="244,37 238,33 238,41" fill="#ec4899"/>
+                <line x1="234" y1="37" x2="250" y2="37" stroke="#ec4899" strokeWidth="1.5"/>
+                {/* Output block */}
+                <rect x="250" y="10" width="80" height="60" fill="#1f2937" stroke="#374151" strokeWidth="1" rx="3"/>
+                <text x="290" y="36" textAnchor="middle" fontSize="9" fill="#9ca3af">26 × 64</text>
+                <text x="290" y="48" textAnchor="middle" fontSize="8" fill="#6b7280">reconstructed</text>
+                {/* Labels */}
+                <text x="50" y="8" textAnchor="middle" fontSize="8" fill="#6b7280">encoder input</text>
+                <text x="290" y="8" textAnchor="middle" fontSize="8" fill="#6b7280">decoder output</text>
+              </svg>
+            </div>
+            {bullets([
+              "latent_dim=32 means the encoder must summarise a 1,664-number window into just 32 numbers. The decoder then tries to rebuild the original from those 32 numbers.",
+              "Smaller latent_dim = more compressed = higher MSE on average, but the model learns more abstract/robust patterns",
+              "Larger latent_dim = less compressed = lower MSE, but the model may memorise rather than generalise",
+              "32–64 is the typical range for this feature count and window size. Start with 32.",
+            ], "#ec4899")}
+          </Section>
+
+          {/* Section 4 — Number of Clusters */}
+          <Section title="Number of Clusters" color="#14b8a6">
+            {bullets([
+              "n_clusters tells K-Means how many distinct market behaviour types to discover after training",
+              "More clusters = more specific patterns, but they may become hard to interpret and some may be very small",
+              "Fewer clusters = broader categories, easier to interpret, but may lump together genuinely different behaviours",
+              "8 is the default. Run the Cluster Quality tool on the Latent Space page to find the optimal number for your data.",
+              "Changing n_clusters does NOT require retraining — it only affects the K-Means step run after training",
+            ], "#14b8a6")}
+          </Section>
+
+          {/* Section 5 — The Guard System */}
+          <Section title="The Guard System" color="#ef4444">
+            <div className="mb-4 rounded-lg overflow-hidden bg-gray-950">
+              <svg viewBox="0 0 520 200" className="w-full">
+                <rect width="520" height="200" fill="#111827"/>
+                {/* Start node */}
+                <rect x="190" y="6" width="140" height="18" rx="9" fill="#374151"/>
+                <text x="260" y="18" textAnchor="middle" fontSize="9" fill="#d1d5db">End of epoch</text>
+                {/* Arrow down */}
+                <line x1="260" y1="24" x2="260" y2="34" stroke="#6b7280" strokeWidth="1"/>
+                <polygon points="260,36 256,32 264,32" fill="#6b7280"/>
+                {/* Diamond 1 — collapse */}
+                <polygon points="260,38 300,52 260,66 220,52" fill="#1f2937" stroke="#6b7280" strokeWidth="1"/>
+                <text x="260" y="50" textAnchor="middle" fontSize="8" fill="#d1d5db">Loss collapsed?</text>
+                <text x="260" y="60" textAnchor="middle" fontSize="7" fill="#9ca3af">guard_collapse</text>
+                {/* Yes right */}
+                <line x1="300" y1="52" x2="340" y2="52" stroke="#ef4444" strokeWidth="1"/>
+                <rect x="340" y="44" width="80" height="16" rx="3" fill="#ef444433" stroke="#ef4444" strokeWidth="1"/>
+                <text x="380" y="55" textAnchor="middle" fontSize="8" fill="#ef4444">Stop (collapse)</text>
+                <text x="310" y="48" fontSize="7" fill="#ef4444">Yes</text>
+                {/* Arrow down */}
+                <line x1="260" y1="66" x2="260" y2="76" stroke="#6b7280" strokeWidth="1"/>
+                <polygon points="260,78 256,74 264,74" fill="#6b7280"/>
+                <text x="240" y="74" fontSize="7" fill="#9ca3af">No</text>
+                {/* Diamond 2 — explosion */}
+                <polygon points="260,80 300,94 260,108 220,94" fill="#1f2937" stroke="#6b7280" strokeWidth="1"/>
+                <text x="260" y="92" textAnchor="middle" fontSize="8" fill="#d1d5db">Loss exploded?</text>
+                <text x="260" y="102" textAnchor="middle" fontSize="7" fill="#9ca3af">guard_explosion</text>
+                {/* Yes right */}
+                <line x1="300" y1="94" x2="340" y2="94" stroke="#ef4444" strokeWidth="1"/>
+                <rect x="340" y="86" width="80" height="16" rx="3" fill="#ef444433" stroke="#ef4444" strokeWidth="1"/>
+                <text x="380" y="97" textAnchor="middle" fontSize="8" fill="#ef4444">Stop (explosion)</text>
+                <text x="310" y="90" fontSize="7" fill="#ef4444">Yes</text>
+                {/* Arrow down */}
+                <line x1="260" y1="108" x2="260" y2="118" stroke="#6b7280" strokeWidth="1"/>
+                <polygon points="260,120 256,116 264,116" fill="#6b7280"/>
+                <text x="240" y="116" fontSize="7" fill="#9ca3af">No</text>
+                {/* Diamond 3 — oscillation */}
+                <polygon points="260,122 300,136 260,150 220,136" fill="#1f2937" stroke="#6b7280" strokeWidth="1"/>
+                <text x="260" y="134" textAnchor="middle" fontSize="8" fill="#d1d5db">Oscillating?</text>
+                <text x="260" y="144" textAnchor="middle" fontSize="7" fill="#9ca3af">guard_oscillation_cv</text>
+                {/* Yes right */}
+                <line x1="300" y1="136" x2="340" y2="136" stroke="#f59e0b" strokeWidth="1"/>
+                <rect x="340" y="128" width="80" height="16" rx="3" fill="#f59e0b33" stroke="#f59e0b" strokeWidth="1"/>
+                <text x="380" y="139" textAnchor="middle" fontSize="8" fill="#f59e0b">Stop (oscillation)</text>
+                <text x="310" y="132" fontSize="7" fill="#f59e0b">Yes</text>
+                {/* Arrow down */}
+                <line x1="260" y1="150" x2="260" y2="160" stroke="#6b7280" strokeWidth="1"/>
+                <polygon points="260,162 256,158 264,158" fill="#6b7280"/>
+                <text x="240" y="158" fontSize="7" fill="#9ca3af">No</text>
+                {/* Diamond 4 — overfit */}
+                <polygon points="260,164 300,178 260,192 220,178" fill="#1f2937" stroke="#6b7280" strokeWidth="1"/>
+                <text x="260" y="176" textAnchor="middle" fontSize="8" fill="#d1d5db">Overfitting?</text>
+                <text x="260" y="186" textAnchor="middle" fontSize="7" fill="#9ca3af">guard_overfit_ratio</text>
+                {/* Yes right — goes off screen to the right; keep compact */}
+                <line x1="300" y1="178" x2="340" y2="178" stroke="#ef4444" strokeWidth="1"/>
+                <rect x="340" y="170" width="80" height="16" rx="3" fill="#ef444433" stroke="#ef4444" strokeWidth="1"/>
+                <text x="380" y="181" textAnchor="middle" fontSize="8" fill="#ef4444">Stop (overfit)</text>
+                <text x="310" y="174" fontSize="7" fill="#ef4444">Yes</text>
+              </svg>
+            </div>
+            <p className="text-sm text-gray-400 mb-3">The guard system watches training on every epoch. Each check has its own config parameter — adjust them in the Training Guard section below if training stops too early or too late.</p>
+            {bullets([
+              "Collapse (guard_collapse_threshold): stops if loss drops below ~0.000001 — this means the model found a degenerate solution where everything reconstructs to near-zero",
+              "Explosion (guard_explosion_factor): stops if loss suddenly multiplies — indicates a diverging learning rate",
+              "Oscillation (guard_oscillation_cv): stops if val loss fluctuates without making progress. CV = coefficient of variation over the last N epochs.",
+              "Overfitting (guard_overfit_ratio): stops if train_loss × ratio < val_loss — meaning val is much worse than train",
+              "Patience: counts epochs since the last val improvement. After guard_patience epochs with no improvement, LR is reduced; after more, training stops.",
+            ], "#ef4444")}
+          </Section>
+
+          {/* Section 6 — Learning Rate Schedulers */}
+          <Section title="Learning Rate Schedulers" color="#10b981">
+            <div className="mb-4 rounded-lg overflow-hidden bg-gray-950">
+              <svg viewBox="0 0 520 120" className="w-full">
+                <rect width="520" height="120" fill="#111827"/>
+                {/* None */}
+                <text x="52" y="12" textAnchor="middle" fontSize="9" fill="#9ca3af">None</text>
+                <rect x="12" y="18" width="80" height="70" fill="none" stroke="#374151" strokeWidth="0.5" rx="2"/>
+                <line x1="12" y1="88" x2="92" y2="88" stroke="#4b5563" strokeWidth="0.5"/>
+                <line x1="12" y1="18" x2="12" y2="88" stroke="#4b5563" strokeWidth="0.5"/>
+                <line x1="12" y1="40" x2="92" y2="40" stroke="#10b981" strokeWidth="2"/>
+                {/* Step */}
+                <text x="154" y="12" textAnchor="middle" fontSize="9" fill="#9ca3af">Step</text>
+                <rect x="114" y="18" width="80" height="70" fill="none" stroke="#374151" strokeWidth="0.5" rx="2"/>
+                <line x1="114" y1="88" x2="194" y2="88" stroke="#4b5563" strokeWidth="0.5"/>
+                <line x1="114" y1="18" x2="114" y2="88" stroke="#4b5563" strokeWidth="0.5"/>
+                <polyline fill="none" stroke="#10b981" strokeWidth="2"
+                  points="114,35 134,35 134,47 154,47 154,59 174,59 174,71 194,71"/>
+                {/* Exponential */}
+                <text x="256" y="12" textAnchor="middle" fontSize="9" fill="#9ca3af">Exponential</text>
+                <rect x="216" y="18" width="80" height="70" fill="none" stroke="#374151" strokeWidth="0.5" rx="2"/>
+                <line x1="216" y1="88" x2="296" y2="88" stroke="#4b5563" strokeWidth="0.5"/>
+                <line x1="216" y1="18" x2="216" y2="88" stroke="#4b5563" strokeWidth="0.5"/>
+                <path d="M216,30 Q236,32 256,45 Q276,62 296,78" fill="none" stroke="#10b981" strokeWidth="2"/>
+                {/* Plateau */}
+                <text x="358" y="12" textAnchor="middle" fontSize="9" fill="#9ca3af">Plateau</text>
+                <rect x="318" y="18" width="80" height="70" fill="none" stroke="#374151" strokeWidth="0.5" rx="2"/>
+                <line x1="318" y1="88" x2="398" y2="88" stroke="#4b5563" strokeWidth="0.5"/>
+                <line x1="318" y1="18" x2="318" y2="88" stroke="#4b5563" strokeWidth="0.5"/>
+                <polyline fill="none" stroke="#10b981" strokeWidth="2"
+                  points="318,35 348,35 348,58 368,58 368,58 398,58"/>
+                {/* Cosine */}
+                <text x="460" y="12" textAnchor="middle" fontSize="9" fill="#9ca3af">Cosine</text>
+                <rect x="420" y="18" width="80" height="70" fill="none" stroke="#374151" strokeWidth="0.5" rx="2"/>
+                <line x1="420" y1="88" x2="500" y2="88" stroke="#4b5563" strokeWidth="0.5"/>
+                <line x1="420" y1="18" x2="420" y2="88" stroke="#4b5563" strokeWidth="0.5"/>
+                <path d="M420,30 Q440,32 460,60 Q480,78 500,68" fill="none" stroke="#10b981" strokeWidth="2"/>
+              </svg>
+            </div>
+            {bullets([
+              "Exponential is a safe default — it continuously reduces LR, preventing overshooting. Good for most training runs.",
+              "Plateau is intelligent — it only reduces LR when val loss stops improving. Better than Step/Exponential for noisy loss curves.",
+              "None (constant LR) can work for short smoke-test runs; the model won't converge as well over long training.",
+              "Cyclic scheduler oscillates LR between a min and max — sometimes helps escape local minima, but adds complexity.",
+            ], "#10b981")}
+          </Section>
+
+          {/* Tags */}
+          <div className="flex flex-wrap gap-1 mt-2">
+            <Tag label="architecture vs dynamics vs guards" color="#6366f1" />
+            <Tag label="window_size" color="#f59e0b" />
+            <Tag label="latent_dim" color="#ec4899" />
+            <Tag label="n_clusters" color="#14b8a6" />
+          </div>
+
+        </div>
+      )}
+    </div>
+  );
+}
+
 // ── Component ──────────────────────────────────────────────────────────────────
 
 export default function ConfigPage() {
@@ -696,16 +987,6 @@ export default function ConfigPage() {
     setMsg("");
   }
 
-  async function handleLoggingToggle() {
-    const newVal = !cfg.logging_enabled;
-    setCfg(c => ({ ...c, logging_enabled: newVal }));
-    try {
-      await api.setLogging(newVal);
-    } catch {
-      setCfg(c => ({ ...c, logging_enabled: !newVal }));
-    }
-  }
-
   async function handleSave() {
     setSaving(true);
     setMsg("");
@@ -724,6 +1005,7 @@ export default function ConfigPage() {
   return (
     <div className="w-full">
       <h1 className="text-2xl font-bold mb-6">Configuration</h1>
+      <ConfigGuide />
 
       {/* ── Presets ── */}
       <section className="mb-8">
@@ -871,29 +1153,6 @@ export default function ConfigPage() {
             )}
           </div>
         )}
-      </section>
-
-      {/* ── System ── */}
-      <section className="mb-6">
-        <h2 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3 border-b border-gray-800 pb-1">
-          System
-        </h2>
-        <div className="flex items-center justify-between px-4 py-3 bg-gray-900 rounded-lg">
-          <div>
-            <p className="text-sm text-gray-200">File Logging</p>
-            <p className="text-xs text-gray-500 mt-0.5">Write server events to logs/server.log</p>
-          </div>
-          <button
-            onClick={handleLoggingToggle}
-            className={`relative inline-flex h-6 w-11 shrink-0 items-center rounded-full transition-colors focus:outline-none
-              ${cfg.logging_enabled ? "bg-indigo-600" : "bg-gray-700"}`}
-          >
-            <span
-              className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform
-                ${cfg.logging_enabled ? "translate-x-6" : "translate-x-1"}`}
-            />
-          </button>
-        </div>
       </section>
 
       <div className="flex items-center gap-4 mt-2">
