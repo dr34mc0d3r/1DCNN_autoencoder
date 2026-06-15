@@ -44,86 +44,235 @@ function clusterStats(labels, nClusters) {
 
 function LatentGuide() {
   const [open, setOpen] = useState(false);
+
+  const Section = ({ title, color = "#6366f1", children }) => (
+    <div className="border-l-2 pl-5 mb-8" style={{ borderColor: color }}>
+      <h3 className="text-base font-semibold mb-3" style={{ color }}>{title}</h3>
+      {children}
+    </div>
+  );
+
+  const Tag = ({ label, color }) => (
+    <span className="inline-block text-xs font-semibold px-2 py-0.5 rounded mr-1 mb-1"
+      style={{ background: `${color}22`, color, border: `1px solid ${color}55` }}>
+      {label}
+    </span>
+  );
+
+  const bullets = (items, color = "#9ca3af") => (
+    <ul className="space-y-1.5 mt-2">
+      {items.map((t, i) => (
+        <li key={i} className="flex gap-2 text-sm" style={{ color: "#9ca3af" }}>
+          <span style={{ color, flexShrink: 0 }}>›</span>
+          <span>{t}</span>
+        </li>
+      ))}
+    </ul>
+  );
+
   return (
     <div className="bg-gray-900 border border-gray-800 rounded-xl mb-6 overflow-hidden">
       <button
         onClick={() => setOpen(v => !v)}
         className="w-full flex items-center justify-between px-4 py-3 text-sm font-semibold text-gray-300 hover:text-gray-100 hover:bg-gray-800/40 transition-colors"
       >
-        <span>What to look for &amp; Finding Patterns</span>
+        <span className="flex items-center gap-2">
+          Understanding the Latent Space
+          <span className="text-[11px] font-normal bg-indigo-900/40 text-indigo-300 border border-indigo-800 rounded px-1.5 py-0.5">
+            Beginner's Guide
+          </span>
+        </span>
         <span className="text-gray-500 text-xs">{open ? "▲ Hide" : "▼ Show"}</span>
       </button>
-
       {open && (
-        <div className="border-t border-gray-800 px-5 py-4 space-y-5 text-sm text-gray-400">
+        <div className="border-t border-gray-800 px-6 py-6">
 
-          {/* ── What to look for ── */}
-          <div>
-            <p className="text-gray-200 font-semibold mb-2">What to look for</p>
+          {/* Section 1 — What is the Latent Space? */}
+          <Section title="What is the Latent Space?" color="#6366f1">
+            <p className="text-sm mb-3" style={{ color: "#9ca3af" }}>
+              The encoder compresses each 64-bar window from 26 features × 64 bars (1,664 numbers) down to just 32 numbers — the "latent vector". This latent space is where every window lives as a single point. Windows with similar market behaviour land near each other in this 32-dimensional space.
+            </p>
+            <p className="text-sm mb-4" style={{ color: "#9ca3af" }}>
+              t-SNE (t-Distributed Stochastic Neighbour Embedding) is an algorithm that projects those 32-dimensional points into 2D so we can visualise them. Points that were close in 32D stay close in 2D — so the scatter plot is a valid map of market behaviour similarity.
+            </p>
+            {/* Compression SVG */}
+            <svg viewBox="0 0 400 80" className="w-full max-w-lg mb-2 rounded-lg" style={{ background: "#111827" }}>
+              {/* Left: tall narrow rect = raw input */}
+              <rect x="20" y="10" width="30" height="60" fill="#1f2937" stroke="#374151" strokeWidth="1" />
+              <text x="35" y="78" textAnchor="middle" fontSize="9" fill="#9ca3af">1,664 numbers</text>
+              {/* Arrow 1 */}
+              <line x1="55" y1="40" x2="100" y2="40" stroke="#374151" strokeWidth="1.5" />
+              <polygon points="100,36 108,40 100,44" fill="#374151" />
+              {/* Encoder label */}
+              <text x="80" y="35" textAnchor="middle" fontSize="8" fill="#6b7280">encoder</text>
+              {/* Middle: small square = latent vector */}
+              <rect x="112" y="28" width="30" height="24" fill="#1e1b4b" stroke="#6366f1" strokeWidth="1.5" />
+              <text x="127" y="58" textAnchor="middle" fontSize="9" fill="#6366f1">32 numbers</text>
+              {/* Arrow 2 */}
+              <line x1="148" y1="40" x2="192" y2="40" stroke="#374151" strokeWidth="1.5" />
+              <polygon points="192,36 200,40 192,44" fill="#374151" />
+              {/* t-SNE label */}
+              <text x="175" y="35" textAnchor="middle" fontSize="8" fill="#6b7280">t-SNE</text>
+              {/* Right: 2D scatter dots — cluster 1 indigo */}
+              <circle cx="238" cy="22" r="3.5" fill="#6366f1" opacity="0.85" />
+              <circle cx="248" cy="18" r="3.5" fill="#6366f1" opacity="0.85" />
+              <circle cx="255" cy="26" r="3.5" fill="#6366f1" opacity="0.85" />
+              <circle cx="244" cy="29" r="3.5" fill="#6366f1" opacity="0.85" />
+              <circle cx="252" cy="14" r="3.5" fill="#6366f1" opacity="0.85" />
+              {/* cluster 2 amber */}
+              <circle cx="305" cy="52" r="3.5" fill="#f59e0b" opacity="0.85" />
+              <circle cx="315" cy="48" r="3.5" fill="#f59e0b" opacity="0.85" />
+              <circle cx="322" cy="56" r="3.5" fill="#f59e0b" opacity="0.85" />
+              <circle cx="310" cy="60" r="3.5" fill="#f59e0b" opacity="0.85" />
+              <circle cx="320" cy="44" r="3.5" fill="#f59e0b" opacity="0.85" />
+              {/* cluster 3 green */}
+              <circle cx="360" cy="20" r="3.5" fill="#10b981" opacity="0.85" />
+              <circle cx="370" cy="16" r="3.5" fill="#10b981" opacity="0.85" />
+              <circle cx="376" cy="24" r="3.5" fill="#10b981" opacity="0.85" />
+              <circle cx="365" cy="28" r="3.5" fill="#10b981" opacity="0.85" />
+              <circle cx="373" cy="12" r="3.5" fill="#10b981" opacity="0.85" />
+              <text x="307" y="78" textAnchor="middle" fontSize="9" fill="#9ca3af">2D t-SNE</text>
+            </svg>
+          </Section>
 
-            <div className="space-y-3">
-              <div>
-                <p className="text-gray-300 font-medium mb-0.5">t-SNE scatter shape</p>
-                <ul className="list-disc list-inside space-y-1">
-                  <li><strong className="text-gray-300">Tight, well-separated blobs</strong> — the model has learned genuinely distinct market regimes. Good clustering.</li>
-                  <li><strong className="text-gray-300">One giant blob with the rest tiny</strong> — most of the data looks the same to the model. Try increasing K, retraining longer, or using a larger dataset.</li>
-                  <li><strong className="text-gray-300">Crescent or horseshoe shapes</strong> — the market has a natural continuum (e.g. slow grind → fast trend). The clusters are capturing points along that continuum, which is still useful.</li>
-                  <li><strong className="text-gray-300">Scattered noise with no structure</strong> — the model hasn't learned meaningful representations. The training data may be too short or the model undertrained.</li>
-                </ul>
-              </div>
+          {/* Section 2 — Reading the Scatter Plot */}
+          <Section title="Reading the Scatter Plot" color="#14b8a6">
+            <svg viewBox="0 0 480 180" className="w-full mb-4 rounded-lg" style={{ background: "#111827" }}>
+              {/* Left panel: Good separation */}
+              <text x="120" y="16" textAnchor="middle" fontSize="10" fill="#14b8a6">✓ Well-separated</text>
+              {/* cluster A indigo */}
+              <circle cx="50" cy="50" r="5" fill="#6366f1" opacity="0.85" />
+              <circle cx="62" cy="44" r="5" fill="#6366f1" opacity="0.85" />
+              <circle cx="58" cy="58" r="5" fill="#6366f1" opacity="0.85" />
+              <circle cx="45" cy="62" r="5" fill="#6366f1" opacity="0.85" />
+              <circle cx="70" cy="52" r="5" fill="#6366f1" opacity="0.85" />
+              {/* cluster B amber */}
+              <circle cx="160" cy="40" r="5" fill="#f59e0b" opacity="0.85" />
+              <circle cx="172" cy="35" r="5" fill="#f59e0b" opacity="0.85" />
+              <circle cx="168" cy="48" r="5" fill="#f59e0b" opacity="0.85" />
+              <circle cx="155" cy="52" r="5" fill="#f59e0b" opacity="0.85" />
+              <circle cx="178" cy="44" r="5" fill="#f59e0b" opacity="0.85" />
+              {/* cluster C green */}
+              <circle cx="100" cy="130" r="5" fill="#10b981" opacity="0.85" />
+              <circle cx="113" cy="124" r="5" fill="#10b981" opacity="0.85" />
+              <circle cx="108" cy="138" r="5" fill="#10b981" opacity="0.85" />
+              <circle cx="95" cy="142" r="5" fill="#10b981" opacity="0.85" />
+              <circle cx="120" cy="132" r="5" fill="#10b981" opacity="0.85" />
+              {/* cluster D red */}
+              <circle cx="175" cy="130" r="5" fill="#ef4444" opacity="0.85" />
+              <circle cx="187" cy="124" r="5" fill="#ef4444" opacity="0.85" />
+              <circle cx="183" cy="138" r="5" fill="#ef4444" opacity="0.85" />
+              <circle cx="170" cy="142" r="5" fill="#ef4444" opacity="0.85" />
+              <circle cx="193" cy="133" r="5" fill="#ef4444" opacity="0.85" />
+              {/* Divider */}
+              <line x1="240" y1="10" x2="240" y2="170" stroke="#374151" strokeWidth="1" strokeDasharray="4 3" />
+              {/* Right panel: Poor separation */}
+              <text x="360" y="16" textAnchor="middle" fontSize="10" fill="#ef4444">⚠ Overlapping</text>
+              {/* overlapping blob */}
+              <circle cx="290" cy="80" r="5" fill="#6366f1" opacity="0.75" />
+              <circle cx="305" cy="70" r="5" fill="#f59e0b" opacity="0.75" />
+              <circle cx="315" cy="85" r="5" fill="#10b981" opacity="0.75" />
+              <circle cx="300" cy="95" r="5" fill="#ef4444" opacity="0.75" />
+              <circle cx="320" cy="75" r="5" fill="#3b82f6" opacity="0.75" />
+              <circle cx="330" cy="90" r="5" fill="#6366f1" opacity="0.75" />
+              <circle cx="345" cy="80" r="5" fill="#f59e0b" opacity="0.75" />
+              <circle cx="310" cy="100" r="5" fill="#10b981" opacity="0.75" />
+              <circle cx="295" cy="65" r="5" fill="#ef4444" opacity="0.75" />
+              <circle cx="340" cy="68" r="5" fill="#3b82f6" opacity="0.75" />
+              <circle cx="355" cy="95" r="5" fill="#6366f1" opacity="0.75" />
+              <circle cx="325" cy="108" r="5" fill="#f59e0b" opacity="0.75" />
+              <circle cx="360" cy="78" r="5" fill="#10b981" opacity="0.75" />
+              <circle cx="285" cy="100" r="5" fill="#ef4444" opacity="0.75" />
+              <circle cx="370" cy="88" r="5" fill="#3b82f6" opacity="0.75" />
+              {/* Legend */}
+              <circle cx="252" cy="150" r="4" fill="#6366f1" />
+              <text x="259" y="154" fontSize="8" fill="#9ca3af">C0</text>
+              <circle cx="278" cy="150" r="4" fill="#f59e0b" />
+              <text x="285" y="154" fontSize="8" fill="#9ca3af">C1</text>
+              <circle cx="304" cy="150" r="4" fill="#10b981" />
+              <text x="311" y="154" fontSize="8" fill="#9ca3af">C2</text>
+              <circle cx="330" cy="150" r="4" fill="#ef4444" />
+              <text x="337" y="154" fontSize="8" fill="#9ca3af">C3</text>
+              <circle cx="356" cy="150" r="4" fill="#3b82f6" />
+              <text x="363" y="154" fontSize="8" fill="#9ca3af">C4</text>
+            </svg>
+            {bullets([
+              "Tight clusters = the model found distinct, consistent market behaviour types. Patterns within a cluster are very similar.",
+              "Well-separated clusters = the model can clearly tell behaviours apart. Each cluster should look different on the price chart.",
+              "Overlapping clusters = the model found similar latent vectors for different market conditions. This suggests n_clusters may be too high for the data, or more training is needed.",
+              "A very large cluster dominating the scatter = most of your training data looks the same (e.g. a low-volatility sideways period dominates). Consider using data with more regime variety.",
+              "t-SNE preserves local structure, not global distances — two clusters being far apart doesn't necessarily mean they're more different than two nearby clusters.",
+            ], "#14b8a6")}
+          </Section>
 
-              <div>
-                <p className="text-gray-300 font-medium mb-0.5">Cluster size table</p>
-                <ul className="list-disc list-inside space-y-1">
-                  <li><strong className="text-gray-300">Balanced sizes (10–20% each)</strong> — the model is using all its clusters. Healthy.</li>
-                  <li><strong className="text-gray-300">One cluster &gt; 50%</strong> — the dominant cluster is a catch-all "normal" regime. The others are specialised edge-case clusters. This is common and fine.</li>
-                  <li><strong className="text-gray-300">Clusters with &lt; 1%</strong> — near-empty clusters waste K. Try reducing K or increasing training data.</li>
-                </ul>
-              </div>
+          {/* Section 3 — The Cluster Size Table */}
+          <Section title="The Cluster Size Table" color="#f59e0b">
+            {bullets([
+              "Even distribution (e.g. each cluster has 10-20% of windows) = the model found genuinely distinct regimes of similar frequency",
+              "One cluster with 60%+ of windows = most training data looked similar. This is common if the training period was dominated by one market regime.",
+              "A cluster with <2% of windows = a rare but real pattern (e.g. extreme volatility events) — or noise. Check its representative windows on the Cluster Profile page.",
+              "The total window count × cluster % gives you absolute numbers — a cluster with 3% of 20,000 windows = 600 windows, enough to be meaningful",
+            ], "#f59e0b")}
+          </Section>
 
-              <div>
-                <p className="text-gray-300 font-medium mb-0.5">Cluster Quality chart (K=2–16)</p>
-                <ul className="list-disc list-inside space-y-1">
-                  <li><strong className="text-gray-300">Silhouette elbow</strong> — look for where it stops rising sharply. That K gives the best-separated clusters relative to their width.</li>
-                  <li><strong className="text-gray-300">Davies-Bouldin minimum</strong> — the K where this metric bottoms out is another vote for optimal K. Lower is better.</li>
-                  <li><strong className="text-gray-300">Calinski-Harabasz peak</strong> — typically peaks early (K=3–5) for financial data. Good as a sanity check, less useful for picking a final K.</li>
-                  <li>If all three agree on the same K, that's your number. If they disagree, pick the K that makes the scatter plot most interpretable.</li>
-                </ul>
-              </div>
+          {/* Section 4 — Cluster Quality Metrics */}
+          <Section title="Cluster Quality Metrics" color="#ec4899">
+            {/* Quality curves SVG */}
+            <svg viewBox="0 0 500 160" className="w-full mb-4 rounded-lg" style={{ background: "#111827" }}>
+              {/* Axes */}
+              <line x1="50" y1="20" x2="50" y2="130" stroke="#374151" strokeWidth="1" />
+              <line x1="50" y1="130" x2="470" y2="130" stroke="#374151" strokeWidth="1" />
+              {/* X axis labels K=2..12 */}
+              {[2,3,4,5,6,7,8,9,10,11,12].map((k, i) => (
+                <text key={k} x={50 + i * 38} y="143" textAnchor="middle" fontSize="9" fill="#6b7280">{k}</text>
+              ))}
+              <text x="260" y="158" textAnchor="middle" fontSize="9" fill="#6b7280">Number of clusters (K)</text>
+              <text x="18" y="80" textAnchor="middle" fontSize="9" fill="#6b7280" transform="rotate(-90,18,80)">quality</text>
+              {/* Silhouette (green): peaks at K=5 (i=3), gently falls */}
+              <polyline
+                points="50,110 88,90 126,72 164,52 202,62 240,70 278,78 316,84 354,90 392,95 430,98"
+                fill="none" stroke="#10b981" strokeWidth="2"
+              />
+              <text x="435" y="96" fontSize="8" fill="#10b981">higher=better</text>
+              {/* Davies-Bouldin (red): lowest at K=5, then rises */}
+              <polyline
+                points="50,65 88,72 126,80 164,95 202,85 240,78 278,72 316,68 354,65 392,63 430,62"
+                fill="none" stroke="#ef4444" strokeWidth="2"
+              />
+              <text x="435" y="60" fontSize="8" fill="#ef4444">lower=better</text>
+              {/* Calinski-Harabasz (blue): high at K=2, falls and flattens */}
+              <polyline
+                points="50,30 88,38 126,50 164,62 202,72 240,78 278,84 316,88 354,91 392,93 430,94"
+                fill="none" stroke="#3b82f6" strokeWidth="2"
+              />
+              <text x="435" y="92" fontSize="8" fill="#3b82f6">elbow</text>
+              {/* Amber dashed line at K=5 (x=164) */}
+              <line x1="164" y1="20" x2="164" y2="130" stroke="#f59e0b" strokeWidth="1.5" strokeDasharray="4 3" />
+              <text x="164" y="15" textAnchor="middle" fontSize="8" fill="#f59e0b">Suggested K</text>
+            </svg>
+            {bullets([
+              "Silhouette Score (−1 to +1): measures how similar each window is to its own cluster vs other clusters. +1 = perfectly assigned, 0 = on the boundary, −1 = likely in the wrong cluster. Look for the peak.",
+              "Davies-Bouldin Index: average similarity between each cluster and its most similar neighbour. Lower is better — it means clusters are compact and well-separated. Look for the minimum.",
+              "Calinski-Harabasz Index: ratio of between-cluster scatter to within-cluster scatter. Higher is better. Look for an 'elbow' — the point where adding more clusters stops giving big gains.",
+              "When all three metrics agree on the same K, that's a strong choice. When they disagree, prefer the K where Silhouette peaks.",
+            ], "#ec4899")}
+          </Section>
+
+          {/* Section 5 — Finding Hidden Patterns */}
+          <Section title="Finding Hidden Patterns" color="#10b981">
+            {bullets([
+              "Start with K=8 (default). Run Cluster Quality to see if a lower K (5-6) gives better separation — fewer, cleaner clusters are easier to interpret.",
+              "After choosing K and re-clustering, go to Cluster Profile for each cluster. The fingerprints will tell you what market behaviour each cluster represents.",
+              "If two clusters have nearly identical fingerprints, they're redundant — lower K by 1.",
+              "The density view of the scatter shows where the model is most 'confident' — dense regions are the core of each regime.",
+              "Compare the t-SNE scatter from different training runs — if the cluster boundaries are similar, the model found stable patterns. If they're very different, training is unstable (possibly too few epochs or poor guard settings).",
+            ], "#10b981")}
+            <div className="mt-4">
+              <Tag label="32-dimensional compression" color="#6366f1" />
+              <Tag label="t-SNE projection" color="#14b8a6" />
+              <Tag label="K-Means clustering" color="#f59e0b" />
             </div>
-          </div>
-
-          {/* ── Finding patterns ── */}
-          <div>
-            <p className="text-gray-200 font-semibold mb-2">Finding Hidden Patterns</p>
-
-            <div className="space-y-3">
-              <div>
-                <p className="text-gray-300 font-medium mb-0.5">Step 1 — Run Extract + Cluster, then Cluster Quality</p>
-                <p>Start with the default K from Config. Run Cluster Quality to see whether a different K would produce tighter clusters. If the quality chart clearly peaks at K=5 but you trained with K=8, retrain with K=5 — or just note the mismatch when interpreting results.</p>
-              </div>
-
-              <div>
-                <p className="text-gray-300 font-medium mb-0.5">Step 2 — Characterise each cluster on Inference</p>
-                <p>Run inference on a date range you know well (e.g. a confirmed trend or a choppy consolidation period). Watch which cluster dominates in the Cluster History strip. That cluster is the model's "label" for that market behaviour. Repeat for other known regimes.</p>
-              </div>
-
-              <div>
-                <p className="text-gray-300 font-medium mb-0.5">Step 3 — Look for temporal clustering on Analysis</p>
-                <p>The Hour-of-Day Heatmap and Day-of-Week Distribution on the Analysis page show whether certain clusters dominate at the open, midday, or close — or concentrate on specific days. A cluster that only appears at 9:30–10:00 is almost certainly the "opening-range volatility" regime.</p>
-              </div>
-
-              <div>
-                <p className="text-gray-300 font-medium mb-0.5">Step 4 — Use MSE as an anomaly filter</p>
-                <p>On Inference, windows with MSE above the p95 line are ones the model found hardest to reconstruct — they don't fit any learned regime cleanly. Cross-reference these timestamps against news, earnings, or macro events. Consistent MSE spikes at the same times across multiple runs suggest a repeating structural pattern the model partially understands.</p>
-              </div>
-
-              <div>
-                <p className="text-gray-300 font-medium mb-0.5">Step 5 — Compare symbols (cross-symbol inference)</p>
-                <p>Run a TSLA-trained model against MSFT data. If a cluster that dominated TSLA's trending days also dominates MSFT's trending days, that cluster is capturing a universal trend signature — not something TSLA-specific. This is a strong signal that the model has learned genuine market structure.</p>
-              </div>
-            </div>
-          </div>
+          </Section>
 
         </div>
       )}
