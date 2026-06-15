@@ -295,7 +295,7 @@ export default function InferencePage() {
   const candleSeriesRef        = useRef(null);
   const mseChartRef            = useRef(null);
   const mseSeriesRef           = useRef(null);
-  const syncSetupRef           = useRef(false);
+  const syncSetupRef           = useRef(null);   // holds the candle chart instance sync was set up for
   const syncingRef             = useRef(false);
   const crosshairSyncingRef    = useRef(false);
   const syncCleanupRef         = useRef(null);
@@ -355,26 +355,34 @@ export default function InferencePage() {
   }, []);
 
   function setupSync() {
-    if (syncSetupRef.current) return;
     const c = candleChartRef.current;
     const m = mseChartRef.current;
     if (!c || !m) return;
-    syncSetupRef.current = true;
+    // Guard: skip if already wired for this exact candle chart instance.
+    // Using the instance (not a boolean) so Strict Mode re-mounts trigger re-wiring.
+    if (syncSetupRef.current === c) return;
 
-    const candleRangeHandler = () => {
-      if (syncingRef.current) return;
-      const range = c.timeScale().getVisibleRange();
-      if (!range) return;
+    // Clean up any previous listeners (may be on a now-removed chart instance)
+    try { syncCleanupRef.current?.(); } catch {}
+    syncCleanupRef.current = null;
+    syncSetupRef.current = c;
+
+    // Pan/zoom sync via logical range. Candle has (warmupOffset) more bars than MSE,
+    // so we shift by the live offset when translating logical indices.
+    const candleRangeHandler = (logicalRange) => {
+      if (syncingRef.current || !logicalRange) return;
+      const offset = candleAccumRef.current.size - mseTimeMapRef.current.size;
+      if (!offset) return;
       syncingRef.current = true;
-      m.timeScale().setVisibleRange(range);
+      m.timeScale().setVisibleLogicalRange({ from: logicalRange.from - offset, to: logicalRange.to - offset });
       syncingRef.current = false;
     };
-    const mseRangeHandler = () => {
-      if (syncingRef.current) return;
-      const range = m.timeScale().getVisibleRange();
-      if (!range) return;
+    const mseRangeHandler = (logicalRange) => {
+      if (syncingRef.current || !logicalRange) return;
+      const offset = candleAccumRef.current.size - mseTimeMapRef.current.size;
+      if (!offset) return;
       syncingRef.current = true;
-      c.timeScale().setVisibleRange(range);
+      c.timeScale().setVisibleLogicalRange({ from: logicalRange.from + offset, to: logicalRange.to + offset });
       syncingRef.current = false;
     };
     c.timeScale().subscribeVisibleLogicalRangeChange(candleRangeHandler);
@@ -408,10 +416,12 @@ export default function InferencePage() {
     m.subscribeCrosshairMove(mseCrosshairHandler);
 
     syncCleanupRef.current = () => {
-      c.timeScale().unsubscribeVisibleLogicalRangeChange(candleRangeHandler);
-      m.timeScale().unsubscribeVisibleLogicalRangeChange(mseRangeHandler);
-      c.unsubscribeCrosshairMove(candleCrosshairHandler);
-      m.unsubscribeCrosshairMove(mseCrosshairHandler);
+      try {
+        c.timeScale().unsubscribeVisibleLogicalRangeChange(candleRangeHandler);
+        m.timeScale().unsubscribeVisibleLogicalRangeChange(mseRangeHandler);
+        c.unsubscribeCrosshairMove(candleCrosshairHandler);
+        m.unsubscribeCrosshairMove(mseCrosshairHandler);
+      } catch {}
     };
   }
 
@@ -459,9 +469,9 @@ export default function InferencePage() {
   }
 
   async function handleStart() {
-    syncCleanupRef.current?.();
+    try { syncCleanupRef.current?.(); } catch {}
     syncCleanupRef.current = null;
-    syncSetupRef.current   = false;
+    syncSetupRef.current   = null;
     setRunId(id => id + 1);
     setMseData([]);
     setCurrent(null);
