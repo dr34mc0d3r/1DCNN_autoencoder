@@ -222,7 +222,8 @@ export default function InferencePage() {
   const [paused, setPaused]   = useState(false);
   const [mode, setMode]       = useState("walkforward"); // "walkforward" | "live"
   const [candleData, setCandleData] = useState([]);
-  const canvasRef             = useRef(null);
+  const candleAccumRef         = useRef(new Map()); // t → bar, accumulates all received bars
+  const canvasRef              = useRef(null);
   const activeRef             = useRef(false);
   const pausedRef             = useRef(false);  // mirrors paused for use inside intervals
   const pendingRef            = useRef(null);   // latest unprocessed infer_step
@@ -282,7 +283,10 @@ export default function InferencePage() {
     setMseData((prev) => [...prev.slice(-999), { timestamp: data.timestamp, mse: data.mse }]);
     setCurrent(data);
     setClusterHistory((prev) => [...prev.slice(-(HISTORY_LEN - 1)), data.cluster_label]);
-    if (data.candle_data?.length) setCandleData(data.candle_data);
+    if (data.candle_data?.length) {
+      data.candle_data.forEach(bar => candleAccumRef.current.set(bar.t, bar));
+      setCandleData([...candleAccumRef.current.values()].sort((a, b) => a.t - b.t));
+    }
     drawWindow(data);
   }
 
@@ -319,6 +323,7 @@ export default function InferencePage() {
     setCurrent(null);
     setClusterHistory([]);
     setCandleData([]);
+    candleAccumRef.current = new Map();
     setError("");
     pendingRef.current   = null;
     lastFlushRef.current = 0;
