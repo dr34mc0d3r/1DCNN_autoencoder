@@ -32,6 +32,190 @@ const INFO = {
   },
 };
 
+// ── Beginner guide ─────────────────────────────────────────────────────────────
+
+function DownloadGuide() {
+  const [open, setOpen] = useState(false);
+
+  const Section = ({ title, color = "#6366f1", children }) => (
+    <div className="border-l-2 pl-5 mb-8" style={{ borderColor: color }}>
+      <h3 className="text-base font-semibold mb-3" style={{ color }}>{title}</h3>
+      {children}
+    </div>
+  );
+
+  const Tag = ({ label, color }) => (
+    <span className="inline-block text-xs font-semibold px-2 py-0.5 rounded mr-1 mb-1"
+      style={{ background: `${color}22`, color, border: `1px solid ${color}55` }}>
+      {label}
+    </span>
+  );
+
+  const bullets = (items, color = "#9ca3af") => (
+    <ul className="space-y-1.5 mt-2">
+      {items.map((t, i) => (
+        <li key={i} className="flex gap-2 text-sm" style={{ color: "#9ca3af" }}>
+          <span style={{ color, flexShrink: 0 }}>›</span>
+          <span>{t}</span>
+        </li>
+      ))}
+    </ul>
+  );
+
+  return (
+    <div className="bg-gray-900 border border-gray-800 rounded-xl mb-6 overflow-hidden">
+      <button
+        onClick={() => setOpen(v => !v)}
+        className="w-full flex items-center justify-between px-4 py-3 text-sm font-semibold text-gray-300 hover:text-gray-100 hover:bg-gray-800/40 transition-colors"
+      >
+        <span className="flex items-center gap-2">
+          Understanding Download Bars
+          <span className="text-[11px] font-normal bg-indigo-900/40 text-indigo-300 border border-indigo-800 rounded px-1.5 py-0.5">
+            Beginner's Guide
+          </span>
+        </span>
+        <span className="text-gray-500 text-xs">{open ? "▲ Hide" : "▼ Show"}</span>
+      </button>
+
+      {open && (
+        <div className="border-t border-gray-800 px-6 py-6">
+
+          <div className="mb-6">
+            <Tag label="OHLCV bars" color="#3b82f6" />
+            <Tag label="timeframe matters" color="#f59e0b" />
+            <Tag label="more data = better" color="#10b981" />
+          </div>
+
+          <Section title="What is OHLCV Data?" color="#3b82f6">
+            <p className="text-sm text-gray-400 mb-4">
+              Each row in the downloaded CSV is one "bar" — a single time interval of trading activity.
+              The model learns entirely from these bars.
+            </p>
+
+            <svg
+              viewBox="0 0 360 130"
+              className="w-full mb-5 rounded-lg"
+              style={{ maxWidth: "28rem", background: "#111827" }}
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              {/* Upper wick */}
+              <line x1="175" y1="15" x2="175" y2="40" stroke="#10b981" strokeWidth="2" />
+              {/* Candle body (close above open = bullish green) */}
+              <rect x="155" y="40" width="40" height="42" rx="2" fill="#10b981" />
+              {/* Lower wick */}
+              <line x1="175" y1="82" x2="175" y2="108" stroke="#10b981" strokeWidth="2" />
+
+              {/* High label */}
+              <line x1="175" y1="15" x2="225" y2="15" stroke="#6b7280" strokeWidth="1" strokeDasharray="3,3" />
+              <text x="230" y="19" fontSize="10" fill="#9ca3af">High</text>
+
+              {/* Close label */}
+              <line x1="195" y1="40" x2="235" y2="32" stroke="#6b7280" strokeWidth="1" strokeDasharray="3,3" />
+              <text x="240" y="36" fontSize="10" fill="#9ca3af">Close</text>
+
+              {/* Open label */}
+              <line x1="195" y1="82" x2="235" y2="90" stroke="#6b7280" strokeWidth="1" strokeDasharray="3,3" />
+              <text x="240" y="94" fontSize="10" fill="#9ca3af">Open</text>
+
+              {/* Low label */}
+              <line x1="175" y1="108" x2="225" y2="115" stroke="#6b7280" strokeWidth="1" strokeDasharray="3,3" />
+              <text x="230" y="119" fontSize="10" fill="#9ca3af">Low</text>
+
+              {/* Volume bar */}
+              <rect x="155" y="114" width="40" height="10" rx="2" fill="#3b82f6" opacity="0.7" />
+              <text x="200" y="122" fontSize="9" fill="#6b7280">Volume</text>
+
+              {/* VWAP dotted line */}
+              <line x1="30" y1="61" x2="145" y2="61" stroke="#f59e0b" strokeWidth="1" strokeDasharray="4,3" />
+              <text x="32" y="57" fontSize="9" fill="#f59e0b">VWAP</text>
+              <text x="32" y="68" fontSize="8" fill="#6b7280">avg price</text>
+
+              <defs />
+            </svg>
+
+            {bullets([
+              "Open: first price of the interval",
+              "High: highest price traded",
+              "Low: lowest price traded",
+              "Close: last price of the interval (most important — all EMAs and indicators are built from close)",
+              "Volume: number of shares traded — captures market participation",
+              "VWAP: volume-weighted average price — where most trading happened",
+            ], "#3b82f6")}
+          </Section>
+
+          <Section title="Choosing a Timeframe" color="#f59e0b">
+            <svg
+              viewBox="0 0 440 160"
+              className="w-full mb-4 rounded-lg"
+              style={{ maxWidth: "36rem", background: "#111827" }}
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              {/* Y-axis labels and bars */}
+              {/* Scale: max ~97500 → bar width max ~310px (at x=100, end at x=410) */}
+              {/* 1Min: 97500 → 310px */}
+              <text x="8" y="27" fontSize="10" fill="#9ca3af">1Min</text>
+              <rect x="100" y="15" width="310" height="16" rx="3" fill="#ef4444" />
+              <text x="415" y="27" fontSize="9" fill="#ef4444">Very noisy</text>
+
+              {/* 5Min: 19500 → 62px */}
+              <text x="8" y="58" fontSize="10" fill="#9ca3af">5Min</text>
+              <rect x="100" y="46" width="62" height="16" rx="3" fill="#10b981" />
+              <text x="166" y="58" fontSize="9" fill="#10b981">★ Recommended  19,500/yr</text>
+
+              {/* 15Min: 6500 → 21px */}
+              <text x="8" y="89" fontSize="10" fill="#9ca3af">15Min</text>
+              <rect x="100" y="77" width="21" height="16" rx="3" fill="#f59e0b" />
+              <text x="125" y="89" fontSize="9" fill="#f59e0b">6,500/yr</text>
+
+              {/* 1Hour: 1750 → 6px */}
+              <text x="8" y="120" fontSize="10" fill="#9ca3af">1Hour</text>
+              <rect x="100" y="108" width="6" height="16" rx="3" fill="#3b82f6" />
+              <text x="110" y="120" fontSize="9" fill="#3b82f6">1,750/yr</text>
+
+              {/* 1Day: 252 → 1px wide, use min 3 */}
+              <text x="8" y="151" fontSize="10" fill="#9ca3af">1Day</text>
+              <rect x="100" y="139" width="3" height="16" rx="3" fill="#6b7280" />
+              <text x="107" y="151" fontSize="9" fill="#6b7280">Very few bars  252/yr</text>
+
+              {/* 1Min annotation */}
+              <text x="100" y="12" fontSize="9" fill="#ef4444">97,500/yr</text>
+
+              <defs />
+            </svg>
+
+            {bullets([
+              "5Min is the standard for this model — enough bars to learn intraday patterns without excessive noise",
+              "1Min has ~5× more bars but much more noise; models trained on 1Min data often cluster on microstructure rather than meaningful price patterns",
+              "1Hour and 1Day require years of data (5–10 years) to generate enough training windows",
+              "Whatever timeframe you choose here must exactly match the 'Timeframe' setting in Config",
+            ], "#f59e0b")}
+          </Section>
+
+          <Section title="Date Range Strategy" color="#10b981">
+            {bullets([
+              "More historical data = more market regimes the model gets to learn from (bull markets, bear markets, high/low volatility periods)",
+              "For 5Min, aim for at least 2 years of data (≈40,000 bars). 5+ years is better.",
+              "The most recent 20% of your data becomes the validation set — it should include recent market conditions",
+              "If you're training on TSLA, include periods of both high and low volatility — the model needs to see both to generalise",
+              "You don't need to re-download if you already have the data — the existing CSV is shown in Available Downloads above",
+            ], "#10b981")}
+          </Section>
+
+          <Section title="What to Watch For" color="#ef4444">
+            {bullets([
+              "Download progress shows bar count — if it stops at an unexpectedly low number, Alpaca may not have data that far back for that symbol",
+              "Weekends and market holidays are automatically excluded by Alpaca — don't worry about gaps in the calendar",
+              "If you delete a CSV and re-download, any trained models that used it will still work (they saved a copy of the scaler during training)",
+              "The Symbol field is case-sensitive and must match Alpaca's format (e.g. TSLA, not tsla)",
+            ], "#ef4444")}
+          </Section>
+
+        </div>
+      )}
+    </div>
+  );
+}
+
 // ── Guidance panel ─────────────────────────────────────────────────────────────
 
 const GUIDANCE = {
@@ -435,6 +619,8 @@ export default function DownloadPage() {
       <h1 className="text-2xl font-bold mb-6">Download Bars</h1>
 
       <AvailableDownloads onUse={handleUse} />
+
+      <DownloadGuide />
 
       <GuidancePanel timeframe={form.timeframe} onApply={applyRange} />
 
