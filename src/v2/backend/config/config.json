@@ -34,5 +34,6 @@
   "scheduler_cyclic_base_lr": 1e-05,
   "scheduler_cyclic_max_lr": 0.01,
   "scheduler_cyclic_step_size": 10,
-  "scheduler_cyclic_mode": "triangular2"
+  "scheduler_cyclic_mode": "triangular2",
+  "live_trade_count_fill": true
 }

@@ -390,6 +390,12 @@ const INFO = {
     values: "triangular, triangular2, exp_range.",
     affects: "Whether peaks diminish over time — visible on the Train page LR line.",
   },
+  live_trade_count_fill: {
+    label: "Flat Trade Count Fill (IEX)",
+    what: "Alpaca's free IEX data feed does not return trade count per bar. The model was trained on a trade_count_ratio feature, so live inference must supply a substitute. When ON, the ratio is filled with a constant 1.0 (neutral/flat). When OFF, a volume-ratio proxy is used instead — relative volume over a 20-bar rolling mean.",
+    values: "ON (flat 1.0 fill) or OFF (volume-ratio proxy). ON is the safer default: the model saw many bars where trade count was roughly average, so 1.0 is a reasonable neutral value. OFF is experimental — volume correlates with trade count but they are not equivalent, and the model was not trained on this substitution.",
+    affects: "Live Inference only. This setting has no effect on walk-forward inference, which uses the downloaded CSV that always includes real trade counts. When ON, the MSE timeline on the Inference page will show a uniformly elevated baseline (the model detects an unusual feature pattern from the constant input). When OFF, the MSE baseline may be lower and more variable, but the proxy introduces its own distortion.",
+  },
 };
 
 // ── Presets ────────────────────────────────────────────────────────────────────
@@ -891,6 +897,25 @@ export default function ConfigPage() {
             <span
               className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform
                 ${cfg.logging_enabled ? "translate-x-6" : "translate-x-1"}`}
+            />
+          </button>
+        </div>
+        <div className="flex items-center justify-between px-4 py-3 bg-gray-900 rounded-lg mt-2">
+          <div>
+            <p className="text-sm text-gray-200 flex items-center gap-1">
+              Flat Trade Count Fill (IEX)
+              <FieldInfo info={INFO.live_trade_count_fill} />
+            </p>
+            <p className="text-xs text-gray-500 mt-0.5">Live inference only — IEX feed omits trade count</p>
+          </div>
+          <button
+            onClick={() => handleChange("live_trade_count_fill", !cfg.live_trade_count_fill)}
+            className={`relative inline-flex h-6 w-11 shrink-0 items-center rounded-full transition-colors focus:outline-none
+              ${cfg.live_trade_count_fill ? "bg-indigo-600" : "bg-gray-700"}`}
+          >
+            <span
+              className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform
+                ${cfg.live_trade_count_fill ? "translate-x-6" : "translate-x-1"}`}
             />
           </button>
         </div>
