@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
-import { createChart, CandlestickSeries, HistogramSeries, LineSeries } from "lightweight-charts";
+import { createChart, CandlestickSeries, HistogramSeries, LineSeries, LineStyle } from "lightweight-charts";
 import {
-  LineChart, Line, XAxis, YAxis, Tooltip, CartesianGrid, ReferenceLine, ResponsiveContainer,
+  XAxis, YAxis, Tooltip, ResponsiveContainer,
   BarChart, Bar, Cell,
 } from "recharts";
 import { api } from "../api.js";
@@ -70,7 +70,61 @@ const PANEL_INFO = {
   },
 };
 
-function CandleChart({ data }) {
+function MSEChart({ data, p95, onChartCreated }) {
+  const containerRef = useRef(null);
+  const chartRef     = useRef(null);
+  const lineRef      = useRef(null);
+  const p95LineRef   = useRef(null);
+
+  useEffect(() => {
+    if (!containerRef.current) return;
+    const chart = createChart(containerRef.current, {
+      layout:    { background: { color: "#111827" }, textColor: "#9CA3AF" },
+      grid:      { vertLines: { color: "#1f2937" }, horzLines: { color: "#1f2937" } },
+      crosshair: { mode: 1 },
+      rightPriceScale: { borderColor: "#374151" },
+      timeScale:  { borderColor: "#374151", timeVisible: true, secondsVisible: false },
+      width:  containerRef.current.clientWidth,
+      height: 240,
+    });
+    const line = chart.addSeries(LineSeries, {
+      color: "#6366f1", lineWidth: 1,
+      lastValueVisible: false, priceLineVisible: false,
+    });
+    chartRef.current = chart;
+    lineRef.current  = line;
+    onChartCreated?.(chart);
+
+    const ro = new ResizeObserver(() => {
+      chart.applyOptions({ width: containerRef.current?.clientWidth ?? 800 });
+    });
+    ro.observe(containerRef.current);
+    return () => { ro.disconnect(); chart.remove(); };
+  }, []);
+
+  useEffect(() => {
+    if (!data?.length || !lineRef.current) return;
+    lineRef.current.setData(
+      data.map(d => ({ time: Math.floor(new Date(d.timestamp).getTime() / 1000), value: d.mse }))
+    );
+    chartRef.current.timeScale().fitContent();
+  }, [data]);
+
+  useEffect(() => {
+    if (!lineRef.current) return;
+    if (p95LineRef.current) { lineRef.current.removePriceLine(p95LineRef.current); p95LineRef.current = null; }
+    if (p95 != null) {
+      p95LineRef.current = lineRef.current.createPriceLine({
+        price: p95, color: "#f59e0b", lineWidth: 1,
+        lineStyle: LineStyle.Dashed, axisLabelVisible: true, title: "p95",
+      });
+    }
+  }, [p95]);
+
+  return <div ref={containerRef} className="w-full" />;
+}
+
+function CandleChart({ data, onChartCreated }) {
   const containerRef = useRef(null);
   const chartRef     = useRef(null);
   const candleRef    = useRef(null);
@@ -114,6 +168,7 @@ function CandleChart({ data }) {
     ema9Ref.current   = ema9;
     ema21Ref.current  = ema21;
     ema50Ref.current  = ema50;
+    onChartCreated?.(chart);
 
     const ro = new ResizeObserver(() => {
       chart.applyOptions({ width: containerRef.current?.clientWidth ?? 800 });
@@ -224,6 +279,10 @@ export default function InferencePage() {
   const [candleData, setCandleData] = useState([]);
   const candleAccumRef         = useRef(new Map()); // t → bar, accumulates all received bars
   const canvasRef              = useRef(null);
+  const candleChartRef         = useRef(null);
+  const mseChartRef            = useRef(null);
+  const syncSetupRef           = useRef(false);
+  const syncingRef             = useRef(false);
   const activeRef             = useRef(false);
   const pausedRef             = useRef(false);  // mirrors paused for use inside intervals
   const pendingRef            = useRef(null);   // latest unprocessed infer_step
@@ -279,8 +338,31 @@ export default function InferencePage() {
     return () => clearInterval(id);
   }, []);
 
+  function setupSync() {
+    if (syncSetupRef.current) return;
+    const c = candleChartRef.current;
+    const m = mseChartRef.current;
+    if (!c || !m) return;
+    syncSetupRef.current = true;
+    c.timeScale().subscribeVisibleTimeRangeChange(range => {
+      if (syncingRef.current || !range) return;
+      syncingRef.current = true;
+      m.timeScale().setVisibleRange(range);
+      syncingRef.current = false;
+    });
+    m.timeScale().subscribeVisibleTimeRangeChange(range => {
+      if (syncingRef.current || !range) return;
+      syncingRef.current = true;
+      c.timeScale().setVisibleRange(range);
+      syncingRef.current = false;
+    });
+  }
+
+  function handleCandleChartReady(chart) { candleChartRef.current = chart; setupSync(); }
+  function handleMseChartReady(chart)    { mseChartRef.current    = chart; setupSync(); }
+
   function flushPending(data) {
-    setMseData((prev) => [...prev.slice(-999), { timestamp: data.timestamp, mse: data.mse }]);
+    setMseData(prev => [...prev, { timestamp: data.timestamp, mse: data.mse }]);
     setCurrent(data);
     setClusterHistory((prev) => [...prev.slice(-(HISTORY_LEN - 1)), data.cluster_label]);
     if (data.candle_data?.length) {
@@ -324,6 +406,7 @@ export default function InferencePage() {
     setClusterHistory([]);
     setCandleData([]);
     candleAccumRef.current = new Map();
+    syncSetupRef.current   = false;
     setError("");
     pendingRef.current   = null;
     lastFlushRef.current = 0;
@@ -478,16 +561,7 @@ export default function InferencePage() {
           MSE Timeline
           <PanelInfo {...PANEL_INFO.mse} />
         </p>
-        <ResponsiveContainer width="100%" height={240}>
-          <LineChart data={mseData}>
-            <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
-            <XAxis dataKey="timestamp" stroke="#6B7280" tick={false} />
-            <YAxis stroke="#6B7280" />
-            <Tooltip contentStyle={{ backgroundColor: "#111827", border: "none" }} />
-            <Line type="monotone" dataKey="mse" stroke="#6366f1" dot={false} />
-            {p95 && <ReferenceLine y={p95} stroke="#f59e0b" strokeDasharray="4 2" label={{ value: "p95", fill: "#f59e0b", fontSize: 11 }} />}
-          </LineChart>
-        </ResponsiveContainer>
+        <MSEChart data={mseData} p95={p95} onChartCreated={handleMseChartReady} />
       </div>
 
       {/* Panel — Candlestick Chart */}
@@ -503,7 +577,7 @@ export default function InferencePage() {
               <span style={{ color: "#10b981" }}>— EMA 50</span>
             </span>
           </p>
-          <CandleChart data={candleData} />
+          <CandleChart data={candleData} onChartCreated={handleCandleChartReady} />
         </div>
       )}
 
