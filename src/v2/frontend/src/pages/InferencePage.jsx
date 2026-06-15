@@ -348,11 +348,13 @@ export default function InferencePage() {
     const m = mseChartRef.current;
     if (!c || !m) return;
     syncSetupRef.current = true;
+    console.log("[sync] setupSync registered, c:", !!c, "m:", !!m);
 
     // Pan/zoom: logical-range event fires on every mouse move, then mirror via time range
     c.timeScale().subscribeVisibleLogicalRangeChange(() => {
       if (syncingRef.current) return;
       const range = c.timeScale().getVisibleRange();
+      console.log("[sync] candle→MSE range:", range);
       if (!range) return;
       syncingRef.current = true;
       m.timeScale().setVisibleRange(range);
@@ -361,6 +363,7 @@ export default function InferencePage() {
     m.timeScale().subscribeVisibleLogicalRangeChange(() => {
       if (syncingRef.current) return;
       const range = m.timeScale().getVisibleRange();
+      console.log("[sync] MSE→candle range:", range);
       if (!range) return;
       syncingRef.current = true;
       c.timeScale().setVisibleRange(range);
