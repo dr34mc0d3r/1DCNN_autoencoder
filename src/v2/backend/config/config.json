@@ -35,6 +35,5 @@
   "scheduler_cyclic_max_lr": 0.01,
   "scheduler_cyclic_step_size": 10,
   "scheduler_cyclic_mode": "triangular2",
-  "forward_return_horizon": 4,
-  "live_trade_count_fill": true
+  "forward_return_horizon": 4
 }

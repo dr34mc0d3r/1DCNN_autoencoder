@@ -71,7 +71,7 @@ _FEATURE_COLS = [
     # Candle structure
     "body", "upper_wick", "lower_wick", "candle_efficiency",
     # Returns & volume
-    "return", "vol_return", "log_return", "volume_ratio", "trade_count_ratio",
+    "return", "vol_return", "log_return", "volume_ratio",
     # Volatility
     "atr_14", "rolling_vol",
     # Bollinger Bands

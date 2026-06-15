@@ -61,7 +61,7 @@ def clean_data(df: pd.DataFrame) -> pd.DataFrame:
     return df
 
 
-def add_features(df: pd.DataFrame, trade_count_fill_flat: bool = True) -> pd.DataFrame:
+def add_features(df: pd.DataFrame) -> pd.DataFrame:
     # ── Trend ────────────────────────────────────────────────────────────────
     df["ema_9"]  = df["close"].ewm(span=9,  adjust=False).mean()
     df["ema_21"] = df["close"].ewm(span=21, adjust=False).mean()
@@ -88,16 +88,6 @@ def add_features(df: pd.DataFrame, trade_count_fill_flat: bool = True) -> pd.Dat
     df["vol_return"]   = df["volume"].pct_change()
     df["log_return"]   = np.log(df["close"] / df["close"].shift(1))
     df["volume_ratio"] = df["volume"] / df["volume"].rolling(20).mean()
-    if "trade_count" in df.columns:
-        df["trade_count_ratio"] = df["trade_count"] / df["trade_count"].rolling(20).mean()
-        df["trade_count_ratio"] = df["trade_count_ratio"].clip(upper=df["trade_count_ratio"].quantile(0.99))
-    elif trade_count_fill_flat:
-        df["trade_count_ratio"] = 1.0  # IEX feed omits trade count; neutral fill
-    else:
-        # Volume-ratio proxy: relative volume activity substitutes for trade count.
-        # Better than a constant but not equivalent to true trade count.
-        df["trade_count_ratio"] = df["volume"] / df["volume"].rolling(20).mean()
-        df["trade_count_ratio"] = df["trade_count_ratio"].clip(upper=df["trade_count_ratio"].quantile(0.99))
     # Alpaca IEX free-tier reports partial volume, producing extreme spikes in
     # vol_return (observed max: 1836×). Clip at the 99th percentile.
     # Quantile is computed on the full passed-in dataset (mild leakage). See src/v2/WARNINGS.md.
@@ -414,6 +404,22 @@ def load_kmeans() -> Any:
             "No K-Means in this bundle — run Latent Space → Extract + Cluster first."
         )
     return joblib.load(path)
+
+
+def save_mse_stats(stats: dict) -> None:
+    """Persist MSE baseline stats into the active bundle's meta.json under 'mse_baseline'."""
+    d = _active_bundle_dir()
+    if d is None:
+        return
+    meta_path = os.path.join(d, "meta.json")
+    if os.path.exists(meta_path):
+        with open(meta_path) as f:
+            meta = json.load(f)
+    else:
+        meta = {}
+    meta["mse_baseline"] = stats
+    with open(meta_path, "w") as f:
+        json.dump(meta, f, indent=2)
 
 
 _CLUSTER_ARTIFACT_FILES = ("latents.npy", "labels.npy", "window_means.npy", "valid_indices.npy")

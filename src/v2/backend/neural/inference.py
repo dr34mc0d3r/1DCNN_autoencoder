@@ -83,11 +83,13 @@ async def walk_forward(
             z_t     = model.encoder(window_t)
             recon_t = model.decoder(z_t)
 
-        z     = z_t.cpu().numpy()[0]
-        recon = recon_t.cpu().numpy()[0].T
-        mse   = float(((window_np - recon) ** 2).mean())
-        label = int(kmeans.predict(z.reshape(1, -1))[0])
-        ts    = str(df["timestamp"].iloc[i])
+        z           = z_t.cpu().numpy()[0]
+        recon       = recon_t.cpu().numpy()[0].T
+        sq_err      = (window_np - recon) ** 2
+        mse         = float(sq_err.mean())
+        feature_mse = sq_err.mean(axis=0).tolist()
+        label       = int(kmeans.predict(z.reshape(1, -1))[0])
+        ts          = str(df["timestamp"].iloc[i])
 
         # Normalize window to 0-255 for canvas display: shape (n_features, window_size)
         w_min, w_max = window_np.min(), window_np.max()
@@ -119,6 +121,7 @@ async def walk_forward(
         yield {
             "timestamp":     ts,
             "mse":           mse,
+            "feature_mse":   feature_mse,
             "cluster_label": label,
             "latent_vector": z.tolist(),
             "window_pixels": window_pixels,

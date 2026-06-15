@@ -2,6 +2,7 @@
 
 import asyncio
 import logging
+from datetime import datetime
 from typing import Optional
 
 import numpy as np
@@ -33,6 +34,30 @@ class InferRequest(BaseModel):
     mode: str = "walkforward"
 
 
+def _compute_and_save_mse_baseline(results: list[dict]) -> None:
+    """Compute MSE distribution stats from a completed walk_forward run and save to meta.json."""
+    if not results:
+        return
+    mse_arr = np.array([r["mse"] for r in results])
+    stats = {
+        "computed_at": datetime.now().isoformat(timespec="seconds"),
+        "count":       int(len(mse_arr)),
+        "min":  float(np.percentile(mse_arr,   0)),
+        "p5":   float(np.percentile(mse_arr,   5)),
+        "p10":  float(np.percentile(mse_arr,  10)),
+        "p25":  float(np.percentile(mse_arr,  25)),
+        "p50":  float(np.percentile(mse_arr,  50)),
+        "p75":  float(np.percentile(mse_arr,  75)),
+        "p90":  float(np.percentile(mse_arr,  90)),
+        "p95":  float(np.percentile(mse_arr,  95)),
+        "p99":  float(np.percentile(mse_arr,  99)),
+        "max":  float(np.percentile(mse_arr, 100)),
+        "mean": float(np.mean(mse_arr)),
+        "std":  float(np.std(mse_arr)),
+    }
+    storage.save_mse_stats(stats)
+
+
 async def _run_inference(req: InferRequest) -> None:
     global _cancel_event
     _cancel_event = asyncio.Event()
@@ -54,13 +79,20 @@ async def _run_inference(req: InferRequest) -> None:
 
         stop_reason = "cancelled" if (_cancel_event and _cancel_event.is_set()) else "completed"
         _state["state"] = "done"
+
+        # Persist MSE distribution as historical baseline for future sessions
+        if stop_reason == "completed":
+            try:
+                _compute_and_save_mse_baseline(_state["results"])
+            except Exception:
+                logger.exception("Failed to save MSE baseline stats")
+
         await manager.send("infer_complete", {"stop_reason": stop_reason})
     except Exception as exc:
         logger.exception("Inference failed")
         _state.update({"state": "error", "error": str(exc)})
         await manager.send("error", {"message": str(exc)})
     finally:
-        # Ensure state is never left permanently at "running" (e.g. on asyncio cancellation)
         if _state["state"] == "running":
             _state["state"] = "done"
 
@@ -95,8 +127,7 @@ async def _run_live_inference(req: InferRequest) -> None:
                                         "vw": "vwap", "n": "trade_count"})
                 df["timestamp"] = pd.to_datetime(df["timestamp"])
                 df = storage.clean_data(df)
-                use_flat = cfg.get("live_trade_count_fill", True)
-                df = storage.add_features(df, trade_count_fill_flat=use_flat)
+                df = storage.add_features(df)
                 df = storage.drop_feature_nans(df)
                 df_ema  = df[["ema_9", "ema_21", "ema_50"]].copy()
                 df_ohlc = df[["timestamp", "open", "high", "low", "close", "volume"]].copy()
@@ -111,10 +142,12 @@ async def _run_live_inference(req: InferRequest) -> None:
                         with torch.no_grad():
                             z_t     = model.encoder(window_t)
                             recon_t = model.decoder(z_t)
-                        z     = z_t.cpu().numpy()[0]
-                        recon = recon_t.cpu().numpy()[0].T
-                        mse   = float(((window_np - recon) ** 2).mean())
-                        label = int(kmeans.predict(z.reshape(1, -1))[0])
+                        z           = z_t.cpu().numpy()[0]
+                        recon       = recon_t.cpu().numpy()[0].T
+                        sq_err      = (window_np - recon) ** 2
+                        mse         = float(sq_err.mean())
+                        feature_mse = sq_err.mean(axis=0).tolist()
+                        label       = int(kmeans.predict(z.reshape(1, -1))[0])
                         w_min, w_max = window_np.min(), window_np.max()
                         window_pixels = (
                             ((window_np.T - w_min) / (w_max - w_min + 1e-8) * 255)
@@ -140,6 +173,7 @@ async def _run_live_inference(req: InferRequest) -> None:
                         result = {
                             "timestamp":     current_ts,
                             "mse":           mse,
+                            "feature_mse":   feature_mse,
                             "cluster_label": label,
                             "latent_vector": z.tolist(),
                             "window_pixels": window_pixels,
