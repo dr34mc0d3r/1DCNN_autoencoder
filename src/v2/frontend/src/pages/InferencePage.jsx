@@ -93,7 +93,7 @@ function MSEChart({ data, p95, onChartCreated }) {
     });
     chartRef.current = chart;
     lineRef.current  = line;
-    onChartCreated?.(chart);
+    onChartCreated?.(chart, line);
 
     const ro = new ResizeObserver(() => {
       chart.applyOptions({ width: containerRef.current?.clientWidth ?? 800 });
@@ -168,7 +168,7 @@ function CandleChart({ data, onChartCreated }) {
     ema9Ref.current   = ema9;
     ema21Ref.current  = ema21;
     ema50Ref.current  = ema50;
-    onChartCreated?.(chart);
+    onChartCreated?.(chart, candles);
 
     const ro = new ResizeObserver(() => {
       chart.applyOptions({ width: containerRef.current?.clientWidth ?? 800 });
@@ -278,11 +278,15 @@ export default function InferencePage() {
   const [mode, setMode]       = useState("walkforward"); // "walkforward" | "live"
   const [candleData, setCandleData] = useState([]);
   const candleAccumRef         = useRef(new Map()); // t → bar, accumulates all received bars
+  const mseTimeMapRef          = useRef(new Map()); // unix_sec → mse, for crosshair lookup
   const canvasRef              = useRef(null);
   const candleChartRef         = useRef(null);
+  const candleSeriesRef        = useRef(null);
   const mseChartRef            = useRef(null);
+  const mseSeriesRef           = useRef(null);
   const syncSetupRef           = useRef(false);
   const syncingRef             = useRef(false);
+  const crosshairSyncingRef    = useRef(false);
   const activeRef             = useRef(false);
   const pausedRef             = useRef(false);  // mirrors paused for use inside intervals
   const pendingRef            = useRef(null);   // latest unprocessed infer_step
@@ -344,25 +348,58 @@ export default function InferencePage() {
     const m = mseChartRef.current;
     if (!c || !m) return;
     syncSetupRef.current = true;
-    c.timeScale().subscribeVisibleTimeRangeChange(range => {
-      if (syncingRef.current || !range) return;
+
+    // Pan/zoom: logical-range event fires on every mouse move, then mirror via time range
+    c.timeScale().subscribeVisibleLogicalRangeChange(() => {
+      if (syncingRef.current) return;
+      const range = c.timeScale().getVisibleRange();
+      if (!range) return;
       syncingRef.current = true;
       m.timeScale().setVisibleRange(range);
       syncingRef.current = false;
     });
-    m.timeScale().subscribeVisibleTimeRangeChange(range => {
-      if (syncingRef.current || !range) return;
+    m.timeScale().subscribeVisibleLogicalRangeChange(() => {
+      if (syncingRef.current) return;
+      const range = m.timeScale().getVisibleRange();
+      if (!range) return;
       syncingRef.current = true;
       c.timeScale().setVisibleRange(range);
       syncingRef.current = false;
     });
+
+    // Crosshair sync
+    c.subscribeCrosshairMove(param => {
+      if (crosshairSyncingRef.current) return;
+      crosshairSyncingRef.current = true;
+      if (!param.time || !mseSeriesRef.current) {
+        m.clearCrosshairPosition();
+      } else {
+        const mseVal = mseTimeMapRef.current.get(param.time);
+        if (mseVal != null) m.setCrosshairPosition(mseVal, param.time, mseSeriesRef.current);
+        else m.clearCrosshairPosition();
+      }
+      crosshairSyncingRef.current = false;
+    });
+    m.subscribeCrosshairMove(param => {
+      if (crosshairSyncingRef.current) return;
+      crosshairSyncingRef.current = true;
+      if (!param.time || !candleSeriesRef.current) {
+        c.clearCrosshairPosition();
+      } else {
+        const bar = candleAccumRef.current.get(param.time);
+        if (bar != null) c.setCrosshairPosition(bar.c, param.time, candleSeriesRef.current);
+        else c.clearCrosshairPosition();
+      }
+      crosshairSyncingRef.current = false;
+    });
   }
 
-  function handleCandleChartReady(chart) { candleChartRef.current = chart; setupSync(); }
-  function handleMseChartReady(chart)    { mseChartRef.current    = chart; setupSync(); }
+  function handleCandleChartReady(chart, series) { candleChartRef.current = chart; candleSeriesRef.current = series; setupSync(); }
+  function handleMseChartReady(chart, series)    { mseChartRef.current    = chart; mseSeriesRef.current    = series; setupSync(); }
 
   function flushPending(data) {
     setMseData(prev => [...prev, { timestamp: data.timestamp, mse: data.mse }]);
+    mseTimeMapRef.current.set(Math.floor(new Date(data.timestamp).getTime() / 1000), data.mse);
     setCurrent(data);
     setClusterHistory((prev) => [...prev.slice(-(HISTORY_LEN - 1)), data.cluster_label]);
     if (data.candle_data?.length) {
@@ -405,8 +442,9 @@ export default function InferencePage() {
     setCurrent(null);
     setClusterHistory([]);
     setCandleData([]);
-    candleAccumRef.current = new Map();
-    syncSetupRef.current   = false;
+    candleAccumRef.current  = new Map();
+    mseTimeMapRef.current   = new Map();
+    syncSetupRef.current    = false;
     setError("");
     pendingRef.current   = null;
     lastFlushRef.current = 0;
