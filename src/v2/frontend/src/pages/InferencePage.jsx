@@ -349,6 +349,8 @@ export default function InferencePage() {
     if (!c || !m) return;
     syncSetupRef.current = true;
     console.log("[sync] setupSync registered, c:", !!c, "m:", !!m);
+    window.__candleChart = c;
+    window.__mseChart = m;
 
     // Pan/zoom: logical-range event fires on every mouse move, then mirror via time range
     c.timeScale().subscribeVisibleLogicalRangeChange(() => {
