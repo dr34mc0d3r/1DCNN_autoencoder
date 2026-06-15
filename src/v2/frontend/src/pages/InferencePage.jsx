@@ -27,20 +27,23 @@ const PANEL_INFO = {
       "A flat line with occasional spikes is healthy. The model knows what it's looking at most of the time.",
       "A sudden spike = the model saw something it hasn't seen before — could be a breakout, news-driven move, or unusual volume.",
       "Sustained high MSE = the market has shifted into a regime the model wasn't trained on. Consider retraining.",
-      "The amber dashed line is the p95 threshold — anything above it is in the top 5% most 'surprising' windows seen so far this session.",
+      "The amber dashed line is the historical p95 threshold — computed from a completed walk-forward run. Anything above it is in the top 5% most 'surprising' windows from training history.",
+      "The lighter dashed line is the historical median (p50). Values below it mean the model is highly confident; above it means above-average reconstruction difficulty.",
+      "Coloured dots mark cluster transitions — when the model switches from one learned regime to another.",
     ],
   },
   bar: {
     label: "Current Bar",
-    what: "A snapshot of the most recently processed bar: its timestamp, reconstruction error, and the cluster the model assigned it to.",
+    what: "A snapshot of the most recently processed bar: its timestamp, reconstruction error, percentile rank against the historical baseline, and the cluster the model assigned it to.",
     watch: [
-      "Watch the cluster label over time. Staying in one cluster = persistent, consistent behaviour (trend or tight range). Rapidly switching clusters = choppy, uncertain price action.",
+      "The percentile rank puts the MSE in historical context — p12 means this bar's MSE is lower than 88% of all training bars. Only visible after a walk-forward run has established the baseline.",
+      "Watch the cluster label over time. Staying in one cluster = persistent, consistent behaviour. Rapidly switching clusters = choppy, uncertain price action.",
       "Cross-reference the MSE here with the MSE Timeline — a high number here explains a spike on the chart.",
     ],
   },
   window: {
     label: "Current Window",
-    what: "A greyscale image of the 14 technical indicator channels × 64 bars that the model just processed. Each row is one feature (ema, macd, body size, volume ratio, etc.); each column is one bar in the window. Brighter pixel = higher scaled value.",
+    what: "A greyscale image of the 26 technical indicator channels × 64 bars that the model just processed. Each row is one feature (ema, macd, body size, volume ratio, etc.); each column is one bar in the window. Brighter pixel = higher scaled value.",
     watch: [
       "Clean, horizontal bands = the features are moving consistently. The model likely sees a trend or steady regime.",
       "Lots of vertical variation / noise = choppy, erratic price action across features.",
@@ -68,13 +71,53 @@ const PANEL_INFO = {
       "Watch for colour changes that coincide with MSE spikes — a regime change often shows up in both at the same time.",
     ],
   },
+  featureMse: {
+    label: "Feature MSE Contribution",
+    what: "Per-feature reconstruction error for the current window — how much each of the 26 indicator channels contributed to the overall MSE. Each bar is the mean squared error between the original and reconstructed values for that feature across all 64 bars in the window.",
+    watch: [
+      "The features with the tallest bars are the ones the model struggled to reconstruct. These are driving the overall MSE.",
+      "During unusual price action, you'll typically see spikes in return, log_return, vol_return, or atr_14 — the high-frequency features.",
+      "If ema or macd features dominate, the model is confused about the trend direction.",
+      "Sorted highest to lowest. The top few features are almost always the meaningful signal.",
+    ],
+  },
 };
 
-function MSEChart({ data, p95, onChartCreated, runId }) {
+// ── MSE percentile rank ────────────────────────────────────────────────────────
+
+function msePercentileRank(mse, baseline) {
+  if (!baseline) return null;
+  const points = [
+    [0,   baseline.min],
+    [5,   baseline.p5],
+    [10,  baseline.p10],
+    [25,  baseline.p25],
+    [50,  baseline.p50],
+    [75,  baseline.p75],
+    [90,  baseline.p90],
+    [95,  baseline.p95],
+    [99,  baseline.p99],
+    [100, baseline.max],
+  ];
+  if (mse <= baseline.min) return 0;
+  if (mse >= baseline.max) return 100;
+  for (let i = 1; i < points.length; i++) {
+    const [p1, v1] = points[i - 1];
+    const [p2, v2] = points[i];
+    if (mse <= v2) {
+      if (v2 === v1) return p1;
+      return Math.round(p1 + (mse - v1) / (v2 - v1) * (p2 - p1));
+    }
+  }
+  return 100;
+}
+
+function MSEChart({ data, p95, p50, markers, onChartCreated, runId }) {
   const containerRef     = useRef(null);
   const chartRef         = useRef(null);
   const lineRef          = useRef(null);
   const p95LineRef       = useRef(null);
+  const p50LineRef       = useRef(null);
   const hasInitialFitRef = useRef(false);
 
   useEffect(() => { hasInitialFitRef.current = false; }, [runId]);
@@ -126,6 +169,31 @@ function MSEChart({ data, p95, onChartCreated, runId }) {
       });
     }
   }, [p95]);
+
+  useEffect(() => {
+    if (!lineRef.current) return;
+    if (p50LineRef.current) { lineRef.current.removePriceLine(p50LineRef.current); p50LineRef.current = null; }
+    if (p50 != null) {
+      p50LineRef.current = lineRef.current.createPriceLine({
+        price: p50, color: "#6b7280", lineWidth: 1,
+        lineStyle: LineStyle.Dashed, axisLabelVisible: true, title: "p50",
+      });
+    }
+  }, [p50]);
+
+  useEffect(() => {
+    if (!lineRef.current || !markers?.length) return;
+    lineRef.current.setMarkers(
+      markers.map(m => ({
+        time:     m.time,
+        position: "aboveBar",
+        color:    COLORS[m.cluster % COLORS.length],
+        shape:    "circle",
+        text:     `${m.cluster}`,
+        size:     1,
+      }))
+    );
+  }, [markers]);
 
   return <div ref={containerRef} className="w-full" />;
 }
@@ -230,7 +298,7 @@ function CrossSymbolGuide({ activeModel, csvInfo }) {
           <div>
             <p className="text-gray-200 font-semibold mb-1">What it is</p>
             <p>
-              The model never sees raw prices. It learns from 14 normalised technical indicator
+              The model never sees raw prices. It learns from 26 normalised technical indicator
               features — EMAs, MACD, candle body/wick ratios, log returns, volume ratio — all
               scaled by a RobustScaler. Because these features describe <em>pattern shapes</em>,
               not absolute values, a model trained on one symbol can score windows from any other
@@ -278,7 +346,8 @@ export default function InferencePage() {
   const [form, setForm]       = useState({ infer_start: "2024-01-01", infer_end: "2024-06-30" });
   const [mseData, setMseData] = useState([]);
   const [current, setCurrent] = useState(null);
-  const [clusterHistory, setClusterHistory] = useState([]);
+  const [clusterHistory, setClusterHistory]         = useState([]);
+  const [clusterTransitions, setClusterTransitions] = useState([]);
   const [state, setState]     = useState("idle");
   const [error, setError]     = useState("");
   const [activeModel, setActiveModel] = useState(null);
@@ -290,6 +359,7 @@ export default function InferencePage() {
   const [runId, setRunId]           = useState(0);
   const candleAccumRef         = useRef(new Map()); // t → bar, accumulates all received bars
   const mseTimeMapRef          = useRef(new Map()); // unix_sec → mse, for crosshair lookup
+  const prevClusterRef         = useRef(null);      // previous cluster label for transition detection
   const canvasRef              = useRef(null);
   const candleChartRef         = useRef(null);
   const candleSeriesRef        = useRef(null);
@@ -311,8 +381,6 @@ export default function InferencePage() {
   useEffect(() => {
     api.getActiveModel().then(m => setActiveModel(Object.keys(m).length ? m : null)).catch(() => {});
     api.getConfig().then(cfg => setCsvInfo({ symbol: cfg.symbol, timeframe: cfg.timeframe })).catch(() => {});
-    // Sync inference state from backend — if a run is in progress (e.g. after page
-    // navigation or refresh) show the Stop button instead of Start.
     api.inferResults().then(res => {
       if (res.state === "running") {
         setState("running");
@@ -327,13 +395,19 @@ export default function InferencePage() {
       if (!activeRef.current) return;
       pendingRef.current = data;
     });
-    const offDone = ws.on("infer_complete", () => {
+    const offDone = ws.on("infer_complete", async (data) => {
       activeRef.current = false;
       setState("idle");
-      // flush whatever is pending so the final bar always appears
       if (pendingRef.current) {
         flushPending(pendingRef.current);
         pendingRef.current = null;
+      }
+      // Walk-forward completion → re-fetch model to pick up updated mse_baseline
+      if (data?.stop_reason === "completed") {
+        try {
+          const m = await api.getActiveModel();
+          setActiveModel(Object.keys(m).length ? m : null);
+        } catch {}
       }
     });
     return () => { offStep(); offDone(); };
@@ -358,17 +432,12 @@ export default function InferencePage() {
     const c = candleChartRef.current;
     const m = mseChartRef.current;
     if (!c || !m) return;
-    // Guard: skip if already wired for this exact candle chart instance.
-    // Using the instance (not a boolean) so Strict Mode re-mounts trigger re-wiring.
     if (syncSetupRef.current === c) return;
 
-    // Clean up any previous listeners (may be on a now-removed chart instance)
     try { syncCleanupRef.current?.(); } catch {}
     syncCleanupRef.current = null;
     syncSetupRef.current = c;
 
-    // Pan/zoom sync via logical range. Candle has (warmupOffset) more bars than MSE,
-    // so we shift by the live offset when translating logical indices.
     const candleRangeHandler = (logicalRange) => {
       if (syncingRef.current || !logicalRange) return;
       const offset = candleAccumRef.current.size - mseTimeMapRef.current.size;
@@ -388,10 +457,6 @@ export default function InferencePage() {
     c.timeScale().subscribeVisibleLogicalRangeChange(candleRangeHandler);
     m.timeScale().subscribeVisibleLogicalRangeChange(mseRangeHandler);
 
-    // Crosshair sync uses coordinateToTime() on the TARGET chart so that the visual
-    // x-position (not the timestamp) drives alignment. The two charts show different
-    // calendar times at the same x because of the warmup-bar offset, so timestamp
-    // lookup across charts cannot work — matching by visual coordinate does.
     const candleCrosshairHandler = param => {
       if (crosshairSyncingRef.current || !param.point) return;
       crosshairSyncingRef.current = true;
@@ -447,6 +512,15 @@ export default function InferencePage() {
     mseTimeMapRef.current.set(Math.floor(new Date(data.timestamp).getTime() / 1000), data.mse);
     setCurrent(data);
     setClusterHistory((prev) => [...prev.slice(-(HISTORY_LEN - 1)), data.cluster_label]);
+
+    // Detect cluster transitions for MSE chart markers
+    const newCluster = data.cluster_label;
+    if (prevClusterRef.current !== null && prevClusterRef.current !== newCluster) {
+      const t = Math.floor(new Date(data.timestamp).getTime() / 1000);
+      setClusterTransitions(prev => [...prev, { time: t, cluster: newCluster }]);
+    }
+    prevClusterRef.current = newCluster;
+
     if (data.candle_data?.length) {
       data.candle_data.forEach(bar => candleAccumRef.current.set(bar.t, bar));
       setCandleData([...candleAccumRef.current.values()].sort((a, b) => a.t - b.t));
@@ -454,9 +528,11 @@ export default function InferencePage() {
     drawWindow(data);
   }
 
-  const p95 = mseData.length
-    ? [...mseData].sort((a, b) => a.mse - b.mse)[Math.floor(mseData.length * 0.95)]?.mse
-    : null;
+  // p95/p50 — prefer historical baseline from completed walk-forward, fall back to session
+  const baseline = activeModel?.mse_baseline ?? null;
+  const p95 = baseline?.p95
+    ?? (mseData.length ? [...mseData].sort((a, b) => a.mse - b.mse)[Math.floor(mseData.length * 0.95)]?.mse : null);
+  const p50 = baseline?.p50 ?? null;
 
   function drawWindow(data) {
     const canvas = canvasRef.current;
@@ -490,9 +566,11 @@ export default function InferencePage() {
     setMseData([]);
     setCurrent(null);
     setClusterHistory([]);
+    setClusterTransitions([]);
     setCandleData([]);
     candleAccumRef.current  = new Map();
     mseTimeMapRef.current   = new Map();
+    prevClusterRef.current  = null;
     setError("");
     pendingRef.current   = null;
     lastFlushRef.current = 0;
@@ -517,6 +595,14 @@ export default function InferencePage() {
   const latentData = current?.latent_vector
     ? current.latent_vector.map((v, i) => ({ i, v }))
     : [];
+
+  const featureMseData = current?.feature_mse && activeModel?.feature_columns
+    ? activeModel.feature_columns
+        .map((name, i) => ({ name, mse: current.feature_mse[i] ?? 0 }))
+        .sort((a, b) => b.mse - a.mse)
+    : [];
+
+  const pctRank = current ? msePercentileRank(current.mse, baseline) : null;
 
   return (
     <div>
@@ -546,6 +632,12 @@ export default function InferencePage() {
             <span className="text-gray-600">loading…</span>
           )}
         </div>
+        {baseline && (
+          <div className="flex items-center gap-2 bg-gray-900 border border-gray-800 rounded-lg px-3 py-2">
+            <span className="text-gray-600 uppercase tracking-wider font-semibold">Baseline</span>
+            <span className="text-gray-400">{baseline.count.toLocaleString()} bars · p50 {baseline.p50?.toFixed(3)} · p95 {baseline.p95?.toFixed(3)}</span>
+          </div>
+        )}
       </div>
 
       {/* ── Cross-symbol guide ── */}
@@ -645,9 +737,19 @@ export default function InferencePage() {
       <div className="bg-gray-900 rounded-xl p-4 mb-6">
         <p className="text-sm text-gray-400 mb-3 flex items-center">
           MSE Timeline
+          {!baseline && mseData.length === 0 && (
+            <span className="ml-3 text-xs text-gray-600">Run walk-forward to establish historical p95 baseline</span>
+          )}
           <PanelInfo {...PANEL_INFO.mse} />
         </p>
-        <MSEChart data={mseData} p95={p95} onChartCreated={handleMseChartReady} runId={runId} />
+        <MSEChart
+          data={mseData}
+          p95={p95}
+          p50={p50}
+          markers={clusterTransitions}
+          onChartCreated={handleMseChartReady}
+          runId={runId}
+        />
       </div>
 
       {/* Panel — Candlestick Chart */}
@@ -677,13 +779,29 @@ export default function InferencePage() {
           {current ? (
             <table className="text-sm w-full">
               <tbody>
-                {[["Time", current.timestamp], ["MSE", current.mse?.toFixed(6)],
-                  ["Cluster", current.cluster_label]].map(([k, v]) => (
-                  <tr key={k}>
-                    <td className="text-gray-500 pr-3">{k}</td>
-                    <td className="text-gray-100">{v}</td>
-                  </tr>
-                ))}
+                <tr>
+                  <td className="text-gray-500 pr-3">Time</td>
+                  <td className="text-gray-100">{current.timestamp}</td>
+                </tr>
+                <tr>
+                  <td className="text-gray-500 pr-3">MSE</td>
+                  <td className="text-gray-100">
+                    {current.mse?.toFixed(6)}
+                    {pctRank !== null && (
+                      <span className={`ml-2 text-xs font-mono px-1.5 py-0.5 rounded
+                        ${pctRank >= 95 ? "bg-red-900/60 text-red-300" :
+                          pctRank >= 75 ? "bg-amber-900/60 text-amber-300" :
+                          pctRank >= 50 ? "bg-gray-700 text-gray-300" :
+                                          "bg-emerald-900/60 text-emerald-300"}`}>
+                        p{pctRank}
+                      </span>
+                    )}
+                  </td>
+                </tr>
+                <tr>
+                  <td className="text-gray-500 pr-3">Cluster</td>
+                  <td className="text-gray-100">{current.cluster_label}</td>
+                </tr>
               </tbody>
             </table>
           ) : (
@@ -743,6 +861,39 @@ export default function InferencePage() {
           )}
         </div>
       </div>
+
+      {/* Panel F — Feature MSE Contribution */}
+      {featureMseData.length > 0 && (
+        <div className="bg-gray-900 rounded-xl p-4 mb-6">
+          <p className="text-sm text-gray-400 mb-3 flex items-center">
+            Feature MSE Contribution
+            <PanelInfo {...PANEL_INFO.featureMse} />
+          </p>
+          <ResponsiveContainer width="100%" height={featureMseData.length * 22 + 20}>
+            <BarChart data={featureMseData} layout="vertical" margin={{ left: 0, right: 20, top: 0, bottom: 0 }}>
+              <XAxis type="number" stroke="#6B7280" tick={{ fontSize: 10, fill: "#9CA3AF" }} />
+              <YAxis
+                dataKey="name"
+                type="category"
+                width={110}
+                tick={{ fontSize: 10, fill: "#9CA3AF" }}
+              />
+              <Tooltip
+                contentStyle={{ backgroundColor: "#111827", border: "none", fontSize: 11 }}
+                formatter={(v) => [v.toFixed(6), "MSE"]}
+              />
+              <Bar dataKey="mse" radius={[0, 2, 2, 0]}>
+                {featureMseData.map((d, i) => {
+                  const maxMse = featureMseData[0]?.mse ?? 1;
+                  const ratio  = maxMse > 0 ? d.mse / maxMse : 0;
+                  const color  = ratio > 0.6 ? "#ef4444" : ratio > 0.3 ? "#f59e0b" : "#6366f1";
+                  return <Cell key={i} fill={color} />;
+                })}
+              </Bar>
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+      )}
 
       {error && <p className="text-red-400 text-sm">{error}</p>}
     </div>
