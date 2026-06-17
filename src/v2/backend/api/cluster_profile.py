@@ -201,12 +201,13 @@ def get_forward_returns(horizon: int = Query(4)) -> dict:
             continue
         arr = np.array(rets)
         clusters_out[str(k)] = {
-            "mean":     round(float(arr.mean()), 6),
-            "median":   round(float(np.median(arr)), 6),
-            "p25":      round(float(np.percentile(arr, 25)), 6),
-            "p75":      round(float(np.percentile(arr, 75)), 6),
-            "hit_rate": round(float((arr > 0).mean()), 4),
-            "n":        len(rets),
+            "mean":        round(float(arr.mean()), 6),
+            "median":      round(float(np.median(arr)), 6),
+            "p25":         round(float(np.percentile(arr, 25)), 6),
+            "p75":         round(float(np.percentile(arr, 75)), 6),
+            "hit_rate":    round(float((arr > 0).mean()), 4),
+            "n":           len(rets),
+            "returns_raw": [round(r, 6) for r in rets],
         }
 
     # Persist forward_returns.csv
@@ -222,4 +223,38 @@ def get_forward_returns(horizon: int = Query(4)) -> dict:
         "horizon":           horizon,
         "n_non_overlapping": n_non_overlapping,
         "clusters":          clusters_out,
+    }
+
+
+# ── /transitions ──────────────────────────────────────────────────────────────
+
+@router.get("/transitions")
+def get_cluster_transitions() -> dict:
+    """
+    Markov transition matrix from the chronological cluster label sequence.
+    Returns raw counts and row-normalised probabilities (n_clusters × n_clusters).
+    Gap-crossing transitions (overnight/weekend) are excluded.
+    """
+    _check_artifacts()
+    cfg           = config_manager.load()
+    window_size   = cfg["window_size"]
+    labels        = storage.load_labels()        # (N,)
+    valid_indices = storage.load_valid_indices() # (N,) — indices into the bar DataFrame
+    n_clusters    = int(labels.max()) + 1
+
+    counts = np.zeros((n_clusters, n_clusters), dtype=np.int32)
+    for i in range(len(labels) - 1):
+        # Skip transitions that cross an overnight/weekend gap
+        if int(valid_indices[i + 1]) - int(valid_indices[i]) > window_size * 2:
+            continue
+        counts[int(labels[i]), int(labels[i + 1])] += 1
+
+    row_sums = counts.sum(axis=1, keepdims=True)
+    probs = np.where(row_sums > 0, counts / row_sums.astype(np.float64), 0.0)
+
+    return {
+        "n_clusters":  n_clusters,
+        "cluster_ids": list(range(n_clusters)),
+        "counts":      counts.tolist(),
+        "probs":       [[round(float(p), 4) for p in row] for row in probs.tolist()],
     }

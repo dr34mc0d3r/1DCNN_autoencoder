@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import {
   ScatterChart, Scatter, XAxis, YAxis, ZAxis, Tooltip, Cell, ResponsiveContainer,
   LineChart, Line, CartesianGrid, Legend,
+  BarChart, Bar,
 } from "recharts";
 import { api } from "../api.js";
 import { captureRechartsSvg } from "../utils/exportUtils.js";
@@ -280,14 +281,32 @@ function LatentGuide() {
   );
 }
 
+function buildHistogram(returns, globalMin, globalMax, nBins = 24) {
+  const range = globalMax - globalMin || 1e-9;
+  const step  = range / nBins;
+  const bins  = Array.from({ length: nBins }, (_, i) => {
+    const lo = globalMin + i * step;
+    return { mid: lo + step / 2, label: `${(lo * 100).toFixed(2)}%`, count: 0, positive: lo + step > 0 };
+  });
+  for (const r of returns) {
+    const idx = Math.min(Math.floor((r - globalMin) / step), nBins - 1);
+    if (idx >= 0) bins[idx].count++;
+  }
+  return bins;
+}
+
 export default function LatentSpacePage() {
   const [activeModel, setActiveModel] = useState(null);
   const [scatter, setScatter]         = useState([]);
   const [result, setResult]           = useState(null);
   const [quality, setQuality]         = useState(null);
   const [state, setState]             = useState("idle");
-  const [qualityLoading, setQualityLoading] = useState(false);
-  const [error, setError]             = useState("");
+  const [qualityLoading, setQualityLoading]   = useState(false);
+  const [fwdDistributions, setFwdDistributions] = useState(null);
+  const [fwdLoading, setFwdLoading]           = useState(false);
+  const [transitions, setTransitions]         = useState(null);
+  const [transLoading, setTransLoading]       = useState(false);
+  const [error, setError]                     = useState("");
   const clusterViewRef  = useRef(null);
   const densityViewRef  = useRef(null);
   const qualityChartRef = useRef(null);
@@ -353,6 +372,32 @@ export default function LatentSpacePage() {
     }
   }
 
+  async function handleFwdDistributions() {
+    setFwdLoading(true);
+    setError("");
+    try {
+      const res = await api.clusterFwdReturns(4);
+      setFwdDistributions(res);
+    } catch (e) {
+      setError(e.message);
+    } finally {
+      setFwdLoading(false);
+    }
+  }
+
+  async function handleTransitions() {
+    setTransLoading(true);
+    setError("");
+    try {
+      const res = await api.clusterTransitions();
+      setTransitions(res);
+    } catch (e) {
+      setError(e.message);
+    } finally {
+      setTransLoading(false);
+    }
+  }
+
   const qualityData = quality
     ? Object.entries(quality).map(([k, v]) => ({ k: Number(k), ...v }))
     : [];
@@ -407,7 +452,21 @@ export default function LatentSpacePage() {
         >
           {qualityLoading ? "Scoring…" : "Cluster Quality"}
         </button>
-        {(state === "running" || qualityLoading) && <Spinner />}
+        <button
+          onClick={handleFwdDistributions}
+          disabled={state === "running" || fwdLoading}
+          className="bg-gray-700 hover:bg-gray-600 disabled:opacity-50 px-5 py-2 rounded text-sm font-semibold"
+        >
+          {fwdLoading ? "Loading…" : "Fwd Distributions"}
+        </button>
+        <button
+          onClick={handleTransitions}
+          disabled={state === "running" || transLoading}
+          className="bg-gray-700 hover:bg-gray-600 disabled:opacity-50 px-5 py-2 rounded text-sm font-semibold"
+        >
+          {transLoading ? "Loading…" : "Transition Matrix"}
+        </button>
+        {(state === "running" || qualityLoading || fwdLoading || transLoading) && <Spinner />}
       </div>
 
       <LatentGuide />
@@ -570,6 +629,127 @@ export default function LatentSpacePage() {
           </ResponsiveContainer>
         </div>
       )}
+
+      {/* ── Forward Return Distributions ── */}
+      {fwdDistributions && (() => {
+        const clusters = Object.entries(fwdDistributions.clusters);
+        // Compute global min/max across all clusters so all histograms share the same x-axis
+        const allReturns = clusters.flatMap(([, c]) => c.returns_raw ?? []);
+        const gMin = allReturns.length ? Math.min(...allReturns) : -0.01;
+        const gMax = allReturns.length ? Math.max(...allReturns) :  0.01;
+        return (
+          <div className="bg-gray-900 rounded-xl p-4 mb-6">
+            <p className="text-sm text-gray-300 font-semibold mb-1">Forward Return Distributions</p>
+            <p className="text-xs text-gray-500 mb-4">
+              Distribution shape of {fwdDistributions.horizon}-bar forward returns per cluster
+              &nbsp;(horizon = {fwdDistributions.horizon} × 5Min). Green = positive return bucket, red = negative.
+            </p>
+            <div className="grid grid-cols-2 gap-4">
+              {clusters.map(([k, c]) => {
+                const raw = c.returns_raw ?? [];
+                const bins = raw.length ? buildHistogram(raw, gMin, gMax) : [];
+                const color = COLORS[Number(k) % COLORS.length];
+                return (
+                  <div key={k} className="bg-gray-800/50 rounded-lg p-3">
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-xs font-semibold" style={{ color }}>Cluster {k}</span>
+                      <span className="text-xs text-gray-500">
+                        n={c.n} &nbsp;·&nbsp; mean={(c.mean * 100).toFixed(3)}% &nbsp;·&nbsp; hit={((c.hit_rate ?? 0) * 100).toFixed(1)}%
+                      </span>
+                    </div>
+                    {bins.length > 0 ? (
+                      <ResponsiveContainer width="100%" height={110}>
+                        <BarChart data={bins} margin={{ top: 2, right: 2, left: -28, bottom: 0 }} barCategoryGap="1%">
+                          <XAxis dataKey="label" hide />
+                          <YAxis tick={{ fontSize: 9 }} />
+                          <Tooltip
+                            contentStyle={{ backgroundColor: "#111827", border: "1px solid #374151", fontSize: 11 }}
+                            formatter={(v, _, props) => [`${v} bars`, `${props.payload.label}`]}
+                          />
+                          <Bar dataKey="count" isAnimationActive={false}>
+                            {bins.map((b, i) => (
+                              <Cell key={i} fill={b.positive ? "#10b98180" : "#ef444480"} />
+                            ))}
+                          </Bar>
+                        </BarChart>
+                      </ResponsiveContainer>
+                    ) : (
+                      <p className="text-xs text-gray-600 text-center py-4">No data</p>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        );
+      })()}
+
+      {/* ── Markov Transition Matrix ── */}
+      {transitions && (() => {
+        const { n_clusters, cluster_ids, probs, counts } = transitions;
+        const maxProb = Math.max(...probs.flat());
+        return (
+          <div className="bg-gray-900 rounded-xl p-4 mb-6">
+            <p className="text-sm text-gray-300 font-semibold mb-1">Cluster Transition Matrix</p>
+            <p className="text-xs text-gray-500 mb-4">
+              P(next cluster = col | current cluster = row). Cell brightness ∝ probability.
+              Diagonal (amber) = staying in the same cluster. Values are row-normalised.
+            </p>
+            <div className="overflow-x-auto">
+              <table className="text-xs border-collapse w-full" style={{ minWidth: n_clusters * 60 + 80 }}>
+                <thead>
+                  <tr>
+                    <th className="text-gray-600 text-right pr-2 pb-1 font-normal">From ↓ To →</th>
+                    {cluster_ids.map(j => (
+                      <th key={j} className="pb-1 font-semibold text-center" style={{ color: COLORS[j % COLORS.length], minWidth: 52 }}>
+                        C{j}
+                      </th>
+                    ))}
+                    <th className="pb-1 pl-2 text-gray-600 font-normal text-left">Most likely next</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {cluster_ids.map(i => {
+                    const row = probs[i];
+                    const bestJ = row.indexOf(Math.max(...row));
+                    return (
+                      <tr key={i}>
+                        <td className="text-right pr-2 py-0.5 font-semibold" style={{ color: COLORS[i % COLORS.length] }}>C{i}</td>
+                        {cluster_ids.map(j => {
+                          const p = row[j];
+                          const isDiag = i === j;
+                          const alpha = maxProb > 0 ? p / maxProb : 0;
+                          const bg = isDiag
+                            ? `rgba(245,158,11,${alpha * 0.75})`
+                            : `rgba(99,102,241,${alpha * 0.75})`;
+                          return (
+                            <td key={j} className="text-center py-0.5 rounded" style={{ background: bg, color: p > 0.4 ? "#fff" : "#9ca3af" }}>
+                              {p.toFixed(2)}
+                            </td>
+                          );
+                        })}
+                        <td className="pl-2 py-0.5 text-left font-semibold" style={{ color: COLORS[bestJ % COLORS.length] }}>
+                          C{bestJ} <span className="text-gray-600 font-normal">({(row[bestJ] * 100).toFixed(0)}%)</span>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+            <div className="mt-3 grid grid-cols-2 gap-4 text-xs text-gray-500">
+              <div>
+                <span className="font-semibold text-gray-400">Total transitions recorded: </span>
+                {counts.reduce((a, row) => a + row.reduce((b, v) => b + v, 0), 0).toLocaleString()}
+              </div>
+              <div>
+                <span className="font-semibold text-gray-400">Avg self-transition rate: </span>
+                {(cluster_ids.reduce((a, i) => a + (probs[i]?.[i] ?? 0), 0) / n_clusters * 100).toFixed(1)}%
+              </div>
+            </div>
+          </div>
+        );
+      })()}
 
       {error && <p className="text-red-400 text-sm mt-2">{error}</p>}
     </div>
