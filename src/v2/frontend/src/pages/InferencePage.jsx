@@ -200,15 +200,16 @@ function MSEChart({ data, p95, p50, markers, onChartCreated, runId }) {
   return <div ref={containerRef} className="w-full" />;
 }
 
-function CandleChart({ data, onChartCreated }) {
-  const containerRef     = useRef(null);
-  const chartRef         = useRef(null);
-  const candleRef        = useRef(null);
-  const volRef           = useRef(null);
-  const ema9Ref          = useRef(null);
-  const ema21Ref         = useRef(null);
-  const ema50Ref         = useRef(null);
-  const hasInitialFitRef = useRef(false);
+function CandleChart({ data, clusterData = [], onChartCreated }) {
+  const containerRef        = useRef(null);
+  const chartRef            = useRef(null);
+  const candleRef           = useRef(null);
+  const volRef              = useRef(null);
+  const ema9Ref             = useRef(null);
+  const ema21Ref            = useRef(null);
+  const ema50Ref            = useRef(null);
+  const clusterMarkersRef   = useRef(null);
+  const hasInitialFitRef    = useRef(false);
 
   useEffect(() => {
     if (!containerRef.current) return;
@@ -239,6 +240,8 @@ function CandleChart({ data, onChartCreated }) {
     const ema21 = chart.addSeries(LineSeries, { color: "#f59e0b", lineWidth: 1, title: "EMA 21", lastValueVisible: false, priceLineVisible: false });
     const ema50 = chart.addSeries(LineSeries, { color: "#10b981", lineWidth: 1, title: "EMA 50", lastValueVisible: false, priceLineVisible: false });
 
+    clusterMarkersRef.current = createSeriesMarkers(candles, []);
+
     chartRef.current  = chart;
     candleRef.current = candles;
     volRef.current    = vol;
@@ -251,7 +254,7 @@ function CandleChart({ data, onChartCreated }) {
       chart.applyOptions({ width: containerRef.current?.clientWidth ?? 800 });
     });
     ro.observe(containerRef.current);
-    return () => { ro.disconnect(); chart.remove(); };
+    return () => { ro.disconnect(); chart.remove(); clusterMarkersRef.current = null; };
   }, []);
 
   useEffect(() => {
@@ -266,6 +269,21 @@ function CandleChart({ data, onChartCreated }) {
       chartRef.current.timeScale().fitContent();
     }
   }, [data]);
+
+  // Per-bar cluster color markers — one dot below each bar colored by cluster label
+  useEffect(() => {
+    if (!clusterMarkersRef.current || !clusterData?.length) return;
+    clusterMarkersRef.current.setMarkers(
+      clusterData.map(({ t, cluster }) => ({
+        time:     t,
+        position: "belowBar",
+        color:    COLORS[cluster % COLORS.length],
+        shape:    "circle",
+        size:     1,
+        text:     "",
+      }))
+    );
+  }, [clusterData]);
 
   return <div ref={containerRef} className="w-full" />;
 }
@@ -974,9 +992,11 @@ export default function InferencePage() {
   const [speed, setSpeed]     = useState("full");
   const [paused, setPaused]   = useState(false);
   const [mode, setMode]       = useState("walkforward"); // "walkforward" | "live"
-  const [candleData, setCandleData] = useState([]);
-  const [runId, setRunId]           = useState(0);
-  const candleAccumRef         = useRef(new Map()); // t → bar, accumulates all received bars
+  const [candleData, setCandleData]         = useState([]);
+  const [barClusterData, setBarClusterData] = useState([]); // [{t, cluster}] — per-bar cluster label
+  const [runId, setRunId]                   = useState(0);
+  const candleAccumRef      = useRef(new Map()); // t → bar, accumulates all received bars
+  const barClusterAccumRef  = useRef([]);        // grows with each infer_step
   const mseTimeMapRef          = useRef(new Map()); // unix_sec → mse, for crosshair lookup
   const prevClusterRef         = useRef(null);      // previous cluster label for transition detection
   const canvasRef              = useRef(null);
@@ -1134,11 +1154,15 @@ export default function InferencePage() {
 
     // Detect cluster transitions for MSE chart markers
     const newCluster = data.cluster_label;
+    const barTs = Math.floor(new Date(data.timestamp).getTime() / 1000);
     if (prevClusterRef.current !== null && prevClusterRef.current !== newCluster) {
-      const t = Math.floor(new Date(data.timestamp).getTime() / 1000);
-      setClusterTransitions(prev => [...prev, { time: t, cluster: newCluster }]);
+      setClusterTransitions(prev => [...prev, { time: barTs, cluster: newCluster }]);
     }
     prevClusterRef.current = newCluster;
+
+    // Per-bar cluster dot on candlestick chart
+    barClusterAccumRef.current.push({ t: barTs, cluster: newCluster });
+    setBarClusterData([...barClusterAccumRef.current]);
 
     if (data.candle_data?.length) {
       data.candle_data.forEach(bar => candleAccumRef.current.set(bar.t, bar));
@@ -1187,7 +1211,9 @@ export default function InferencePage() {
     setClusterHistory([]);
     setClusterTransitions([]);
     setCandleData([]);
-    candleAccumRef.current  = new Map();
+    setBarClusterData([]);
+    candleAccumRef.current     = new Map();
+    barClusterAccumRef.current = [];
     mseTimeMapRef.current   = new Map();
     prevClusterRef.current  = null;
     setError("");
@@ -1387,7 +1413,7 @@ export default function InferencePage() {
               <span style={{ color: "#10b981" }}>— EMA 50</span>
             </span>
           </p>
-          <CandleChart data={candleData} onChartCreated={handleCandleChartReady} />
+          <CandleChart data={candleData} clusterData={barClusterData} onChartCreated={handleCandleChartReady} />
         </div>
       )}
 
