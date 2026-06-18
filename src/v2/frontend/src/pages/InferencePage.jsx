@@ -1099,7 +1099,6 @@ export default function InferencePage() {
     const candleRangeHandler = (logicalRange) => {
       if (syncingRef.current || !logicalRange) return;
       const offset = candleAccumRef.current.size - mseTimeMapRef.current.size;
-      if (!offset) return;
       syncingRef.current = true;
       m.timeScale().setVisibleLogicalRange({ from: logicalRange.from - offset, to: logicalRange.to - offset });
       syncingRef.current = false;
@@ -1107,7 +1106,6 @@ export default function InferencePage() {
     const mseRangeHandler = (logicalRange) => {
       if (syncingRef.current || !logicalRange) return;
       const offset = candleAccumRef.current.size - mseTimeMapRef.current.size;
-      if (!offset) return;
       syncingRef.current = true;
       c.timeScale().setVisibleLogicalRange({ from: logicalRange.from + offset, to: logicalRange.to + offset });
       syncingRef.current = false;
