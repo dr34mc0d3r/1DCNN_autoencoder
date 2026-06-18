@@ -1045,11 +1045,13 @@ export default function InferencePage() {
   useEffect(() => { speedRef.current = speed; }, [speed]);
   useEffect(() => { pausedRef.current = paused; }, [paused]);
 
-  // After first data arrives, fit both charts together so they start at the same zoom level.
-  // Walk-forward: both charts have 1 bar → offset=0 → both just fitContent().
-  // Live mode: OHLCV has 64 bars → use its zoom as reference, shift MSE back by offset.
+  // Fit both charts together once OHLCV has at least 64 bars so the initial zoom is
+  // meaningful (one full window of context).
+  // Walk-forward: 1 bar/step, so waits 64 flushes — imperceptible at Full Speed.
+  // Live mode: 64 bars arrive on the very first step, fires immediately.
   useEffect(() => {
     if (!mseData.length || initialFitDoneRef.current) return;
+    if (candleAccumRef.current.size < 64) return;
     if (!mseChartRef.current || !candleChartRef.current) return;
     initialFitDoneRef.current = true;
     candleChartRef.current.timeScale().fitContent();
