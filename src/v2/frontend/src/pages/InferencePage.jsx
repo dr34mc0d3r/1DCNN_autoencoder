@@ -11,6 +11,22 @@ import PanelInfo from "../components/PanelInfo.jsx";
 const COLORS = ["#6366f1","#f59e0b","#10b981","#ef4444","#3b82f6","#8b5cf6","#ec4899","#14b8a6"];
 const HISTORY_LEN = 200;
 
+// Local-timezone, 12-hour clock formatters for both lw-charts instances
+const _tickMarkFormatter = (time, tickMarkType) => {
+  const d = new Date(time * 1000);
+  if (tickMarkType === 0) return d.toLocaleDateString(undefined, { year: "numeric" });
+  if (tickMarkType === 1) return d.toLocaleDateString(undefined, { month: "short" });
+  if (tickMarkType === 2) return d.toLocaleDateString(undefined, { month: "short", day: "numeric" });
+  return d.toLocaleTimeString(undefined, { hour: "numeric", minute: "2-digit", hour12: true });
+};
+const _timeFormatter = (time) => {
+  const d = new Date(time * 1000);
+  return d.toLocaleString(undefined, {
+    month: "short", day: "numeric", year: "2-digit",
+    hour: "numeric", minute: "2-digit", hour12: true,
+  });
+};
+
 const SPEED_OPTIONS = [
   { value: "full", label: "Full Speed",      delayMs: 0    },
   { value: "1s",   label: "Every 1 second",  delayMs: 1000 },
@@ -126,11 +142,12 @@ function MSEChart({ data, p95, p50, markers, onChartCreated, runId }) {
   useEffect(() => {
     if (!containerRef.current) return;
     const chart = createChart(containerRef.current, {
-      layout:    { background: { color: "#111827" }, textColor: "#9CA3AF" },
-      grid:      { vertLines: { color: "#1f2937" }, horzLines: { color: "#1f2937" } },
-      crosshair: { mode: 1 },
+      layout:       { background: { color: "#111827" }, textColor: "#9CA3AF" },
+      grid:         { vertLines: { color: "#1f2937" }, horzLines: { color: "#1f2937" } },
+      crosshair:    { mode: 1 },
+      localization: { timeFormatter: _timeFormatter },
       rightPriceScale: { borderColor: "#374151" },
-      timeScale:  { borderColor: "#374151", timeVisible: true, secondsVisible: false },
+      timeScale:    { borderColor: "#374151", timeVisible: true, secondsVisible: false, tickMarkFormatter: _tickMarkFormatter },
       width:  containerRef.current.clientWidth,
       height: 240,
     });
@@ -214,11 +231,12 @@ function CandleChart({ data, clusterData = [], onChartCreated }) {
   useEffect(() => {
     if (!containerRef.current) return;
     const chart = createChart(containerRef.current, {
-      layout:    { background: { color: "#111827" }, textColor: "#9CA3AF" },
-      grid:      { vertLines: { color: "#1f2937" }, horzLines: { color: "#1f2937" } },
-      crosshair: { mode: 1 },
+      layout:       { background: { color: "#111827" }, textColor: "#9CA3AF" },
+      grid:         { vertLines: { color: "#1f2937" }, horzLines: { color: "#1f2937" } },
+      crosshair:    { mode: 1 },
+      localization: { timeFormatter: _timeFormatter },
       rightPriceScale: { borderColor: "#374151" },
-      timeScale:  { borderColor: "#374151", timeVisible: true, secondsVisible: false },
+      timeScale:    { borderColor: "#374151", timeVisible: true, secondsVisible: false, tickMarkFormatter: _tickMarkFormatter },
       width:  containerRef.current.clientWidth,
       height: 320,
     });
