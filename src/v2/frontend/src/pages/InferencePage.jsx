@@ -1013,9 +1013,28 @@ export default function InferencePage() {
   const pendingRef            = useRef(null);   // latest unprocessed infer_step
   const lastFlushRef          = useRef(0);      // ms timestamp of last UI update
   const speedRef              = useRef("full"); // mirrors speed for use inside intervals
+  const initialFitDoneRef     = useRef(false);  // gates the one-time joint zoom sync
 
   useEffect(() => { speedRef.current = speed; }, [speed]);
   useEffect(() => { pausedRef.current = paused; }, [paused]);
+
+  // After first data arrives, fit both charts together so they start at the same zoom level.
+  // Walk-forward: both charts have 1 bar → offset=0 → both just fitContent().
+  // Live mode: OHLCV has 64 bars → use its zoom as reference, shift MSE back by offset.
+  useEffect(() => {
+    if (!mseData.length || initialFitDoneRef.current) return;
+    if (!mseChartRef.current || !candleChartRef.current) return;
+    initialFitDoneRef.current = true;
+    candleChartRef.current.timeScale().fitContent();
+    const candleRange = candleChartRef.current.timeScale().getVisibleLogicalRange();
+    if (!candleRange) { mseChartRef.current.timeScale().fitContent(); return; }
+    const offset = candleAccumRef.current.size - mseTimeMapRef.current.size;
+    if (offset === 0) { mseChartRef.current.timeScale().fitContent(); return; }
+    mseChartRef.current.timeScale().setVisibleLogicalRange({
+      from: candleRange.from - offset,
+      to:   candleRange.to   - offset,
+    });
+  }, [mseData.length]);
 
   useEffect(() => {
     api.getActiveModel().then(m => setActiveModel(Object.keys(m).length ? m : null)).catch(() => {});
@@ -1212,8 +1231,9 @@ export default function InferencePage() {
     setClusterTransitions([]);
     setCandleData([]);
     setBarClusterData([]);
-    candleAccumRef.current     = new Map();
-    barClusterAccumRef.current = [];
+    candleAccumRef.current      = new Map();
+    barClusterAccumRef.current  = [];
+    initialFitDoneRef.current   = false;
     mseTimeMapRef.current   = new Map();
     prevClusterRef.current  = null;
     setError("");

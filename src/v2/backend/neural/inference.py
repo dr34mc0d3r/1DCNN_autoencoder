@@ -99,8 +99,8 @@ async def walk_forward(
             .tolist()
         )
 
-        ohlc_slice = df_ohlc.iloc[i - window_size + 1 : i + 1]
-        ema_slice  = df_ema.iloc[i - window_size + 1 : i + 1]
+        ohlc_slice = df_ohlc.iloc[i : i + 1]
+        ema_slice  = df_ema.iloc[i : i + 1]
         candle_data = []
         for j in range(len(ohlc_slice)):
             row = ohlc_slice.iloc[j]
