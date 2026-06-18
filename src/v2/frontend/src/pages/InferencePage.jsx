@@ -11,6 +11,15 @@ import PanelInfo from "../components/PanelInfo.jsx";
 const COLORS = ["#6366f1","#f59e0b","#10b981","#ef4444","#3b82f6","#8b5cf6","#ec4899","#14b8a6"];
 const HISTORY_LEN = 200;
 
+// Parse a backend timestamp string (naive UTC, e.g. "2024-01-02 14:50:00") as UTC seconds.
+// Without the "Z" suffix JS treats the string as local time, causing an offset equal to the
+// browser timezone — hence "4 hours ahead" for UTC-4 users.
+const toUtcSec = (s) => {
+  const iso = s.includes("T") ? s : s.replace(" ", "T");
+  const utc = iso.endsWith("Z") || /[+-]\d{2}:\d{2}$/.test(iso) ? iso : iso + "Z";
+  return Math.floor(new Date(utc).getTime() / 1000);
+};
+
 // Local-timezone, 12-hour clock formatters for both lw-charts instances
 const _tickMarkFormatter = (time, tickMarkType) => {
   const d = new Date(time * 1000);
@@ -170,7 +179,7 @@ function MSEChart({ data, p95, p50, markers, onChartCreated, runId }) {
   useEffect(() => {
     if (!data?.length || !lineRef.current) return;
     lineRef.current.setData(
-      data.map(d => ({ time: Math.floor(new Date(d.timestamp).getTime() / 1000), value: d.mse }))
+      data.map(d => ({ time: toUtcSec(d.timestamp), value: d.mse }))
     );
     if (!hasInitialFitRef.current) {
       hasInitialFitRef.current = true;
@@ -1183,13 +1192,13 @@ export default function InferencePage() {
 
   function flushPending(data) {
     setMseData(prev => [...prev, { timestamp: data.timestamp, mse: data.mse }]);
-    mseTimeMapRef.current.set(Math.floor(new Date(data.timestamp).getTime() / 1000), data.mse);
+    mseTimeMapRef.current.set(toUtcSec(data.timestamp), data.mse);
     setCurrent(data);
     setClusterHistory((prev) => [...prev.slice(-(HISTORY_LEN - 1)), data.cluster_label]);
 
     // Detect cluster transitions for MSE chart markers
     const newCluster = data.cluster_label;
-    const barTs = Math.floor(new Date(data.timestamp).getTime() / 1000);
+    const barTs = toUtcSec(data.timestamp);
     if (prevClusterRef.current !== null && prevClusterRef.current !== newCluster) {
       setClusterTransitions(prev => [...prev, { time: barTs, cluster: newCluster }]);
     }
